@@ -36,9 +36,13 @@ namespace PtxViewer
 
         private void mainView_Paint(object sender, PaintEventArgs e)
         {
+            using (var impl = new Tngn.Class1())
+            {
+                impl.DrawToWindow(mainView.Handle);
+            }
             var panelSize = mainView.Size;
-            int margin = 1;
-            e.Graphics.DrawRectangle(System.Drawing.Pens.Green, margin, margin, panelSize.Width - margin * 2, panelSize.Height - margin * 2);
+            int margin = 2;
+            e.Graphics.DrawRectangle(System.Drawing.Pens.Red, margin, margin, panelSize.Width - margin * 2 - 1, panelSize.Height - margin * 2 - 1);
         }
     }
 }
