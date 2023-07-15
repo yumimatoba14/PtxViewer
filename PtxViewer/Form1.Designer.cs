@@ -29,11 +29,13 @@ namespace PtxViewer
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.openMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.exitMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.mainView = new System.Windows.Forms.Panel();
+            this.viewTimer = new System.Windows.Forms.Timer(this.components);
             this.mainMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -80,6 +82,12 @@ namespace PtxViewer
             this.mainView.Size = new System.Drawing.Size(800, 424);
             this.mainView.TabIndex = 1;
             this.mainView.Paint += new System.Windows.Forms.PaintEventHandler(this.mainView_Paint);
+            this.mainView.Resize += new System.EventHandler(this.mainView_Resize);
+            // 
+            // viewTimer
+            // 
+            this.viewTimer.Interval = 1000;
+            this.viewTimer.Tick += new System.EventHandler(this.viewTimer_Tick);
             // 
             // Form1
             // 
@@ -105,6 +113,7 @@ namespace PtxViewer
         private System.Windows.Forms.ToolStripMenuItem openMenu;
         private System.Windows.Forms.ToolStripMenuItem exitMenu;
         private System.Windows.Forms.Panel mainView;
+        private System.Windows.Forms.Timer viewTimer;
     }
 }
 

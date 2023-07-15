@@ -34,6 +34,7 @@ namespace PtxViewer
             }
         }
 
+        private bool afterTimer = false;
         private void mainView_Paint(object sender, PaintEventArgs e)
         {
             using (var impl = new Tngn.Class1())
@@ -43,6 +44,27 @@ namespace PtxViewer
             var panelSize = mainView.Size;
             int margin = 2;
             e.Graphics.DrawRectangle(System.Drawing.Pens.Red, margin, margin, panelSize.Width - margin * 2 - 1, panelSize.Height - margin * 2 - 1);
+            if (afterTimer)
+            {
+                e.Graphics.FillRectangle(System.Drawing.Brushes.Blue, panelSize.Width / 3, panelSize.Height / 3, panelSize.Width / 3, panelSize.Height / 3);
+                viewTimer.Enabled = false;
+            } else
+            {
+                viewTimer.Enabled = true;
+            }
+            afterTimer = false;
         }
+
+        private void mainView_Resize(object sender, EventArgs e)
+        {
+            mainView.Invalidate();
+        }
+
+        private void viewTimer_Tick(object sender, EventArgs e)
+        {
+            afterTimer = true;
+            mainView.Invalidate();
+        }
+
     }
 }
