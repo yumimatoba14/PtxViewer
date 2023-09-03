@@ -12,6 +12,48 @@ namespace PtxViewer
 {
     public partial class Form1 : Form
     {
+        class LocalCursorManager : IDisposable
+        {
+            public LocalCursorManager(Cursor newCursor)
+            {
+                orgCursor = Cursor.Current;
+                Cursor.Current = newCursor;
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        // TODO: マネージド状態を破棄します (マネージド オブジェクト)
+                        Cursor.Current = orgCursor;
+                    }
+
+                    // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
+                    // TODO: 大きなフィールドを null に設定します
+                    disposedValue = true;
+                }
+            }
+
+            // // TODO: 'Dispose(bool disposing)' にアンマネージド リソースを解放するコードが含まれる場合にのみ、ファイナライザーをオーバーライドします
+            // ~LocalCursorManager()
+            // {
+            //     // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            //     Dispose(disposing: false);
+            // }
+
+            public void Dispose()
+            {
+                // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
+
+            private Cursor orgCursor = null;
+            private bool disposedValue = false;
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -24,33 +66,63 @@ namespace PtxViewer
 
         private void openMenu_Click(object sender, EventArgs e)
         {
+            if (viewModel == null)
+            {
+                return;
+            }
+
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.Filter = "PTX File(*.ptx)|*.ptx|All file(*.*)|*.*";
+                openFileDialog.Multiselect = true;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    MessageBox.Show(openFileDialog.FileName, "開発中", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    using (var localCursor = new LocalCursorManager(Cursors.WaitCursor))
+                    {
+                        if (openFileDialog.Multiselect)
+                        {
+                            foreach (var filePath in openFileDialog.FileNames)
+                            {
+                                bool isOk = viewModel.OpenPtxFile(filePath);
+                                if (!isOk)
+                                {
+                                    MessageBox.Show("Failed to open file:" + filePath, "File open", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            bool isOk = viewModel.OpenPtxFile(openFileDialog.FileName);
+                            if (!isOk)
+                            {
+                                MessageBox.Show("Failed to open file:" + openFileDialog.FileName, "File open", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                    }
                 }
             }
         }
 
+        private bool isProgressiveViewMode = true;
         private bool afterTimer = false;
+        private Tngn.ViewModel viewModel = null;
+
         private void mainView_Paint(object sender, PaintEventArgs e)
         {
-            using (var impl = new Tngn.Class1())
+            if (viewModel == null)
             {
-                impl.DrawToWindow(mainView.Handle);
+                viewModel = new Tngn.ViewModel(this.components, mainView.Handle);
             }
-            var panelSize = mainView.Size;
-            int margin = 2;
-            e.Graphics.DrawRectangle(System.Drawing.Pens.Red, margin, margin, panelSize.Width - margin * 2 - 1, panelSize.Height - margin * 2 - 1);
-            if (afterTimer)
-            {
-                e.Graphics.FillRectangle(System.Drawing.Brushes.Blue, panelSize.Width / 3, panelSize.Height / 3, panelSize.Width / 3, panelSize.Height / 3);
-                viewTimer.Enabled = false;
-            } else
+            viewModel.SetProgressiveViewMode(isProgressiveViewMode, afterTimer);
+            viewModel.Draw();
+            if (isProgressiveViewMode && viewModel.IsViewContentUpdated())
             {
                 viewTimer.Enabled = true;
+            }
+            else
+            {
+                viewTimer.Enabled = false;
             }
             afterTimer = false;
         }
@@ -58,6 +130,58 @@ namespace PtxViewer
         private void mainView_Resize(object sender, EventArgs e)
         {
             mainView.Invalidate();
+            if (viewModel != null)
+            {
+                viewModel.OnSize(mainView.Size);
+            }
+        }
+
+        private void mainView_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (viewModel != null)
+            {
+                viewModel.OnMouseWheel(e);
+                if (viewModel.IsNeedDraw())
+                {
+                    mainView.Invalidate();
+                }
+            }
+        }
+
+        private void mainView_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (viewModel != null)
+            {
+                viewModel.OnMouseButtonDown(e);
+                if (viewModel.IsNeedDraw())
+                {
+                    mainView.Invalidate();
+                }
+            }
+        }
+
+        private void mainView_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (viewModel != null)
+            {
+                viewModel.OnMouseButtonUp(e);
+                if (viewModel.IsNeedDraw())
+                {
+                    mainView.Invalidate();
+                }
+            }
+        }
+
+        private void mainView_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (viewModel != null)
+            {
+                viewModel.OnMouseMove(e);
+                if (viewModel.IsNeedDraw())
+                {
+                    mainView.Invalidate();
+                }
+            }
         }
 
         private void viewTimer_Tick(object sender, EventArgs e)
@@ -65,6 +189,5 @@ namespace PtxViewer
             afterTimer = true;
             mainView.Invalidate();
         }
-
     }
 }

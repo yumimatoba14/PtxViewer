@@ -122,12 +122,36 @@
     <Link />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="FormView.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Tngn.h" />
+    <ClInclude Include="TngnCli.h" />
+    <ClInclude Include="ViewModel.h" />
+    <ClInclude Include="YmTngnModel\YmRgba.h" />
+    <ClInclude Include="YmTngnModel\YmTngnExclusiveLodPointListCreator.h" />
+    <ClInclude Include="YmTngnModel\YmTngnExclusiveLodPointListLodTable.h" />
+    <ClInclude Include="YmTngnModel\YmTngnModel.h" />
+    <ClInclude Include="YmTngnModel\YmTngnPointBlockListBuilder.h" />
+    <ClInclude Include="YmTngn\YmComPtr.h" />
+    <ClInclude Include="YmTngn\YmDx11MappedSubResource.h" />
+    <ClInclude Include="YmTngn\YmPtxFileParser.h" />
+    <ClInclude Include="YmTngn\YmTngnDmExclusiveLodPointList.h" />
+    <ClInclude Include="YmTngn\YmTngnDmMemoryPointList.h" />
+    <ClInclude Include="YmTngn\YmTngnDmPointBlockList.h" />
+    <ClInclude Include="YmTngn\YmTngnDmPtxFiles.h" />
+    <ClInclude Include="YmTngn\YmTngnDraw.h" />
+    <ClInclude Include="YmTngn\YmTngnDrawingModel.h" />
+    <ClInclude Include="YmTngn\YmTngnFwd.h" />
+    <ClInclude Include="YmTngn\YmTngnShaderContext.h" />
+    <ClInclude Include="YmTngn\YmTngnShaderImpl.h" />
+    <ClInclude Include="YmTngn\YmTngnVectorUtil.h" />
+    <ClInclude Include="YmTngn\YmTngnViewModel.h" />
+    <ClInclude Include="YmTngn\YmViewOp.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="FormView.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -135,6 +159,24 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Tngn.cpp" />
+    <ClCompile Include="ViewModel.cpp" />
+    <ClCompile Include="YmTngnModel\YmRgba.cpp" />
+    <ClCompile Include="YmTngnModel\YmTngnExclusiveLodPointListCreator.cpp" />
+    <ClCompile Include="YmTngnModel\YmTngnExclusiveLodPointListLodTable.cpp" />
+    <ClCompile Include="YmTngnModel\YmTngnModel.cpp" />
+    <ClCompile Include="YmTngnModel\YmTngnPointBlockListBuilder.cpp" />
+    <ClCompile Include="YmTngn\YmDx11MappedSubResource.cpp" />
+    <ClCompile Include="YmTngn\YmPtxFileParser.cpp" />
+    <ClCompile Include="YmTngn\YmTngnDmExclusiveLodPointList.cpp" />
+    <ClCompile Include="YmTngn\YmTngnDmMemoryPointList.cpp" />
+    <ClCompile Include="YmTngn\YmTngnDmPointBlockList.cpp" />
+    <ClCompile Include="YmTngn\YmTngnDmPtxFiles.cpp" />
+    <ClCompile Include="YmTngn\YmTngnDraw.cpp" />
+    <ClCompile Include="YmTngn\YmTngnDrawingModel.cpp" />
+    <ClCompile Include="YmTngn\YmTngnShaderContext.cpp" />
+    <ClCompile Include="YmTngn\YmTngnShaderImpl.cpp" />
+    <ClCompile Include="YmTngn\YmTngnViewModel.cpp" />
+    <ClCompile Include="YmTngn\YmViewOp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc" />
@@ -145,7 +187,17 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="YmTngn\DefaultShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\YmBase\YmBase.vcxproj">

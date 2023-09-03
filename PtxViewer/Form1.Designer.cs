@@ -34,7 +34,7 @@ namespace PtxViewer
             this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.openMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.exitMenu = new System.Windows.Forms.ToolStripMenuItem();
-            this.mainView = new System.Windows.Forms.Panel();
+            this.mainView = new Tngn.FormView();
             this.viewTimer = new System.Windows.Forms.Timer(this.components);
             this.mainMenuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -81,12 +81,17 @@ namespace PtxViewer
             this.mainView.Name = "mainView";
             this.mainView.Size = new System.Drawing.Size(800, 424);
             this.mainView.TabIndex = 1;
+            this.mainView.Text = "formView1";
             this.mainView.Paint += new System.Windows.Forms.PaintEventHandler(this.mainView_Paint);
+            this.mainView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mainView_MouseDown);
+            this.mainView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mainView_MouseMove);
+            this.mainView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mainView_MouseUp);
+            this.mainView.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.mainView_MouseWheel);
             this.mainView.Resize += new System.EventHandler(this.mainView_Resize);
             // 
             // viewTimer
             // 
-            this.viewTimer.Interval = 1000;
+            this.viewTimer.Interval = 1;
             this.viewTimer.Tick += new System.EventHandler(this.viewTimer_Tick);
             // 
             // Form1
@@ -112,7 +117,7 @@ namespace PtxViewer
         private System.Windows.Forms.ToolStripMenuItem fileMenu;
         private System.Windows.Forms.ToolStripMenuItem openMenu;
         private System.Windows.Forms.ToolStripMenuItem exitMenu;
-        private System.Windows.Forms.Panel mainView;
+        private Tngn.FormView mainView;
         private System.Windows.Forms.Timer viewTimer;
     }
 }
