@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PtxViewer", "PtxViewer\PtxV
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tngn", "Tngn\Tngn.vcxproj", "{7480C1D4-337B-4290-9DCB-CFF1D452B3FA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "YmBase", "YmBase\YmBase.vcxproj", "{855F694F-5647-4D20-BA31-A7DEB27F9525}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{7480C1D4-337B-4290-9DCB-CFF1D452B3FA}.Release|x64.Build.0 = Release|x64
 		{7480C1D4-337B-4290-9DCB-CFF1D452B3FA}.Release|x86.ActiveCfg = Release|Win32
 		{7480C1D4-337B-4290-9DCB-CFF1D452B3FA}.Release|x86.Build.0 = Release|Win32
+		{855F694F-5647-4D20-BA31-A7DEB27F9525}.Debug|x64.ActiveCfg = Debug|x64
+		{855F694F-5647-4D20-BA31-A7DEB27F9525}.Debug|x64.Build.0 = Debug|x64
+		{855F694F-5647-4D20-BA31-A7DEB27F9525}.Debug|x86.ActiveCfg = Debug|Win32
+		{855F694F-5647-4D20-BA31-A7DEB27F9525}.Debug|x86.Build.0 = Debug|Win32
+		{855F694F-5647-4D20-BA31-A7DEB27F9525}.Release|x64.ActiveCfg = Release|x64
+		{855F694F-5647-4D20-BA31-A7DEB27F9525}.Release|x64.Build.0 = Release|x64
+		{855F694F-5647-4D20-BA31-A7DEB27F9525}.Release|x86.ActiveCfg = Release|Win32
+		{855F694F-5647-4D20-BA31-A7DEB27F9525}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -8,7 +8,7 @@
 #define PCH_H
 
 // プリコンパイルするヘッダーをここに追加します
-#include <Windows.h>
+#include "framework.h"
 #include "YmBase/YmBase.h"
 
 #endif //PCH_H

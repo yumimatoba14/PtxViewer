@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="public">
+      <UniqueIdentifier>{78afb84f-5f99-463b-aaa1-e167ad7f2bf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="public\IO">
+      <UniqueIdentifier>{875b8759-1171-4efb-a337-f2b193bd5d2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="public\Geometry">
+      <UniqueIdentifier>{03c5aec7-f06d-4e1e-9aa1-0dc621b5f14e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmBaseFwd.h">
+      <Filter>public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmErrorUtil.h">
+      <Filter>public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmStreamBuf.h">
+      <Filter>public\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmMemoryStreamBuf.h">
+      <Filter>public\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmWin32FileBuf.h">
+      <Filter>public\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmMemoryMappedFile.h">
+      <Filter>public\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmWin32.h">
+      <Filter>public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmBase.h">
+      <Filter>public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmBinaryFormatter.h">
+      <Filter>public\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmMemoryBinaryFormatter.h">
+      <Filter>public\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmVector.h">
+      <Filter>public\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmKdTree.h">
+      <Filter>public\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmAabBox.h">
+      <Filter>public\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmKdTreeVisitor.h">
+      <Filter>public\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmVectorN.h">
+      <Filter>public\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmOrtho3dXform.h">
+      <Filter>public\Geometry</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="YmBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\YmBase\YmErrorUtil.cpp">
+      <Filter>public</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\YmBase\YmMemoryStreamBuf.cpp">
+      <Filter>public\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\YmBase\YmStreamBuf.cpp">
+      <Filter>public\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\YmBase\YmWin32FileBuf.cpp">
+      <Filter>public\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\YmBase\YmMemoryMappedFile.cpp">
+      <Filter>public\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\YmBase\YmBinaryFormatter.cpp">
+      <Filter>public\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\YmBase\YmMemoryBinaryFormatter.cpp">
+      <Filter>public\IO</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\CodingRule.md" />
+  </ItemGroup>
+</Project>
