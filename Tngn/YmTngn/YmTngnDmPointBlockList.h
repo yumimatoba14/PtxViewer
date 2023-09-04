@@ -7,22 +7,31 @@
 
 namespace Ymcpp {
 
+/// <summary>
+/// Container drawing model class which contains some point block.
+/// A point block is implemented by YmTngnDmExclusiveLodPointList.
+/// </summary>
 class YmTngnDmPointBlockList : public YmTngnDrawingModel
 {
 public:
+	using PointBlockType = YmTngnDmExclusiveLodPointList;
 	struct InstanceData {
 		DirectX::XMFLOAT4X4 localToGlobalMatrix;
 		YmAabBox3d aabb;	// AABB in model space.
-		std::unique_ptr<YmTngnDmExclusiveLodPointList> pPointBlock;
+		std::shared_ptr<PointBlockType> pPointBlock;
 	};
 public:
-	explicit YmTngnDmPointBlockList(std::unique_ptr<YmWin32FileBuf> pBaseFile);
+	YmTngnDmPointBlockList();
 	virtual ~YmTngnDmPointBlockList();
 
 public:
 	void SetScannerPosition(const YmVector3d& scannerPos);
-	void PrepareBlockData();
-	const std::vector<InstanceData>& GetIntanceList() const { return m_instanceList; }
+
+	const std::vector<InstanceData>& GetInstanceList() const { return m_instanceList; }
+	void ClearInstance() { m_instanceList.clear(); }
+	void AddInstance(InstanceData instance);
+	void AddInstances(const YmTngnDmPointBlockList& sourceInstances);
+	void ReserveInstanceList(size_t capacity) { m_instanceList.reserve(capacity); }
 
 protected:
 	virtual void OnDraw(YmTngnDraw* pDraw);
@@ -34,8 +43,6 @@ private:
 	);
 
 private:
-	std::unique_ptr<YmWin32FileBuf> m_pBaseFile;
-	YmMemoryMappedFile m_mmFile;
 	std::vector<InstanceData> m_instanceList;
 	std::vector<size_t> m_drawnInstanceIndices;
 };

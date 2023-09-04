@@ -100,6 +100,7 @@ namespace PtxViewer
                             }
                         }
                     }
+                    mainView.Invalidate();
                 }
             }
         }

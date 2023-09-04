@@ -7,6 +7,9 @@
 
 namespace Ymcpp {
 
+/// <summary>
+/// This class doesn't own memory mapped instance itself. It should be kept by someone else.
+/// </summary>
 class YmTngnDmExclusiveLodPointList : public YmTngnDrawingModel
 {
 public:

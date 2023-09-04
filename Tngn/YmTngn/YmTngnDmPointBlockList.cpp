@@ -9,11 +9,8 @@ using namespace Ymcpp;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-YmTngnDmPointBlockList::YmTngnDmPointBlockList(std::unique_ptr<YmWin32FileBuf> pBaseFile)
-	: m_pBaseFile(move(pBaseFile))
+YmTngnDmPointBlockList::YmTngnDmPointBlockList()
 {
-	YM_IS_TRUE(m_pBaseFile);
-	m_mmFile.AttachFileToRead(m_pBaseFile->GetHandle());
 }
 
 YmTngnDmPointBlockList::~YmTngnDmPointBlockList()
@@ -24,50 +21,21 @@ YmTngnDmPointBlockList::~YmTngnDmPointBlockList()
 
 void YmTngnDmPointBlockList::SetScannerPosition(const YmVector3d& scannerPos)
 {
-	PrepareBlockData();
-
 	for (auto& inst : m_instanceList) {
 		inst.pPointBlock->SetScannerPosition(scannerPos);
 	}
 }
 
-void YmTngnDmPointBlockList::PrepareBlockData()
+void YmTngnDmPointBlockList::AddInstance(InstanceData instance)
 {
-	if (!m_instanceList.empty()) {
-		return;
-	}
+	m_instanceList.push_back(move(instance));
+}
 
-	YM_IS_TRUE(m_mmFile.IsOpened());
-	m_pBaseFile->pubseekpos(0);
-
-	YmTngnModel::FileHeader fileHeader;
-	fileHeader.ReadFrom(m_pBaseFile.get());
-	if (YmTngnModel::CURRENT_FILE_VERSION < fileHeader.version) {
-		YM_THROW_ERROR("This file is newer than this module.");
-	}
-
-	YmBinaryFormatter input(m_pBaseFile.get());
-	input.SetFormatFlags(fileHeader.formatterBitFlags);
-
-	input.SetCurrentPosition(fileHeader.contentPosition);
-	size_t nBlock = static_cast<size_t>(input.ReadInt32());
-	m_instanceList.reserve(nBlock);
-	for (size_t iBlock = 0; iBlock < nBlock; ++iBlock) {
-		YmTngnModel::PointBlockHeader blockHeader;
-		input.ReadBytes(reinterpret_cast<char*>(&blockHeader), sizeof(YmTngnModel::PointBlockHeader));
-
-		InstanceData instance;
-		for (int i = 0; i < 4; ++i) {
-			for (int j = 0; j < 4; ++j) {
-				instance.localToGlobalMatrix.m[i][j] =
-					static_cast<float>(blockHeader.localToGlobalMatrix[i*4 + j]);
-			}
-		}
-
-		instance.aabb.Extend(blockHeader.aAabbPoint[0]);
-		instance.aabb.Extend(blockHeader.aAabbPoint[1]);
-		instance.pPointBlock = make_unique<YmTngnDmExclusiveLodPointList>(m_mmFile, blockHeader.firstBytePos);
-		m_instanceList.push_back(move(instance));
+void YmTngnDmPointBlockList::AddInstances(const YmTngnDmPointBlockList& sourceInstances)
+{
+	YM_IS_TRUE(this != &sourceInstances);
+	for (auto& instance : sourceInstances.GetInstanceList()) {
+		m_instanceList.push_back(instance);
 	}
 }
 
@@ -102,7 +70,6 @@ static double CalcPointListEnumerationPrecision(
 
 void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 {
-	PrepareBlockData();
 	const int64_t maxDrawnPointCountPerFrame = 1 << 20;
 
 	if (!pDraw->IsProgressiveViewFollowingFrame()) {
@@ -139,18 +106,7 @@ void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 	bool isProgressiveMode = pDraw->IsProgressiveViewMode();
 
 	if (isProgressiveMode) {
-#if 1
 		DrawInstancesInProgressiveMode(pDraw, maxDrawnPointCountPerFrame);
-#else
-		for (auto iBlock : m_drawnInstanceIndices) {
-			const InstanceData& instance = m_instanceList[iBlock];
-			g.SetModelMatrix(instance.localToGlobalMatrix);
-			instance.pObject->DrawTo(g);
-			if (isProgressiveMode && maxDrawnPointCountPerFrame < g.GetDrawnPointCount()) {
-				break;
-			}
-		}
-#endif
 	}
 	else {
 		for (auto iBlock : m_drawnInstanceIndices) {
@@ -159,12 +115,6 @@ void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 			instance.pPointBlock->Draw(pDraw);
 		}
 	}
-#if 0
-	for (auto& inst : m_instanceList) {
-		pDraw->SetModelMatrix(inst.localToGlobalMatrix);
-		inst.pPointBlock->Draw(pDraw);
-	}
-#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -220,17 +170,26 @@ void YmTngnDmPointBlockList::UpdateDrawnInstances(YmTngnDraw* pDraw)
 {
 	m_drawnInstanceIndices.clear();
 
+	XMMATRIX modelViewMatrix = pDraw->GetModelToViewMatrix();
 	XMMATRIX modelProjMatrix = pDraw->GetModelToProjectionMatrix();
 
 	size_t nBlock = m_instanceList.size();
-	multimap<double, size_t> distanceToBlock;
+	using Distance = tuple<double, double>;
+	multimap<Distance, size_t> distanceToBlock;
 	for (size_t iBlock = 0; iBlock < nBlock; ++iBlock) {
-		double distance = 0;
-		bool isVisible = CalcBoxDistanceInProjection(modelProjMatrix, m_instanceList[iBlock].aabb, &distance);
+		auto& block = m_instanceList[iBlock];
+		double scannerDistance = 20;	// using the same value as distUpperBound in DefaultShader.hlsl.
+		if (block.pPointBlock->IsUseScannerPosition()) {
+			XMFLOAT3 scannerPos = YmVectorUtil::StaticCast<XMFLOAT3>(block.pPointBlock->GetScannerPosition());
+			XMVECTOR scannerPosInView = XMVector3Transform(XMLoadFloat3(&scannerPos), modelViewMatrix);
+			scannerDistance = sqrt(XMVectorGetX(XMVector3Dot(scannerPosInView, scannerPosInView)));
+		}
+		double boxDistance = 0;
+		bool isVisible = CalcBoxDistanceInProjection(modelProjMatrix, block.aabb, &boxDistance);
 		if (!isVisible) {
 			continue;
 		}
-		distanceToBlock.emplace(distance, iBlock);
+		distanceToBlock.emplace(Distance(scannerDistance, boxDistance), iBlock);
 	}
 	for (auto distToIndex : distanceToBlock) {
 		m_drawnInstanceIndices.push_back(distToIndex.second);

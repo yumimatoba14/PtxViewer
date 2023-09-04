@@ -105,6 +105,9 @@
     <ClInclude Include="YmTngn\YmTngnDmPointBlockList.h">
       <Filter>Ymcpp\YmTngn</Filter>
     </ClInclude>
+    <ClInclude Include="YmTngn\YmTngnDmPointBlockListFile.h">
+      <Filter>Ymcpp\YmTngn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tngn.cpp">
@@ -171,6 +174,9 @@
       <Filter>Ymcpp\YmTngn</Filter>
     </ClCompile>
     <ClCompile Include="YmTngn\YmTngnDmPointBlockList.cpp">
+      <Filter>Ymcpp\YmTngn</Filter>
+    </ClCompile>
+    <ClCompile Include="YmTngn\YmTngnDmPointBlockListFile.cpp">
       <Filter>Ymcpp\YmTngn</Filter>
     </ClCompile>
   </ItemGroup>

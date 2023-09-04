@@ -1,6 +1,7 @@
 #pragma once
 
 #include "YmTngnDrawingModel.h"
+#include "YmTngnDmPointBlockList.h"
 #include <vector>
 
 namespace Ymcpp {
@@ -18,11 +19,11 @@ public:
 	virtual ~YmTngnDmPtxFiles();
 
 	YmTString ReadPtxFile(const YmTString& filePath);
-	void AddChildModel(const YmTString& name, const YmTngnDrawingModelPtr& pModel);
 protected:
 	virtual void OnDraw(YmTngnDraw* pDraw);
 
 private:
+	YmTngnDmPointBlockList m_blockListImpl;
 	std::vector<Content> m_contents;
 };
 
