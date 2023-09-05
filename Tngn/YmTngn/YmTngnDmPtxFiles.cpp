@@ -35,7 +35,7 @@ static shared_ptr<YmTngnDmPointBlockList> ReadPtxFileImpl(const char* pPtxFilePa
 		YmTngnPointBlockListBuilder builder(pOutputBuf.get());
 		YmOrtho3dXform<double> localToGlobal;
 		bool isFirstPoint = true;
-		auto onParsePoint = [&](const YmPtxFileParser::FileHeader& header, size_t col, size_t row, const YmPtxFileParser::PointData& point) {
+		auto onParsePoint = [&](const YmPtxFileParser::FileHeader& header, int64_t col, int64_t row, const YmPtxFileParser::PointData& point) {
 			if (isFirstPoint) {
 				isFirstPoint = false;
 				localToGlobal = YmOrtho3dXform<double>::MakeFromXy(
@@ -56,7 +56,7 @@ static shared_ptr<YmTngnDmPointBlockList> ReadPtxFileImpl(const char* pPtxFilePa
 	}
 
 	// isImageReliable represents whether this point set would construct a image.
-	const size_t pixelCountLowerBound = 16;
+	const int64_t pixelCountLowerBound = 16;
 	bool isImageReliable = pixelCountLowerBound < header.numberOfColumn && pixelCountLowerBound < header.numberOfRow;
 	if (isImageReliable) {
 		double aspectRatio = 5;

@@ -36,12 +36,12 @@ YmPtxFileParser::FileHeader YmPtxFileParser::ParseFile(const char* pPtxFilePath,
 			YM_THROW_ERROR("Failed to read line.");
 		}
 	};
-	auto readSize = [&]() {
+	auto readInt64 = [&]() {
 		readLine();
 		int64_t value;
 		int ret = sscanf(aBufferByte, "%I64d", &value);
 		YM_IS_TRUE(ret == 1);
-		return (size_t)value;
+		return value;
 	};
 	auto readVector3d = [&]() {
 		readLine();
@@ -56,8 +56,8 @@ YmPtxFileParser::FileHeader YmPtxFileParser::ParseFile(const char* pPtxFilePath,
 		YM_IS_TRUE(ret == 4);
 	};
 
-	header.numberOfColumn = readSize();
-	header.numberOfRow = readSize();
+	header.numberOfColumn = readInt64();
+	header.numberOfRow = readInt64();
 	header.scannerOrg = readVector3d();
 	header.scannerDirX = readVector3d();
 	header.scannerDirY = readVector3d();
@@ -86,8 +86,8 @@ YmPtxFileParser::FileHeader YmPtxFileParser::ParseFile(const char* pPtxFilePath,
 		if (m_aRadiusRange[0] < 0) {
 			aRadiusSq[0] *= -1;
 		}
-		for (size_t iCol = 0; iCol < header.numberOfColumn; ++iCol) {
-			for (size_t iRow = 0; iRow < header.numberOfRow; ++iRow) {
+		for (int64_t iCol = 0; iCol < header.numberOfColumn; ++iCol) {
+			for (int64_t iRow = 0; iRow < header.numberOfRow; ++iRow) {
 				PointData point = readPointData();
 				double sqLen = point.localPoint.GetSqLength();
 				if (sqLen < aRadiusSq[0] || aRadiusSq[1] < sqLen) {

@@ -10,8 +10,8 @@ class YmPtxFileParser
 public:
 	struct FileHeader
 	{
-		size_t numberOfColumn;
-		size_t numberOfRow;
+		int64_t numberOfColumn;
+		int64_t numberOfRow;
 		YmVector3d scannerOrg;
 		YmVector3d scannerDirX;
 		YmVector3d scannerDirY;
@@ -26,7 +26,7 @@ public:
 	};
 
 	using ParsePointCallback = std::function<
-		void(const FileHeader& header, size_t col, size_t row, const PointData& point)>;
+		void(const FileHeader& header, int64_t col, int64_t row, const PointData& point)>;
 public:
 	YmPtxFileParser();
 	virtual ~YmPtxFileParser();
