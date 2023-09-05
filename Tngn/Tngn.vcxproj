@@ -147,6 +147,7 @@
     <ClInclude Include="YmTngn\YmTngnShaderContext.h" />
     <ClInclude Include="YmTngn\YmTngnShaderImpl.h" />
     <ClInclude Include="YmTngn\YmTngnVectorUtil.h" />
+    <ClInclude Include="YmTngn\YmTngnViewConfig.h" />
     <ClInclude Include="YmTngn\YmTngnViewModel.h" />
     <ClInclude Include="YmTngn\YmViewOp.h" />
   </ItemGroup>
@@ -177,6 +178,7 @@
     <ClCompile Include="YmTngn\YmTngnDrawingModel.cpp" />
     <ClCompile Include="YmTngn\YmTngnShaderContext.cpp" />
     <ClCompile Include="YmTngn\YmTngnShaderImpl.cpp" />
+    <ClCompile Include="YmTngn\YmTngnViewConfig.cpp" />
     <ClCompile Include="YmTngn\YmTngnViewModel.cpp" />
     <ClCompile Include="YmTngn\YmViewOp.cpp" />
   </ItemGroup>

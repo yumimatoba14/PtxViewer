@@ -33,7 +33,7 @@ public:
 		int isUseScannerPosition;
 	};
 public:
-	explicit YmTngnShaderImpl(const D3DDevicePtr& pDevice, const D3DDeviceContextPtr& pDc);
+	explicit YmTngnShaderImpl(const YmTngnViewConfig& config, const D3DDevicePtr& pDevice, const D3DDeviceContextPtr& pDc);
 	virtual ~YmTngnShaderImpl();
 
 	YmTngnShaderImpl(const YmTngnShaderImpl& other) = delete;
@@ -133,10 +133,10 @@ private:
 	D3DBufferPtr m_pShaderParamConstBuf;
 	YmTngnShaderContext m_pointListSc;
 	YmVector2i m_viewSize;
-	double m_pointSize = 0.01f;
-	double m_fovAngleYDeg = 90;
-	double m_viewNearZ = 0.01f;
-	double m_viewFarZ = 100;
+	double m_pointSize;
+	double m_fovAngleYDeg;
+	double m_viewNearZ;
+	double m_viewFarZ;
 	YmVector3d m_scannerPosition;
 	std::unique_ptr<YmViewOp> m_pViewOp;
 	XMFLOAT4X4 m_modelMatrix;	// pre multiplication

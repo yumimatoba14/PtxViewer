@@ -5,6 +5,7 @@
 #include <atlconv.h>
 #include "YmTngnVectorUtil.h"
 #include "YmViewOp.h"
+#include "YmTngnViewConfig.h"
 
 using namespace std;
 using namespace Ymcpp;
@@ -14,9 +15,13 @@ using namespace DirectX;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-YmTngnShaderImpl::YmTngnShaderImpl(const D3DDevicePtr& pDevice, const D3DDeviceContextPtr& pDc)
+YmTngnShaderImpl::YmTngnShaderImpl(const YmTngnViewConfig& config, const D3DDevicePtr& pDevice, const D3DDeviceContextPtr& pDc)
 	: m_pDevice(pDevice), m_pDc(pDc), m_scannerPosition(YmVector3d::MakeZero())
 {
+	m_pointSize = config.GetDoubleValue(YmTngnViewConfig::POINT_SIZE);
+	m_fovAngleYDeg = config.GetDoubleValue(YmTngnViewConfig::FOV_ANGLE_Y_DEG);
+	m_viewNearZ = config.GetDoubleValue(YmTngnViewConfig::PERSPECTIVE_VIEW_NEAR_Z);
+	m_viewFarZ = config.GetDoubleValue(YmTngnViewConfig::PERSPECTIVE_VIEW_FAR_Z);
 	XMStoreFloat4x4(&m_modelMatrix, XMMatrixIdentity());
 	Initialize();
 }

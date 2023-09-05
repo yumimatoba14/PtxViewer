@@ -4,6 +4,7 @@
 #include "YmTngnDrawingModel.h"
 #include "YmTngnDmPtxFiles.h"
 #include "YmTngnShaderImpl.h"
+#include "YmTngnViewConfig.h"
 
 using namespace std;
 using namespace Ymcpp;
@@ -86,6 +87,7 @@ static DXGIAdapterPtr SelectAdapter()
 void YmTngnViewModel::Setup(HWND hWnd)
 {
 	YM_IS_TRUE(hWnd != nullptr);
+	YmTngnViewConfig config;
 	RECT clientRect;
 	BOOL ok = ::GetClientRect(hWnd, &clientRect);
 	if (!ok) {
@@ -95,7 +97,7 @@ void YmTngnViewModel::Setup(HWND hWnd)
 	YmVector2i viewSize = YmVectorUtil::Make(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top);
 
 	SetupDevice(hWnd, viewSize);
-	m_pShaderImpl = make_unique<YmTngnShaderImpl>(m_pDevice, m_pDc);
+	m_pShaderImpl = make_unique<YmTngnShaderImpl>(config, m_pDevice, m_pDc);
 	m_pShaderImpl->SetViewSize(viewSize);
 }
 

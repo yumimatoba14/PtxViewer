@@ -16,6 +16,7 @@ namespace Ymcpp {
 class YmTngnDraw;
 class YmTngnDrawingModel;
 struct YmTngnPointListVertex;
+class YmTngnViewConfig;
 class YmViewOp;
 
 using YmTngnDrawingModelPtr = std::shared_ptr<YmTngnDrawingModel>;
