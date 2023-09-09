@@ -2,19 +2,27 @@
 #include "ViewModel.h"
 #include "YmTngn/YmViewOp.h"
 #include "YmTngn/YmTngnDmPtxFiles.h"
-#include <msclr/marshal_cppstd.h>
 #include "YmTngn/YmTngnDmMemoryPointList.h"
+#include "YmTngn/YmTngnViewConfig.h"
+#include "YmBase/YmFilePath.h"
+#include <msclr/marshal_cppstd.h>
 
 using namespace System;
 using namespace Tngn;
 using namespace Ymcpp;
+using namespace msclr::interop;
 
 ////////////////////////////////////////////////////////////////////////////////
 
 ViewModel::ViewModel(IContainer^ container, System::IntPtr handleWnd)
 {
 	container->Add(this);
-	m_pImpl = new YmTngnViewModel();
+	YmTngnViewConfig config;
+	System::String^ baseDir = System::AppDomain::CurrentDomain->BaseDirectory;
+	config.ReadIniFile(
+		YmFilePath(marshal_as<YmTString>(baseDir)).AppendFileName("Tngn.ini").ToString().c_str()
+	);
+	m_pImpl = new YmTngnViewModel(config);
 	HWND hWnd = reinterpret_cast<HWND>(handleWnd.ToPointer());
 	m_pImpl->Setup(hWnd);
 	m_pImpl->GetViewOp().SetVerticalDirection(1e-6, YmVectorUtil::Make(0, 0, 1));
@@ -44,7 +52,6 @@ ViewModel::!ViewModel()
 bool ViewModel::OpenPtxFile(System::String^ ptxFilePath)
 {
 	YM_NOEXCEPT_BEGIN("ViewModel::OpenPtxFile");
-	using namespace msclr::interop;
 	m_pImpl->PreparePtxFileContent()->ReadPtxFile(marshal_as<YmTString>(ptxFilePath));
 	return true;
 	YM_NOEXCEPT_END;

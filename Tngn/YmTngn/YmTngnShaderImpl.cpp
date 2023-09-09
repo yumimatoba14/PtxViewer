@@ -6,6 +6,7 @@
 #include "YmTngnVectorUtil.h"
 #include "YmViewOp.h"
 #include "YmTngnViewConfig.h"
+#include "YmBase/YmFilePath.h"
 
 using namespace std;
 using namespace Ymcpp;
@@ -172,13 +173,10 @@ YmTString YmTngnShaderImpl::GetHslsFilePath(const YmTString& fileName)
 	HMODULE hModule = GetModuleHandle(nullptr);
 	TCHAR exeFilePath[_MAX_PATH];
 	DWORD nChar = ::GetModuleFileName(hModule, exeFilePath, _MAX_PATH);
-	if (nChar < _MAX_PATH) {
-		LPCTSTR lastSep = _tcsrchr(exeFilePath, _T('\\'));
-		if (lastSep != nullptr) {
-			exeFilePath[lastSep - exeFilePath] = _T('\0');
-		}
+	if (_MAX_PATH <= nChar) {
+		YM_THROW_ERROR("Module path is too long.");
 	}
-	return YmTString(exeFilePath) + _T("\\") + fileName;
+	return YmFilePath(exeFilePath).GetParentDirectory().AppendFileName(fileName).ToTString();
 }
 
 D3DBufferPtr YmTngnShaderImpl::CreateConstantBuffer(size_t nByte)

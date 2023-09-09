@@ -11,7 +11,7 @@ class YmTngnDmPtxFiles;
 class YmTngnViewModel
 {
 public:
-	YmTngnViewModel();
+	explicit YmTngnViewModel(const YmTngnViewConfig& config);
 	virtual ~YmTngnViewModel();
 
 	YmTngnViewModel(const YmTngnViewModel& other) = delete;
@@ -44,6 +44,7 @@ private:
 	void EndDraw();
 
 private:
+	std::unique_ptr< YmTngnViewConfig> m_pConfig;
 	D3DDevicePtr m_pDevice;
 	D3DDeviceContextPtr m_pDc;
 	DXGISwapChainPtr m_pSwapChain;

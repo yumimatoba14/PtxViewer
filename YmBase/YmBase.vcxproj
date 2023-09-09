@@ -160,6 +160,7 @@
     <ClInclude Include="..\src\YmBase\YmBaseFwd.h" />
     <ClInclude Include="..\src\YmBase\YmBinaryFormatter.h" />
     <ClInclude Include="..\src\YmBase\YmErrorUtil.h" />
+    <ClInclude Include="..\src\YmBase\YmFilePath.h" />
     <ClInclude Include="..\src\YmBase\YmKdTree.h" />
     <ClInclude Include="..\src\YmBase\YmKdTreeVisitor.h" />
     <ClInclude Include="..\src\YmBase\YmMemoryBinaryFormatter.h" />
@@ -177,6 +178,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\YmBase\YmBinaryFormatter.cpp" />
     <ClCompile Include="..\src\YmBase\YmErrorUtil.cpp" />
+    <ClCompile Include="..\src\YmBase\YmFilePath.cpp" />
     <ClCompile Include="..\src\YmBase\YmMemoryBinaryFormatter.cpp" />
     <ClCompile Include="..\src\YmBase\YmMemoryMappedFile.cpp" />
     <ClCompile Include="..\src\YmBase\YmMemoryStreamBuf.cpp" />

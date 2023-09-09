@@ -78,6 +78,9 @@
     <ClInclude Include="..\src\YmBase\YmOrtho3dXform.h">
       <Filter>public\Geometry</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmFilePath.h">
+      <Filter>public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="YmBase.cpp">
@@ -106,6 +109,9 @@
     </ClCompile>
     <ClCompile Include="..\src\YmBase\YmMemoryBinaryFormatter.cpp">
       <Filter>public\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\YmBase\YmFilePath.cpp">
+      <Filter>public</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -22,6 +22,7 @@ public:
 	double GetDoubleValue(DoubleKey key) const { return m_doubleValues[key]; }
 	void SetDoubleValue(DoubleKey key, double value) { m_doubleValues[key] = value; }
 
+	void ReadIniFile(const char* pIniFilePath);
 private:
 	double m_doubleValues[(int)DOUBLE_KEY_COUNT];
 };
