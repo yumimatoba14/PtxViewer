@@ -11,8 +11,16 @@ using namespace Ymcpp;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-YmTngnDmPtxFiles::YmTngnDmPtxFiles()
+YmTngnDmPtxFiles::YmTngnDmPtxFiles() : YmTngnDmPtxFiles(YmTngnViewConfig())
 {
+}
+
+YmTngnDmPtxFiles::YmTngnDmPtxFiles(const YmTngnViewConfig& config)
+	: m_config(config)
+{
+	m_blockListImpl.SetMaxDrawnPointCountPerFrame(
+		m_config.GetDoubleValueAsInt64(YmTngnViewConfig::DM_PTX_FILE_MAX_DRAWN_POINT_PER_FRAME_MB, 1 << 20)
+	);
 }
 
 YmTngnDmPtxFiles::~YmTngnDmPtxFiles()
@@ -26,13 +34,16 @@ static int MakeRgb(const int rgb[3])
 	return rgb[0] | (rgb[1] << 8) | (rgb[2] << 16);
 }
 
-static shared_ptr<YmTngnDmPointBlockList> ReadPtxFileImpl(const char* pPtxFilePath)
+static shared_ptr<YmTngnDmPointBlockList> ReadPtxFileImpl(const YmTngnViewConfig& config, const char* pPtxFilePath)
 {
 	auto pOutputBuf = make_unique<YmWin32FileBuf>();
 	pOutputBuf->OpenTempFile();
 	YmPtxFileParser::FileHeader header;
 	{
 		YmTngnPointBlockListBuilder builder(pOutputBuf.get());
+		builder.SetTargetPointCountPerBlock(
+			config.GetDoubleValueAsInt64(YmTngnViewConfig::DM_PTX_FILE_POINT_COUNT_PER_BLOCK, 1024*1024)
+		);
 		YmOrtho3dXform<double> localToGlobal;
 		bool isFirstPoint = true;
 		auto onParsePoint = [&](const YmPtxFileParser::FileHeader& header, int64_t col, int64_t row, const YmPtxFileParser::PointData& point) {
@@ -49,7 +60,10 @@ static shared_ptr<YmTngnDmPointBlockList> ReadPtxFileImpl(const char* pPtxFilePa
 		};
 
 		YmPtxFileParser parser;
-		parser.SetRadiusLowerBound(0.001);
+		parser.SetRadiusLowerBound(config.GetDoubleValue(YmTngnViewConfig::DM_PTX_FILE_RADIUS_LOWER_BOUND));
+		if (0 < config.GetDoubleValue(YmTngnViewConfig::DM_PTX_FILE_RADIUS_UPPER_BOUND)) {
+			parser.SetRadiusUpperBound(config.GetDoubleValue(YmTngnViewConfig::DM_PTX_FILE_RADIUS_UPPER_BOUND));
+		}
 		header = parser.ParseFile(pPtxFilePath, onParsePoint);
 
 		builder.BuildPointBlockFile();
@@ -75,7 +89,7 @@ static shared_ptr<YmTngnDmPointBlockList> ReadPtxFileImpl(const char* pPtxFilePa
 
 YmTString YmTngnDmPtxFiles::ReadPtxFile(const YmTString& filePath)
 {
-	auto pModel = ReadPtxFileImpl(ATL::CT2A(filePath.c_str()));
+	auto pModel = ReadPtxFileImpl(m_config, ATL::CT2A(filePath.c_str()));
 	Content content = { filePath, true, pModel };
 	m_contents.push_back(content);
 	m_blockListImpl.AddInstances(*pModel);

@@ -28,6 +28,10 @@ public:
 	YmTngnPointBlockListBuilder& operator = (YmTngnPointBlockListBuilder&& other) noexcept = delete;
 
 public:
+	int64_t GetTargetPointCountPerBlock() const { return m_targetPointCountPerBlock; }
+	void SetTargetPointCountPerBlock(int64_t nPoint) { YM_IS_TRUE(0 < m_targetPointCountPerBlock);  m_targetPointCountPerBlock = nPoint; }
+
+public:
 	void AddPoint(const PointType& point);
 	int64_t GetPointCount() const { return m_nInputPoint; }
 
@@ -46,6 +50,8 @@ private:
 	std::unique_ptr<YmBinaryFormatter> m_pInputPointFormatter;
 	YmAabBox3d m_inputPointAabb;
 	int64_t m_nInputPoint = 0;
+private:
+	int64_t m_targetPointCountPerBlock = 1024 * 1024;
 };
 
 }

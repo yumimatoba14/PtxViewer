@@ -26,6 +26,8 @@ public:
 
 public:
 	void SetScannerPosition(const YmVector3d& scannerPos);
+	int64_t GetMaxDrawnPointCountPerFrame() const { return m_maxDrawnPointCountPerFrame; }
+	void SetMaxDrawnPointCountPerFrame(int64_t numPoint) { m_maxDrawnPointCountPerFrame = numPoint; }
 
 	const std::vector<InstanceData>& GetInstanceList() const { return m_instanceList; }
 	void ClearInstance() { m_instanceList.clear(); }
@@ -45,6 +47,7 @@ private:
 private:
 	std::vector<InstanceData> m_instanceList;
 	std::vector<size_t> m_drawnInstanceIndices;
+	int64_t m_maxDrawnPointCountPerFrame = 1 << 20;
 };
 
 }

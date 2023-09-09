@@ -70,7 +70,7 @@ static double CalcPointListEnumerationPrecision(
 
 void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 {
-	const int64_t maxDrawnPointCountPerFrame = 1 << 20;
+	const int64_t maxDrawnPointCountPerFrame = m_maxDrawnPointCountPerFrame;
 
 	if (!pDraw->IsProgressiveViewFollowingFrame()) {
 		UpdateDrawnInstances(pDraw);
@@ -78,7 +78,7 @@ void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 		XMFLOAT4X4 modelToViewMatrix;
 		XMStoreFloat4x4(&modelToViewMatrix, pDraw->GetModelToViewMatrix());
 		size_t nDrawnInst = m_drawnInstanceIndices.size();
-		int64_t maxPointPerInst = 1 << 20;
+		int64_t maxPointPerInst = maxDrawnPointCountPerFrame;
 		const int numInstMax = 3;
 		if (0 < nDrawnInst && nDrawnInst < numInstMax) {
 			if (nDrawnInst == 1) {

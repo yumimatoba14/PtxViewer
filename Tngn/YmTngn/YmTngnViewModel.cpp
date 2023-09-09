@@ -167,7 +167,7 @@ void YmTngnViewModel::SetProgressiveViewMode(bool enableProgressiveView, bool is
 YmTngnDmPtxFiles* YmTngnViewModel::PreparePtxFileContent()
 {
 	if (!m_pDmPtxFiles) {
-		m_pDmPtxFiles = make_shared<YmTngnDmPtxFiles>();
+		m_pDmPtxFiles = make_shared<YmTngnDmPtxFiles>(*m_pConfig);
 	}
 	SetContent(m_pDmPtxFiles);
 	return m_pDmPtxFiles.get();

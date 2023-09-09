@@ -41,11 +41,12 @@ void YmTngnPointBlockListBuilder::AddPoint(const PointType& point)
 /// <param name="targetVertexCountInLattice"></param>
 /// <param name="aResultCount">(output) result division counts</param>
 static void CalculateLatticeDivisionCount(
-	const YmAabBox3d& aabb, int64_t nVertex, uint64_t targetVertexCountInLattice,
+	const YmAabBox3d& aabb, int64_t nVertex, int64_t targetVertexCountInLattice,
 	int aResultCount[3]
 )
 {
 	YM_IS_TRUE(aabb.IsInitialized());
+	YM_IS_TRUE(0 < targetVertexCountInLattice);
 	const int64_t nLatticeRequired = (nVertex + targetVertexCountInLattice - 1) / targetVertexCountInLattice;
 	YM_IS_TRUE(nLatticeRequired < (1i64 << 31));
 
@@ -206,10 +207,12 @@ void YmTngnPointBlockListBuilder::BuildPointBlockFile()
 	// TODO: maintain output format flag.
 	//m_output.SetFormatFlags(0);
 
+	int64_t targetPointCount = GetTargetPointCountPerBlock();
+
 	YmWin32FileBuf dividedFile;
 	dividedFile.OpenTempFile();
 	vector<BlockData> dividedBlocks;
-	Build1Level(*m_pInputPointFormatter, GetPointCount(), m_inputPointAabb, 1024 * 1024,
+	Build1Level(*m_pInputPointFormatter, GetPointCount(), m_inputPointAabb, targetPointCount,
 		YmBinaryFormatter(&dividedFile), 0, &dividedBlocks);
 
 	size_t nBlock = dividedBlocks.size();
