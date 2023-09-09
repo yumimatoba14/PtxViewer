@@ -6,8 +6,6 @@
 using namespace std;
 using namespace Ymcpp;
 
-const int32_t CURRENT_FILE_VERSION = 10;
-
 ////////////////////////////////////////////////////////////////////////////////
 
 YmTngnPointBlockListBuilder::YmTngnPointBlockListBuilder(YmWin32FileBuf* pOutputStreamBuf)
