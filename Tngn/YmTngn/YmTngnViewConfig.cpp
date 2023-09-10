@@ -31,6 +31,12 @@ namespace {
 			"PerspectiveViewFarZ", 100, sectionTngnView
 		},
 		{
+			"ScannerDistanceUpperBound", 20/*[m]*/, sectionTngnView
+		},
+		{
+			"ScannerDistanceDepthOffset", 0.01/*[no unit, 0 to 1]*/, sectionTngnView
+		},
+		{
 			"RadiusLowerBound", 0.001, sectionDmPtxFile
 		},
 		{

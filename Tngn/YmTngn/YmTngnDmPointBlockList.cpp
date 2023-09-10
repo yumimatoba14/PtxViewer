@@ -178,7 +178,7 @@ void YmTngnDmPointBlockList::UpdateDrawnInstances(YmTngnDraw* pDraw)
 	multimap<Distance, size_t> distanceToBlock;
 	for (size_t iBlock = 0; iBlock < nBlock; ++iBlock) {
 		auto& block = m_instanceList[iBlock];
-		double scannerDistance = 20;	// using the same value as distUpperBound in DefaultShader.hlsl.
+		double scannerDistance = m_scannerDistanceForPointBlockWithoutScannerPos;
 		if (block.pPointBlock->IsUseScannerPosition()) {
 			XMFLOAT3 scannerPos = YmVectorUtil::StaticCast<XMFLOAT3>(block.pPointBlock->GetScannerPosition());
 			XMVECTOR scannerPosInView = XMVector3Transform(XMLoadFloat3(&scannerPos), modelViewMatrix);

@@ -9,6 +9,8 @@ cbuffer ShaderParam : register(b0)
 	float pixelSizeX;
 	float pixelSizeY;
 	float3 scannerPosition;
+	float scannerDistanceUpperBound;
+	float scannerDistanceDepthOffset;
 	int isUseScannerPosition;
 };
 
@@ -26,15 +28,19 @@ struct PS_INPUT
 
 float calcCameraDistanceOffset(float3 scannerPos, float4 posViewCoord)
 {
+	// Right hand coordinate system is assumed.
+	if (0 <= posViewCoord[2]) {
+		return 0;
+	}
 	float4 scannerPosViewCoord = float4(scannerPos, 1);
 	scannerPosViewCoord = mul(scannerPosViewCoord, viewMatrix);
 	scannerPosViewCoord[3] = 0;
 	float dist = sqrt(mul(scannerPosViewCoord, scannerPosViewCoord));
-	float distUpperBound = 20;
+	float distUpperBound = scannerDistanceUpperBound;
 	if (distUpperBound < dist) {
 		dist = distUpperBound;
 	}
-	return dist / distUpperBound * 0.01;
+	return dist / distUpperBound * scannerDistanceDepthOffset;
 }
 
 PS_INPUT vsMain(VS_INPUT pos)
@@ -45,6 +51,10 @@ PS_INPUT vsMain(VS_INPUT pos)
 		float4 posViewCoord = mul(coord, viewMatrix);
 		o.Pos = mul(posViewCoord, projectionMatrix);
 		float zOffset = calcCameraDistanceOffset(scannerPosition, posViewCoord);
+		// w をかけると奥の方の点が想定より早く消えてしまう。
+		// w をかける方がオフセット値を線形にできるが、同次座標系のためかオフセット量が大きくなり制御が難しそう。
+		// w をかけない方がオフセット量がz値に反比例するイメージになり、害が少ない。(これでも消えるタイミングは早いが。)
+		//zOffset *= o.Pos[3];
 		o.Pos[2] += zOffset;
 	}
 	else {

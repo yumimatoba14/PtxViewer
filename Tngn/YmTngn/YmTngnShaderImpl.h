@@ -30,6 +30,8 @@ public:
 		float pixelSizeX;
 		float pixelSizeY;
 		XMFLOAT3 scannerPosition;	// scanner point of ptx.
+		float scannerDistanceUpperBound;
+		float scannerDistanceDepthOffset;
 		int isUseScannerPosition;
 	};
 public:
@@ -138,6 +140,8 @@ private:
 	double m_viewNearZ;
 	double m_viewFarZ;
 	YmVector3d m_scannerPosition;
+	double m_scannerDistanceUpperBound;
+	double m_scannerDistanceDepthOffset;
 	std::unique_ptr<YmViewOp> m_pViewOp;
 	XMFLOAT4X4 m_modelMatrix;	// pre multiplication
 	bool m_isNeedUpdateShaderParam = true;

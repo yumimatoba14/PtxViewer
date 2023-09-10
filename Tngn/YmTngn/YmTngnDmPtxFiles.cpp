@@ -21,6 +21,10 @@ YmTngnDmPtxFiles::YmTngnDmPtxFiles(const YmTngnViewConfig& config)
 	m_blockListImpl.SetMaxDrawnPointCountPerFrame(
 		m_config.GetDoubleValueAsInt64(YmTngnViewConfig::DM_PTX_FILE_MAX_DRAWN_POINT_PER_FRAME_MB, 1 << 20)
 	);
+	// Draw point block without using scanner position at last.
+	m_blockListImpl.SetScannerDistanceForPointBlockWithoutScanerPos(
+		m_config.GetDoubleValue(YmTngnViewConfig::SCANNER_DISTANCE_UB)
+	);
 }
 
 YmTngnDmPtxFiles::~YmTngnDmPtxFiles()

@@ -23,6 +23,8 @@ YmTngnShaderImpl::YmTngnShaderImpl(const YmTngnViewConfig& config, const D3DDevi
 	m_fovAngleYDeg = config.GetDoubleValue(YmTngnViewConfig::FOV_ANGLE_Y_DEG);
 	m_viewNearZ = config.GetDoubleValue(YmTngnViewConfig::PERSPECTIVE_VIEW_NEAR_Z);
 	m_viewFarZ = config.GetDoubleValue(YmTngnViewConfig::PERSPECTIVE_VIEW_FAR_Z);
+	m_scannerDistanceUpperBound = config.GetDoubleValue(YmTngnViewConfig::SCANNER_DISTANCE_UB);
+	m_scannerDistanceDepthOffset = config.GetDoubleValue(YmTngnViewConfig::SCANNER_DISTANCE_DEPTH_OFFSET);
 	XMStoreFloat4x4(&m_modelMatrix, XMMatrixIdentity());
 	Initialize();
 }
@@ -123,6 +125,8 @@ void YmTngnShaderImpl::UpdateShaderParam()
 	}
 
 	shaderParam.scannerPosition = YmVectorUtil::StaticCast<XMFLOAT3>(m_scannerPosition);
+	shaderParam.scannerDistanceUpperBound = (float)m_scannerDistanceUpperBound;
+	shaderParam.scannerDistanceDepthOffset = (float)m_scannerDistanceDepthOffset;
 	shaderParam.isUseScannerPosition = m_isUseScannerPosition;
 
 	SetConstantBufferData(m_pShaderParamConstBuf, shaderParam);
