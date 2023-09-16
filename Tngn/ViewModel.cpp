@@ -27,7 +27,9 @@ ViewModel::ViewModel(IContainer^ container, System::IntPtr handleWnd)
 	m_pImpl->Setup(hWnd);
 	m_pImpl->GetViewOp().SetVerticalDirection(1e-6, YmVectorUtil::Make(0, 0, 1));
 #if defined(_DEBUG)
-	m_pImpl->SetContent(std::make_unique<YmTngnDmMemoryPointList>());
+	m_pImpl->SetContent(std::make_unique<YmTngnDmMemoryPointListXZRectangle>());
+	m_pImpl->SetSelectedContent(std::make_shared<YmTngnDmMemoryPointListXZRectangle>(
+		YmVectorUtil::Make(0, 1, 0), YmRgba4b(0xFF, 0, 0)));
 #endif
 }
 

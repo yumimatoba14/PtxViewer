@@ -34,16 +34,30 @@ void YmTngnDmMemoryPointList::ResetScannerPosition()
 	m_isUseScannerPoint = false;
 }
 
+void YmTngnDmMemoryPointList::AddPoint(const YmVector3d& position, const YmRgba4b& color)
+{
+	YmTngnPointListVertex vertex;
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(position);
+	vertex.rgba = color.ToUint32();
+	m_dataSource.push_back(vertex);
+	m_pVertexBuffer = nullptr;
+}
+
+void YmTngnDmMemoryPointList::SetupXZRectanglePoints(const YmVector3d& basePos, const YmRgba4b& color)
+{
+	m_dataSource = CreateXZRectanglePoints(basePos, color);
+	m_pVertexBuffer = nullptr;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void YmTngnDmMemoryPointList::OnDraw(YmTngnDraw* pDraw)
 {
 	if (!m_pVertexBuffer) {
-		if (m_dataSource.empty()) {
-			m_dataSource = CreateSampleDataSource();
-		}
-
 		m_nVertex = m_dataSource.size();
+		if (m_dataSource.empty()) {
+			return;
+		}
 		m_pVertexBuffer = pDraw->CreateVertexBuffer(
 			m_dataSource.data(), static_cast<UINT>(m_nVertex), false
 		);
@@ -61,21 +75,36 @@ void YmTngnDmMemoryPointList::OnDraw(YmTngnDraw* pDraw)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-std::vector<YmTngnPointListVertex> YmTngnDmMemoryPointList::CreateSampleDataSource()
+std::vector<YmTngnPointListVertex> YmTngnDmMemoryPointList::CreateXZRectanglePoints(
+	const YmVector3d& basePos, const YmRgba4b& color
+)
 {
 	vector<YmTngnPointListVertex> vertices;
 	YmTngnPointListVertex vertex;
-	vertex.rgba = 0xFFFFFF;
+	vertex.rgba = color.ToUint32();
 	const int nX = 100;
 	const int nZ = 100;
 	double aDelta[3] = { 0.01, 1, 0.01 };
 	for (int iX = 0; iX < nX; ++iX) {
 		for (int iZ = 0; iZ < nZ; ++iZ) {
-			vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(iX * aDelta[0], 0, iZ * aDelta[2]));
+			vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(
+				basePos + YmVectorUtil::Make<double>(iX * aDelta[0], 0, iZ * aDelta[2]));
 			vertices.push_back(vertex);
 		}
 	}
 	return vertices;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+YmTngnDmMemoryPointListXZRectangle::YmTngnDmMemoryPointListXZRectangle()
+	: YmTngnDmMemoryPointListXZRectangle(YmVector3d::MakeZero(), YmRgba4b(0xFF, 0xFF, 0xFF))
+{
+}
+
+YmTngnDmMemoryPointListXZRectangle::YmTngnDmMemoryPointListXZRectangle(const YmVector3d& basePos, const YmRgba4b& color)
+{
+	SetupXZRectanglePoints(basePos, color);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
