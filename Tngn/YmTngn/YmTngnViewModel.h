@@ -7,6 +7,7 @@ namespace Ymcpp {
 
 class YmTngnShaderImpl;
 class YmTngnDmPtxFiles;
+class YmTngnDmMemoryPointList;
 
 class YmTngnViewModel
 {
@@ -31,10 +32,16 @@ public:
 	bool IsProgressiveViewFollowingFrame() const;
 	void SetProgressiveViewMode(bool enableProgressiveView, bool isFollowingFrame = false);
 
-	void SetContent(const YmTngnDrawingModelPtr& pContent) { m_pContent = pContent; m_isNeedDraw = true; }
-	YmTngnDmPtxFiles* PreparePtxFileContent();
-
 	bool IsViewContentUpdated() const { return m_isViewUpdated; }
+
+	void SetContent(const YmTngnDrawingModelPtr& pContent) { m_pContent = pContent; m_isNeedDraw = true; }
+
+	void SetSelectedContent(const YmTngnDrawingModelPtr& pContent) { m_pSelectedContent = pContent; m_isNeedDraw = true; }
+
+public:
+	std::shared_ptr<YmTngnDmPtxFiles> PreparePtxFileContent();
+	std::shared_ptr<YmTngnDmMemoryPointList> PrepareSelectedPointList();
+
 private:
 	void SetupDevice(HWND hWnd, const YmVector2i& viewSize);
 	void PrepareDepthStencilView();
@@ -44,11 +51,12 @@ private:
 	void EndDraw();
 
 private:
-	std::unique_ptr< YmTngnViewConfig> m_pConfig;
+	std::unique_ptr<YmTngnViewConfig> m_pConfig;
 	D3DDevicePtr m_pDevice;
 	D3DDeviceContextPtr m_pDc;
 	DXGISwapChainPtr m_pSwapChain;
 	D3DDepthStencilStatePtr m_pDepthStencilState;
+	D3DDepthStencilStatePtr m_pDepthStencilStateForForegroundDraw;
 	D3DRasterizerStatePtr m_pRasterizerState;
 
 	D3DDepthStencilViewPtr m_pDepthStencilView;
@@ -61,7 +69,9 @@ private:
 
 private:
 	YmTngnDrawingModelPtr m_pContent;
+	YmTngnDrawingModelPtr m_pSelectedContent;
 	std::shared_ptr<YmTngnDmPtxFiles> m_pDmPtxFiles;
+	std::shared_ptr<YmTngnDmMemoryPointList> m_pSelectedPoints;
 };
 
 }

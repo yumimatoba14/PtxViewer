@@ -53,6 +53,7 @@ bool ViewModel::OpenPtxFile(System::String^ ptxFilePath)
 {
 	YM_NOEXCEPT_BEGIN("ViewModel::OpenPtxFile");
 	m_pImpl->PreparePtxFileContent()->ReadPtxFile(marshal_as<YmTString>(ptxFilePath));
+	m_pImpl->SetSelectedContent(nullptr);
 	return true;
 	YM_NOEXCEPT_END;
 	return false;

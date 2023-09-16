@@ -2,6 +2,7 @@
 #include "YmTngnViewModel.h"
 #include "YmTngnDraw.h"
 #include "YmTngnDrawingModel.h"
+#include "YmTngnDmMemoryPointList.h"
 #include "YmTngnDmPtxFiles.h"
 #include "YmTngnShaderImpl.h"
 #include "YmTngnViewConfig.h"
@@ -126,17 +127,25 @@ void YmTngnViewModel::ResizeBuffer(const YmVector2i& size)
 void YmTngnViewModel::Draw()
 {
 	m_isNeedDraw = false;
+	m_isViewUpdated = false;
 
 	bool isEraseBackground = !(IsProgressiveViewMode() && IsProgressiveViewFollowingFrame());
 	BeginDraw(isEraseBackground);
 
-	YmTngnDraw draw(m_pShaderImpl.get(), m_pDevice);
 	if (m_pContent) {
+		YmTngnDraw draw(m_pShaderImpl.get(), m_pDevice);
 		m_pContent->Draw(&draw);
+		m_isViewUpdated = m_isViewUpdated || 0 < draw.GetDrawnPointCount();
+	}
+
+	if (m_pSelectedContent) {
+		m_pDc->OMSetDepthStencilState(m_pDepthStencilStateForForegroundDraw.Get(), 1);
+		YmTngnDraw draw(m_pShaderImpl.get(), m_pDevice);
+		m_pSelectedContent->Draw(&draw);
+		// Selected content should not be considered where view is updated or not.
 	}
 
 	EndDraw();
-	m_isViewUpdated = 0 < draw.GetDrawnPointCount();
 }
 
 bool YmTngnViewModel::IsNeedDraw() const
@@ -164,13 +173,22 @@ void YmTngnViewModel::SetProgressiveViewMode(bool enableProgressiveView, bool is
 	m_pShaderImpl->SetProgressiveViewMode(enableProgressiveView, isFollowingFrame);
 }
 
-YmTngnDmPtxFiles* YmTngnViewModel::PreparePtxFileContent()
+std::shared_ptr<YmTngnDmPtxFiles> YmTngnViewModel::PreparePtxFileContent()
 {
 	if (!m_pDmPtxFiles) {
 		m_pDmPtxFiles = make_shared<YmTngnDmPtxFiles>(*m_pConfig);
 	}
 	SetContent(m_pDmPtxFiles);
-	return m_pDmPtxFiles.get();
+	return m_pDmPtxFiles;
+}
+
+shared_ptr<YmTngnDmMemoryPointList> YmTngnViewModel::PrepareSelectedPointList()
+{
+	if (!m_pSelectedPoints) {
+		m_pSelectedPoints = make_shared<YmTngnDmMemoryPointList>();
+	}
+	SetSelectedContent(m_pSelectedPoints);
+	return m_pSelectedPoints;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -236,14 +254,12 @@ void YmTngnViewModel::SetupDevice(HWND hWnd, const YmVector2i& viewSize)
 		YM_THROW_ERROR("CreateDepthStencilState");
 	}
 
-#if 0
-	D3D11_DEPTH_STENCIL_DESC depthStencilForSelectedEntityDesc = depthStencilDesc;
-	depthStencilForSelectedEntityDesc.DepthEnable = FALSE;
-	hr = m_pDevice->CreateDepthStencilState(&depthStencilForSelectedEntityDesc, &m_pDepthStencilStateForSelectedEntity);
+	D3D11_DEPTH_STENCIL_DESC depthStencilForFgDrawDesc = depthStencilDesc;
+	depthStencilForFgDrawDesc.DepthEnable = FALSE;
+	hr = m_pDevice->CreateDepthStencilState(&depthStencilForFgDrawDesc, &m_pDepthStencilStateForForegroundDraw);
 	if (FAILED(hr)) {
 		YM_THROW_ERROR("CreateDepthStencilState");
 	}
-#endif
 
 	PrepareDepthStencilView();
 	PrepareRenderTargetView();
