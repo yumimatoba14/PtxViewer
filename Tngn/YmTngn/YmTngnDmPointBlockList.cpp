@@ -41,6 +41,11 @@ void YmTngnDmPointBlockList::AddInstances(const YmTngnDmPointBlockList& sourceIn
 
 ////////////////////////////////////////////////////////////////////////////////
 
+bool YmTngnDmPointBlockList::OnSetPickEnabled(bool bEnable)
+{
+	return bEnable;
+}
+
 static double CalcPointListEnumerationPrecision(
 	const XMFLOAT4X4& modelToViewMatrix, const YmAabBox3d& aabb, double distanceLBIn
 )
@@ -92,6 +97,7 @@ void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 			maxPointPerInst = maxDrawnPointCountPerFrame / numInstMax;
 		}
 
+		uint64_t nextPickId = uint64_t(1) << 32;
 		double persNearZ = pDraw->GetPerspectiveViewNearZ();
 		for (auto iBlock : m_drawnInstanceIndices) {
 			const InstanceData& instance = m_instanceList[iBlock];
@@ -99,7 +105,15 @@ void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 			double precision = CalcPointListEnumerationPrecision(modelToViewMatrix, instance.aabb, persNearZ);
 			instance.pPointBlock->SetDrawingPrecision(precision);
 			instance.pPointBlock->SetMaxPointCountDrawnPerFrame(maxPointPerInst);
-			//instance.pPointBlock->SetPointSelectionTargetIdFirst(uint64_t(iBlock + 1) << 32);
+			if (IsPickEnabled()) {
+				instance.pPointBlock->SetPointPickTargetIdFirst(nextPickId);
+				uint64_t pickIdEnd = nextPickId + instance.pPointBlock->GetPointCount();
+				nextPickId = ((pickIdEnd >> 32) + 1 ) << 32;
+				instance.pPointBlock->SetPickEnabled(true);
+			}
+			else {
+				instance.pPointBlock->SetPickEnabled(false);
+			}
 			instance.pPointBlock->PrepareFirstDraw(pDraw);
 		}
 	}
@@ -115,6 +129,19 @@ void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 			instance.pPointBlock->Draw(pDraw);
 		}
 	}
+}
+
+std::vector<YmTngnPointListVertex> YmTngnDmPointBlockList::OnFindPickedPoints(YmTngnPickTargetId id)
+{
+	std::vector<YmTngnPointListVertex> points;
+	for (auto iInstance : m_drawnInstanceIndices) {
+		const InstanceData& instance = m_instanceList[iInstance];
+		YmTngnPointListVertex pointData;
+		if (instance.pPointBlock->FindPointByPickTargetId(id, &pointData)) {
+			points.push_back(pointData);
+		}
+	}
+	return points;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

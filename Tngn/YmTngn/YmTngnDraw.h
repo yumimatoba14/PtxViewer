@@ -52,13 +52,13 @@ public:
 	D3DBufferPtr CreateVertexBufferWithSize(UINT bufferByte, const void* aVertex, bool writeByCpu);
 
 public:
-	void DrawPointList(const YmTngnPointListVertex aVertex[], size_t nVertex);
+	void DrawPointList(const YmTngnPointListVertex aVertex[], size_t nVertex, YmTngnPickTargetId firstId);
 	void DrawPointList(
 		const D3DBufferPtr& pVertexBuf, size_t vertexSize, size_t nVertex
 	);
 
 	void DrawPointListWithSingleScannerPosition(
-		const YmTngnPointListVertex aVertex[], size_t nVertex, const YmVector3d& scannerPos
+		const YmTngnPointListVertex aVertex[], size_t nVertex, const YmVector3d& scannerPos, YmTngnPickTargetId firstId
 	);
 	void DrawPointListWithSingleScannerPosition(
 		const D3DBufferPtr& pVertexBuf, size_t vertexSize, size_t nVertex, const YmVector3d& scannerPos

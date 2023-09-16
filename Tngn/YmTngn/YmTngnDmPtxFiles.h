@@ -22,7 +22,9 @@ public:
 
 	YmTString ReadPtxFile(const YmTString& filePath);
 protected:
+	virtual bool OnSetPickEnabled(bool bEnable);
 	virtual void OnDraw(YmTngnDraw* pDraw);
+	virtual std::vector<YmTngnPointListVertex> OnFindPickedPoints(YmTngnPickTargetId id);
 
 private:
 	YmTngnViewConfig m_config;

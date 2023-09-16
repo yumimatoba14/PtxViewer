@@ -81,8 +81,9 @@ D3DBufferPtr YmTngnDraw::CreateVertexBufferWithSize(UINT bufferByte, const void*
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void YmTngnDraw::DrawPointList(const YmTngnPointListVertex aVertex[], size_t nVertex)
+void YmTngnDraw::DrawPointList(const YmTngnPointListVertex aVertex[], size_t nVertex, YmTngnPickTargetId firstId)
 {
+	// TODO: use firstId.
 	m_pShaderImpl->PrepareShaderParam();
 	DrawPointListWithTempBuffer(aVertex, nVertex);
 }
@@ -97,9 +98,10 @@ void YmTngnDraw::DrawPointList(
 }
 
 void YmTngnDraw::DrawPointListWithSingleScannerPosition(
-	const YmTngnPointListVertex aVertex[], size_t nVertex, const YmVector3d& scannerPos
+	const YmTngnPointListVertex aVertex[], size_t nVertex, const YmVector3d& scannerPos, YmTngnPickTargetId firstId
 )
 {
+	// TODO: use firstId.
 	m_pShaderImpl->PrepareShaderParamToDrawPointListWithSingleScannerPosition(scannerPos);
 	DrawPointListWithTempBuffer(aVertex, nVertex);
 }
