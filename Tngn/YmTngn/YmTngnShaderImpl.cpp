@@ -82,6 +82,21 @@ void YmTngnShaderImpl::DrawPointList(
 	m_pDc->Draw((UINT)nVertex, 0);
 }
 
+void YmTngnShaderImpl::DrawPickablePointList(
+	const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pPickIdBuf, size_t nVertex
+)
+{
+	YM_ASSERT(nVertex <= UINT_MAX);
+	m_pDc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	ID3D11Buffer* apVB[2] = { pVertexBuf.Get(), pPickIdBuf.Get() };
+	UINT aVertexSize[2] = { (UINT)sizeof(YmTngnPointListVertex), (UINT)sizeof(YmTngnPickTargetId) };
+	UINT aOffset[2] = { 0, 0 };
+	m_pDc->IASetVertexBuffers(0, 2, apVB, aVertexSize, aOffset);
+
+	SetShaderContext(m_pickablePointListSc);
+	m_pDc->Draw((UINT)nVertex, 0);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void YmTngnShaderImpl::Initialize()
@@ -92,6 +107,7 @@ void YmTngnShaderImpl::Initialize()
 	});
 	m_pShaderParamConstBuf = CreateConstantBuffer(sizeof(ShaderParam));
 	InitializeShaderContextsForNormalRendering();
+	InitializeShaderContextsForPickableRendering();
 }
 
 void YmTngnShaderImpl::UpdateShaderParam()
@@ -154,7 +170,6 @@ void YmTngnShaderImpl::InitializeShaderContextsForNormalRendering()
 {
 	const YmTString hlslFilePath = GetHslsFilePath(_T("DefaultShader.hlsl"));
 	const D3D_SHADER_MACRO aMacro[] = {
-		{ "RGBA_TYPE", "float4" },
 		{ nullptr, nullptr }
 	};
 
@@ -163,6 +178,29 @@ void YmTngnShaderImpl::InitializeShaderContextsForNormalRendering()
 		{ "COLOR"	,	0,	DXGI_FORMAT_R8G8B8A8_UNORM,	    0,	12,	D3D11_INPUT_PER_VERTEX_DATA,	0},
 	};
 	m_pointListSc.Init(
+		CreateInputLayout(aPointListElem, sizeof(aPointListElem) / sizeof(aPointListElem[0]), hlslFilePath, "vsMain", aMacro),
+		CreateVertexShader(hlslFilePath, "vsMain", aMacro),
+		m_pShaderParamConstBuf,
+		CreateGeometryShader(hlslFilePath, "gsMain", aMacro),
+		m_pShaderParamConstBuf,
+		CreatePixelShader(hlslFilePath, "psMain", aMacro)
+	);
+}
+
+void YmTngnShaderImpl::InitializeShaderContextsForPickableRendering()
+{
+	const YmTString hlslFilePath = GetHslsFilePath(_T("DefaultShader.hlsl"));
+	const D3D_SHADER_MACRO aMacro[] = {
+		{ "PICKABLE_MODE", "1" },
+		{ nullptr, nullptr }
+	};
+
+	D3D11_INPUT_ELEMENT_DESC aPointListElem[] = {
+		{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0,	0,	D3D11_INPUT_PER_VERTEX_DATA,	0},
+		{ "COLOR"	,	0,	DXGI_FORMAT_R8G8B8A8_UNORM,	    0,	12,	D3D11_INPUT_PER_VERTEX_DATA,	0},
+		{ "PICK_ID"	,	0,	DXGI_FORMAT_R16G16B16A16_UINT,	1,	0,	D3D11_INPUT_PER_VERTEX_DATA,	0},
+	};
+	m_pickablePointListSc.Init(
 		CreateInputLayout(aPointListElem, sizeof(aPointListElem) / sizeof(aPointListElem[0]), hlslFilePath, "vsMain", aMacro),
 		CreateVertexShader(hlslFilePath, "vsMain", aMacro),
 		m_pShaderParamConstBuf,

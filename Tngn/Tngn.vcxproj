@@ -136,6 +136,7 @@
     <ClInclude Include="YmTngn\YmComPtr.h" />
     <ClInclude Include="YmTngn\YmDx11MappedSubResource.h" />
     <ClInclude Include="YmTngn\YmPtxFileParser.h" />
+    <ClInclude Include="YmTngn\YmTngn.h" />
     <ClInclude Include="YmTngn\YmTngnDmExclusiveLodPointList.h" />
     <ClInclude Include="YmTngn\YmTngnDmMemoryPointList.h" />
     <ClInclude Include="YmTngn\YmTngnDmPointBlockList.h" />

@@ -46,6 +46,8 @@ private:
 	void SetupDevice(HWND hWnd, const YmVector2i& viewSize);
 	void PrepareDepthStencilView();
 	void PrepareRenderTargetView();
+	void PrepareRenderTargetViewForNormalRendering();
+	void PrepareRenderTargetViewForPick();
 
 	void BeginDraw(bool isEraseBackground);
 	void EndDraw();
@@ -60,7 +62,8 @@ private:
 	D3DRasterizerStatePtr m_pRasterizerState;
 
 	D3DDepthStencilViewPtr m_pDepthStencilView;
-	D3DRenderTargetViewPtr m_pRenderTargetView;
+	D3DRenderTargetViewPtr m_pRenderTargetViewForNormalRendering;
+	D3DRenderTargetViewPtr m_pRenderTargetViewForPick;
 	D3D11_VIEWPORT m_viewport = { 0, 0, 0, 0, 0, 0 };
 
 	std::unique_ptr<YmTngnShaderImpl> m_pShaderImpl;

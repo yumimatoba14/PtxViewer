@@ -1,17 +1,10 @@
 #pragma once
 
-#include "YmTngnFwd.h"
-#include "YmTngnVectorUtil.h"
+#include "YmTngn.h"
 
 namespace Ymcpp {
 
 class YmTngnShaderImpl;
-
-struct YmTngnPointListVertex
-{
-	DirectX::XMFLOAT3 position;
-	UINT rgba;
-};
 
 /// <summary>
 /// This class has operations to implement YmTngnDrawingModel.
@@ -66,7 +59,7 @@ public:
 
 private:
 	YmDx11BufferWithSize PrepareTempVertexBuffer();
-	void DrawPointListWithTempBuffer(const YmTngnPointListVertex aVertex[], size_t nVertex);
+	void DrawPointListWithTempBuffer(const YmTngnPointListVertex aVertex[], size_t nVertex, YmTngnPickTargetId firstId);
 
 private:
 	YmTngnShaderImpl* m_pShaderImpl;

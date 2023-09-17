@@ -1,5 +1,3 @@
-//#define RGBA_TYPE float4
-
 cbuffer ShaderParam : register(b0)
 {
 	matrix viewMatrix;
@@ -17,14 +15,34 @@ cbuffer ShaderParam : register(b0)
 struct VS_INPUT
 {
 	float3 Pos : POSITION;
-	RGBA_TYPE Col : COLOR;
+	float4 Col : COLOR;
+#if PICKABLE_MODE
+	uint4 PickTargetId : PICK_ID;
+#endif
 };
 
 struct PS_INPUT
 {
 	float4 Pos : SV_POSITION;
-	RGBA_TYPE Col : COLOR;
+	float4 Col : COLOR;
+#if PICKABLE_MODE
+	uint4 PickTargetId : PICK_ID;
+#endif
 };
+
+struct PS_OUTPUT
+{
+	float4 Color : SV_TARGET0;
+#if PICKABLE_MODE
+	uint4 PickTargetId : SV_TARGET1;
+#endif
+};
+
+#if PICKABLE_MODE
+#define COPY_PICK_TARGET_ID(o, i) (o).PickTargetId = (i).PickTargetId
+#else
+#define COPY_PICK_TARGET_ID(o, i) (0)
+#endif
 
 float calcCameraDistanceOffset(float3 scannerPos, float4 posViewCoord)
 {
@@ -62,6 +80,7 @@ PS_INPUT vsMain(VS_INPUT pos)
 		o.Pos = mul(coord, projectionMatrix);
 	}
 	o.Col = pos.Col;
+	COPY_PICK_TARGET_ID(o, pos);
 	return o;
 }
 
@@ -81,6 +100,7 @@ void gsMain(point PS_INPUT inPoint[1],                       // ƒ|ƒCƒ“ƒg ƒvƒŠƒ~ƒ
 )
 {
 	PS_INPUT outPoint;
+	COPY_PICK_TARGET_ID(outPoint, inPoint[0]);
 	const float halfSizeX = decideHalfPointSize(pointSizeX, pixelSizeX, inPoint[0].Pos[3]);
 	const float halfSizeY = decideHalfPointSize(pointSizeY, pixelSizeY, inPoint[0].Pos[3]);
 
@@ -103,7 +123,10 @@ void gsMain(point PS_INPUT inPoint[1],                       // ƒ|ƒCƒ“ƒg ƒvƒŠƒ~ƒ
 	triStream.RestartStrip();
 }
 
-RGBA_TYPE psMain(PS_INPUT input) : SV_TARGET
+PS_OUTPUT psMain(PS_INPUT input)
 {
-	return input.Col;
+	PS_OUTPUT output;
+	output.Color = input.Col;
+	COPY_PICK_TARGET_ID(output, input);
+	return output;
 }
