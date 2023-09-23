@@ -21,15 +21,15 @@ void YmDx11MappedSubResource::Unmap()
 		m_pDC->Unmap(m_pSubResource.Get(), 0);
 		m_pDC = nullptr;
 		m_pSubResource = nullptr;
-		m_aData = nullptr;
+		m_rawData.pData = nullptr;
 	}
 	YM_ASSERT(!IsMapped());
 }
 
 void YmDx11MappedSubResource::Write(const void* pData, UINT dataByte)
 {
-	YM_IS_TRUE(m_aData != nullptr);
-	memcpy(m_aData, pData, dataByte);
+	YM_IS_TRUE(m_rawData.pData != nullptr);
+	memcpy(m_rawData.pData, pData, dataByte);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
