@@ -71,6 +71,16 @@ void ViewModel::SetProgressiveViewMode(bool enableProgressiveView, bool isFollow
 	m_pImpl->SetProgressiveViewMode(enableProgressiveView, isFollowingFrame);
 }
 
+bool ViewModel::IsPickEnabled()
+{
+	return m_pImpl->IsPickEnabled();
+}
+
+void ViewModel::SetPickEnabled(bool isEnabled)
+{
+	m_pImpl->SetPickEnabled(isEnabled);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void ViewModel::OnSize(System::Drawing::Size viewSize)
@@ -117,7 +127,7 @@ void ViewModel::OnMouseButtonDown(System::Windows::Forms::MouseEventArgs^ e)
 		m_pImpl->GetViewOp().OnMouseButtonDown(GetLocation(e), button);
 	}
 	if (button == YmViewOp::MouseStartOption::L_BUTTON) {
-		isPicking = true;
+		isPicking = IsPickEnabled();
 	}
 }
 

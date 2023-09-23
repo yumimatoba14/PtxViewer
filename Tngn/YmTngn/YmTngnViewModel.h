@@ -39,6 +39,9 @@ public:
 
 	void SetSelectedContent(const YmTngnDrawingModelPtr& pContent) { m_pSelectedContent = pContent; m_isNeedDraw = true; }
 
+	bool IsPickEnabled() const { return m_isPickEnabled; }
+	void SetPickEnabled(bool isEnabled);
+
 	std::vector<YmTngnPointListVertex> TryToPickPoint(const YmVector2i& mousePos);
 public:
 	std::shared_ptr<YmTngnDmPtxFiles> PreparePtxFileContent();
@@ -71,6 +74,7 @@ private:
 	std::unique_ptr<YmTngnShaderImpl> m_pShaderImpl;
 	bool m_isNeedDraw = false;
 	bool m_isViewUpdated = false;
+	bool m_isPickEnabled = false;
 
 private:
 	YmTngnDrawingModelPtr m_pContent;

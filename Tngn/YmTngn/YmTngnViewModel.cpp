@@ -135,6 +135,7 @@ void YmTngnViewModel::Draw()
 
 	if (m_pContent) {
 		YmTngnDraw draw(m_pShaderImpl.get(), m_pDevice);
+		m_pContent->SetPickEnabled(IsPickEnabled());
 		m_pContent->Draw(&draw);
 		m_isViewUpdated = m_isViewUpdated || 0 < draw.GetDrawnPointCount();
 	}
@@ -172,6 +173,21 @@ bool YmTngnViewModel::IsProgressiveViewFollowingFrame() const
 void YmTngnViewModel::SetProgressiveViewMode(bool enableProgressiveView, bool isFollowingFrame)
 {
 	m_pShaderImpl->SetProgressiveViewMode(enableProgressiveView, isFollowingFrame);
+}
+
+void YmTngnViewModel::SetPickEnabled(bool isEnabled)
+{
+	if (!m_isPickEnabled && isEnabled) {
+		// It is necessary to draw view after enabling pick because pick uses drawing result.
+		m_isNeedDraw = true;
+	}
+	m_isPickEnabled = isEnabled;
+	if (!m_isPickEnabled && m_pSelectedPoints) {
+		if (0 < m_pSelectedPoints->GetPointCount()) {
+			m_pSelectedPoints->ClearPoint();
+			m_isNeedDraw = true;
+		}
+	}
 }
 
 static D3DTexture2DPtr CaptureRenderTargetStagingTexture(

@@ -25,6 +25,10 @@ public:
 	bool IsProgressiveViewMode();
 	void SetProgressiveViewMode(bool enableProgressiveView, bool isFollowingFrame);
 	bool IsViewContentUpdated() { return m_pImpl->IsViewContentUpdated(); }
+
+	bool IsPickEnabled();
+	void SetPickEnabled(bool isEnabled);
+
 public:
 	void OnSize(System::Drawing::Size viewSize);
 	void Draw();

@@ -190,5 +190,10 @@ namespace PtxViewer
             afterTimer = true;
             mainView.Invalidate();
         }
+
+        private void enablePickMenu_Click(object sender, EventArgs e)
+        {
+            viewModel.SetPickEnabled(enablePickMenu.Checked);
+        }
     }
 }

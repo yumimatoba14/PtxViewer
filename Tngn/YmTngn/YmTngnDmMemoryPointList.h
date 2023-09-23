@@ -24,6 +24,7 @@ public:
 
 	void AddPoint(const YmVector3d& position, const YmRgba4b& color);
 	void ClearPoint() { m_dataSource.clear(); m_pVertexBuffer = nullptr; }
+	size_t GetPointCount() const { return m_dataSource.size(); }
 
 	void SetupXZRectanglePoints(const YmVector3d& basePos, const YmRgba4b& color);
 
