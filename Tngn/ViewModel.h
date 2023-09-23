@@ -39,6 +39,7 @@ private:
 	bool isDisposed = false;
 	ISite^ site = nullptr;
 	Ymcpp::YmTngnViewModel* m_pImpl = nullptr;
+	bool isPicking = false;
 };
 
 }

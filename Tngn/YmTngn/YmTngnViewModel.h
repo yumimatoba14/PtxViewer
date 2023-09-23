@@ -2,6 +2,7 @@
 
 #include "YmTngnFwd.h"
 #include "YmBase/YmVector.h"
+#include <vector>
 
 namespace Ymcpp {
 
@@ -38,6 +39,7 @@ public:
 
 	void SetSelectedContent(const YmTngnDrawingModelPtr& pContent) { m_pSelectedContent = pContent; m_isNeedDraw = true; }
 
+	std::vector<YmTngnPointListVertex> TryToPickPoint(const YmVector2i& mousePos);
 public:
 	std::shared_ptr<YmTngnDmPtxFiles> PreparePtxFileContent();
 	std::shared_ptr<YmTngnDmMemoryPointList> PrepareSelectedPointList();

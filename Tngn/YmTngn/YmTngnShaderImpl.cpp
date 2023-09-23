@@ -58,13 +58,23 @@ XMMATRIX YmTngnShaderImpl::GetModelToProjectionMatrix() const
 
 YmDx11MappedSubResource YmTngnShaderImpl::MapDynamicBuffer(const D3DBufferPtr& pDynamicBuffer)
 {
-	YM_IS_TRUE(pDynamicBuffer != nullptr);
-	D3D11_MAP mapType = D3D11_MAP_WRITE_DISCARD;
+	return MapResource(pDynamicBuffer, D3D11_MAP_WRITE_DISCARD);
+}
+
+YmDx11MappedSubResource YmTngnShaderImpl::MapResource(const D3DResourcePtr& pResource, D3D11_MAP mapType)
+{
+	YM_IS_TRUE(pResource != nullptr);
+	UINT subResourceId = 0;
 	UINT mapFlags = 0;
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	ZeroMemory(&mappedData, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	m_pDc->Map(pDynamicBuffer.Get(), 0, mapType, mapFlags, &mappedData);
-	return YmDx11MappedSubResource(m_pDc, pDynamicBuffer, mappedData.pData);
+
+	HRESULT hr = m_pDc->Map(pResource.Get(), subResourceId, mapType, mapFlags, &mappedData);
+	if (FAILED(hr)) {
+		YM_THROW_ERROR("Map");
+	}
+
+	return YmDx11MappedSubResource(m_pDc, pResource, move(mappedData));
 }
 
 void YmTngnShaderImpl::DrawPointList(

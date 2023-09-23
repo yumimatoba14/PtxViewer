@@ -174,6 +174,125 @@ void YmTngnViewModel::SetProgressiveViewMode(bool enableProgressiveView, bool is
 	m_pShaderImpl->SetProgressiveViewMode(enableProgressiveView, isFollowingFrame);
 }
 
+static D3DTexture2DPtr CaptureRenderTargetStagingTexture(
+	const D3DDevicePtr& pDevice, const D3DDeviceContextPtr& pDc, const D3DRenderTargetViewPtr& pRtView
+)
+{
+	D3DResourcePtr pRtResource;
+	pRtView->GetResource(&pRtResource);
+	YM_IS_TRUE(pRtResource);
+
+	D3D11_RESOURCE_DIMENSION resType = D3D11_RESOURCE_DIMENSION_UNKNOWN;
+	pRtResource->GetType(&resType);
+	if (resType != D3D11_RESOURCE_DIMENSION_TEXTURE2D) {
+		YM_THROW_ERROR("resouce dimension must be 2D");
+	}
+	D3DTexture2DPtr pRtTexture;
+	HRESULT hr = pRtResource->QueryInterface(IID_PPV_ARGS(&pRtTexture));
+	if (FAILED(hr)) {
+		YM_THROW_ERROR("QueryInterface");
+	}
+
+	D3D11_TEXTURE2D_DESC desc;
+	pRtTexture->GetDesc(&desc);
+
+	if (1 < desc.SampleDesc.Count) {
+		YM_THROW_ERROR("Not supported case (1 < desc.SampleDesc.Count)");
+	}
+
+	D3DTexture2DPtr pStaging;
+	if ((desc.Usage == D3D11_USAGE_STAGING) && (desc.CPUAccessFlags & D3D11_CPU_ACCESS_READ)) {
+		pStaging = pRtTexture;
+	}
+	else {
+		D3D11_TEXTURE2D_DESC stagingDesc = desc;
+		stagingDesc.BindFlags = 0;
+		stagingDesc.MiscFlags &= D3D11_RESOURCE_MISC_TEXTURECUBE;
+		stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		stagingDesc.Usage = D3D11_USAGE_STAGING;
+
+		hr = pDevice->CreateTexture2D(&stagingDesc, nullptr, &pStaging);
+		if (FAILED(hr)) {
+			YM_THROW_ERROR("CreateTexture2D");
+		}
+		YM_IS_TRUE(pStaging);
+
+		pDc->CopyResource(pStaging.Get(), pRtResource.Get());
+	}
+
+	return pStaging;
+}
+
+static map<uint64_t, size_t> CountTexture2DColor(YmTngnShaderImpl* pShaderImpl, const D3DTexture2DPtr& pStaging)
+{
+	YM_NOEXCEPT_BEGIN("CountTexture2DColor");
+	D3D11_TEXTURE2D_DESC desc;
+	pStaging->GetDesc(&desc);
+
+	YmDx11MappedSubResource mappedTexture = pShaderImpl->MapResource(pStaging, D3D11_MAP_READ);
+	const int64_t imageSize = int64_t(mappedTexture.GetRowPitch()) * int64_t(desc.Height);
+	YM_IS_TRUE(imageSize < UINT_MAX);
+	const int pixelSize = mappedTexture.GetRowPitch() / desc.Width;
+	YM_IS_TRUE(pixelSize <= 8);
+	map<uint64_t, size_t> colorCounter;
+	for (UINT row = 0; row < desc.Height; ++row) {
+		for (UINT col = 0; col < desc.Width; ++col) {
+			const unsigned char* pHead = mappedTexture.ToArray<unsigned char>(size_t(row) * mappedTexture.GetRowPitch() + col * pixelSize);
+			uint64_t value = 0;
+			for (int i = 0; i < pixelSize; ++i) {
+				value += (uint64_t(pHead[i]) << (8 * i));
+			}
+			auto it = colorCounter.find(value);
+			if (it == colorCounter.end()) {
+				colorCounter[value] = 1;
+			}
+			else {
+				it->second++;
+			}
+		}
+	}
+
+	return colorCounter;
+	YM_NOEXCEPT_END;
+	return map<uint64_t, size_t>();
+}
+
+static YmTngnPickTargetId GetTexture2DInt64Pixel(YmTngnShaderImpl* pShaderImpl, const D3DTexture2DPtr& pStaging, const YmVector2i& mousePos)
+{
+	D3D11_TEXTURE2D_DESC desc;
+	pStaging->GetDesc(&desc);
+	YM_ASSERT(0 <= mousePos[0] && UINT(mousePos[0]) < desc.Width);
+	YM_ASSERT(0 <= mousePos[1] && UINT(mousePos[1]) < desc.Height);
+
+	YmDx11MappedSubResource mappedTexture = pShaderImpl->MapResource(pStaging, D3D11_MAP_READ);
+	const int64_t imageSize = int64_t(mappedTexture.GetRowPitch()) * int64_t(desc.Height);
+	YM_ASSERT(imageSize < UINT_MAX);
+	const int pixelSize = mappedTexture.GetRowPitch() / desc.Width;
+	YM_IS_TRUE(pixelSize == 8);
+	const unsigned char* pPixelHead = mappedTexture.ToArray<unsigned char>(size_t(mousePos[1]) * mappedTexture.GetRowPitch() + mousePos[0] * pixelSize);
+	uint64_t value = 0;
+	for (int i = 0; i < pixelSize; ++i) {
+		value += (uint64_t(pPixelHead[i]) << (8 * i));
+	}
+	return YmTngnPickTargetId(value);
+}
+
+std::vector<YmTngnPointListVertex> YmTngnViewModel::TryToPickPoint(const YmVector2i& mousePos)
+{
+	D3DTexture2DPtr pStaging = CaptureRenderTargetStagingTexture(m_pDevice, m_pDc, m_pRenderTargetViewForPick);
+	if (false) {
+		CountTexture2DColor(m_pShaderImpl.get(), pStaging);
+	}
+
+	YmTngnPickTargetId pickedId = GetTexture2DInt64Pixel(m_pShaderImpl.get(), pStaging, mousePos);
+	if (pickedId == YM_TNGN_PICK_TARGET_NULL) {
+		return vector<YmTngnPointListVertex>();
+	}
+	return m_pContent->FindPickedPoints(pickedId);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 std::shared_ptr<YmTngnDmPtxFiles> YmTngnViewModel::PreparePtxFileContent()
 {
 	if (!m_pDmPtxFiles) {

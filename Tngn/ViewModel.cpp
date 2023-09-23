@@ -116,6 +116,9 @@ void ViewModel::OnMouseButtonDown(System::Windows::Forms::MouseEventArgs^ e)
 	if (ConvertButtonType(e->Button, &button)) {
 		m_pImpl->GetViewOp().OnMouseButtonDown(GetLocation(e), button);
 	}
+	if (button == YmViewOp::MouseStartOption::L_BUTTON) {
+		isPicking = true;
+	}
 }
 
 void ViewModel::OnMouseButtonUp(System::Windows::Forms::MouseEventArgs^ e)
@@ -124,11 +127,23 @@ void ViewModel::OnMouseButtonUp(System::Windows::Forms::MouseEventArgs^ e)
 	if (ConvertButtonType(e->Button, &button)) {
 		m_pImpl->GetViewOp().OnMouseButtonUp(GetLocation(e), button);
 	}
+	if (button == YmViewOp::MouseStartOption::L_BUTTON && isPicking) {
+		auto points = m_pImpl->TryToPickPoint(GetLocation(e));
+		if (points.empty()) {
+			m_pImpl->PrepareSelectedPointList()->ClearPoint();
+		}
+		else {
+			for (YmTngnPointListVertex& point : points) {
+				m_pImpl->PrepareSelectedPointList()->AddPoint(point.position, YmRgba4b(255, 0, 0));
+			}
+		}
+	}
 }
 
 void ViewModel::OnMouseMove(System::Windows::Forms::MouseEventArgs^ e)
 {
 	m_pImpl->GetViewOp().OnMouseMove(GetLocation(e));
+	isPicking = false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

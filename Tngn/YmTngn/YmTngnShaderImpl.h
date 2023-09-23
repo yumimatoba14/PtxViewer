@@ -86,6 +86,7 @@ public:
 	}
 
 	YmDx11MappedSubResource MapDynamicBuffer(const D3DBufferPtr& pDynamicBuffer);
+	YmDx11MappedSubResource MapResource(const D3DResourcePtr& pResource, D3D11_MAP mapType);
 
 	YmDx11BufferWithSize GetTempVertexBuffer(int i) const {
 		if (size_t(i) < m_tempVertexBufferList.size()) {
