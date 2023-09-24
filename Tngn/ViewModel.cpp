@@ -27,7 +27,9 @@ ViewModel::ViewModel(IContainer^ container, System::IntPtr handleWnd)
 	m_pImpl->Setup(hWnd);
 	m_pImpl->GetViewOp().SetVerticalDirection(1e-6, YmVectorUtil::Make(0, 0, 1));
 #if defined(_DEBUG)
-	m_pImpl->SetContent(std::make_unique<YmTngnDmMemoryPointList>());
+	m_pImpl->SetContent(std::make_unique<YmTngnDmMemoryPointListXZRectangle>());
+	m_pImpl->SetSelectedContent(std::make_shared<YmTngnDmMemoryPointListXZRectangle>(
+		YmVectorUtil::Make(0, 1, 0), YmRgba4b(0xFF, 0, 0)));
 #endif
 }
 
@@ -53,6 +55,7 @@ bool ViewModel::OpenPtxFile(System::String^ ptxFilePath)
 {
 	YM_NOEXCEPT_BEGIN("ViewModel::OpenPtxFile");
 	m_pImpl->PreparePtxFileContent()->ReadPtxFile(marshal_as<YmTString>(ptxFilePath));
+	m_pImpl->SetSelectedContent(nullptr);
 	return true;
 	YM_NOEXCEPT_END;
 	return false;
@@ -66,6 +69,16 @@ bool ViewModel::IsProgressiveViewMode()
 void ViewModel::SetProgressiveViewMode(bool enableProgressiveView, bool isFollowingFrame)
 {
 	m_pImpl->SetProgressiveViewMode(enableProgressiveView, isFollowingFrame);
+}
+
+bool ViewModel::IsPickEnabled()
+{
+	return m_pImpl->IsPickEnabled();
+}
+
+void ViewModel::SetPickEnabled(bool isEnabled)
+{
+	m_pImpl->SetPickEnabled(isEnabled);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -113,6 +126,9 @@ void ViewModel::OnMouseButtonDown(System::Windows::Forms::MouseEventArgs^ e)
 	if (ConvertButtonType(e->Button, &button)) {
 		m_pImpl->GetViewOp().OnMouseButtonDown(GetLocation(e), button);
 	}
+	if (button == YmViewOp::MouseStartOption::L_BUTTON) {
+		isPicking = IsPickEnabled();
+	}
 }
 
 void ViewModel::OnMouseButtonUp(System::Windows::Forms::MouseEventArgs^ e)
@@ -121,11 +137,23 @@ void ViewModel::OnMouseButtonUp(System::Windows::Forms::MouseEventArgs^ e)
 	if (ConvertButtonType(e->Button, &button)) {
 		m_pImpl->GetViewOp().OnMouseButtonUp(GetLocation(e), button);
 	}
+	if (button == YmViewOp::MouseStartOption::L_BUTTON && isPicking) {
+		auto points = m_pImpl->TryToPickPoint(GetLocation(e));
+		if (points.empty()) {
+			m_pImpl->PrepareSelectedPointList()->ClearPoint();
+		}
+		else {
+			for (YmTngnPointListVertex& point : points) {
+				m_pImpl->PrepareSelectedPointList()->AddPoint(point.position, YmRgba4b(255, 0, 0));
+			}
+		}
+	}
 }
 
 void ViewModel::OnMouseMove(System::Windows::Forms::MouseEventArgs^ e)
 {
 	m_pImpl->GetViewOp().OnMouseMove(GetLocation(e));
+	isPicking = false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -35,6 +35,8 @@ namespace PtxViewer
             this.openMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.exitMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.mainView = new Tngn.FormView();
+            this.testMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.enablePickMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.viewTimer = new System.Windows.Forms.Timer(this.components);
             this.mainMenuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -42,7 +44,8 @@ namespace PtxViewer
             // mainMenuStrip
             // 
             this.mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileMenu});
+            this.fileMenu,
+            this.testMenu});
             this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.mainMenuStrip.Name = "mainMenuStrip";
             this.mainMenuStrip.Size = new System.Drawing.Size(800, 24);
@@ -61,14 +64,14 @@ namespace PtxViewer
             // openMenu
             // 
             this.openMenu.Name = "openMenu";
-            this.openMenu.Size = new System.Drawing.Size(180, 22);
+            this.openMenu.Size = new System.Drawing.Size(101, 22);
             this.openMenu.Text = "&open";
             this.openMenu.Click += new System.EventHandler(this.openMenu_Click);
             // 
             // exitMenu
             // 
             this.exitMenu.Name = "exitMenu";
-            this.exitMenu.Size = new System.Drawing.Size(180, 22);
+            this.exitMenu.Size = new System.Drawing.Size(101, 22);
             this.exitMenu.Text = "&exit";
             this.exitMenu.Click += new System.EventHandler(this.exitMenu_Click);
             // 
@@ -88,6 +91,22 @@ namespace PtxViewer
             this.mainView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mainView_MouseUp);
             this.mainView.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.mainView_MouseWheel);
             this.mainView.Resize += new System.EventHandler(this.mainView_Resize);
+            // 
+            // testMenu
+            // 
+            this.testMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.enablePickMenu});
+            this.testMenu.Name = "testMenu";
+            this.testMenu.Size = new System.Drawing.Size(39, 20);
+            this.testMenu.Text = "&Test";
+            // 
+            // enablePickMenu
+            // 
+            this.enablePickMenu.CheckOnClick = true;
+            this.enablePickMenu.Name = "enablePickMenu";
+            this.enablePickMenu.Size = new System.Drawing.Size(180, 22);
+            this.enablePickMenu.Text = "Enable &pick";
+            this.enablePickMenu.Click += new System.EventHandler(this.enablePickMenu_Click);
             // 
             // viewTimer
             // 
@@ -119,6 +138,8 @@ namespace PtxViewer
         private System.Windows.Forms.ToolStripMenuItem exitMenu;
         private Tngn.FormView mainView;
         private System.Windows.Forms.Timer viewTimer;
+        private System.Windows.Forms.ToolStripMenuItem testMenu;
+        private System.Windows.Forms.ToolStripMenuItem enablePickMenu;
     }
 }
 

@@ -20,6 +20,8 @@ class YmTngnViewConfig;
 class YmViewOp;
 
 using YmTngnDrawingModelPtr = std::shared_ptr<YmTngnDrawingModel>;
+using YmTngnPickTargetId = uint64_t;
+#define YM_TNGN_PICK_TARGET_NULL YmTngnPickTargetId(0)
 
 using DXGIFactoryPtr = YmComPtr<IDXGIFactory>;
 using DXGIOutputPtr = YmComPtr<IDXGIOutput>;

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "YmTngnFwd.h"
+#include "YmTngn.h"
 #include "YmTngnShaderContext.h"
 #include "YmDx11MappedSubResource.h"
-#include "YmBase/YmVector.h"
+#include <vector>
 
 namespace Ymcpp {
 
@@ -86,12 +86,27 @@ public:
 	}
 
 	YmDx11MappedSubResource MapDynamicBuffer(const D3DBufferPtr& pDynamicBuffer);
+	YmDx11MappedSubResource MapResource(const D3DResourcePtr& pResource, D3D11_MAP mapType);
 
-	YmDx11BufferWithSize GetTempVertexBuffer() const { return m_tempVertexBuffer; }
-	void SetTempVertexBuffer(const YmDx11BufferWithSize& buffer) { m_tempVertexBuffer = buffer; }
+	YmDx11BufferWithSize GetTempVertexBuffer(int i) const {
+		if (size_t(i) < m_tempVertexBufferList.size()) {
+			return m_tempVertexBufferList.at(i);
+		}
+		return YmDx11BufferWithSize{ nullptr, 0 };
+	}
+	void SetTempVertexBuffer(int i, const YmDx11BufferWithSize& buffer) {
+		if (m_tempVertexBufferList.size() <= size_t(i)) {
+			m_tempVertexBufferList.resize(i + 1);
+		}
+		m_tempVertexBufferList[i] = buffer;
+	}
 
 	void DrawPointList(
 		const D3DBufferPtr& pVertexBuf, size_t vertexSize, size_t nVertex
+	);
+
+	void DrawPickablePointList(
+		const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pPickIdBuf, size_t nVertex
 	);
 
 private:
@@ -103,6 +118,7 @@ private:
 	XMMATRIX GetProjectionMatrix(double aspectRatio) const;
 
 	void InitializeShaderContextsForNormalRendering();
+	void InitializeShaderContextsForPickableRendering();
 
 	static YmTString GetHslsFilePath(const YmTString& fileName);
 
@@ -134,6 +150,7 @@ private:
 	D3DDeviceContextPtr m_pDc;
 	D3DBufferPtr m_pShaderParamConstBuf;
 	YmTngnShaderContext m_pointListSc;
+	YmTngnShaderContext m_pickablePointListSc;
 	YmVector2i m_viewSize;
 	double m_pointSize;
 	double m_fovAngleYDeg;
@@ -149,7 +166,7 @@ private:
 	bool m_isProgressiveViewMode = false;
 	bool m_isProgressiveViewFollowingFrame = false;
 
-	YmDx11BufferWithSize m_tempVertexBuffer;
+	std::vector<YmDx11BufferWithSize> m_tempVertexBufferList;
 };
 
 }

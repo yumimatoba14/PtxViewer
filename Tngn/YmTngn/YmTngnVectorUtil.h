@@ -21,6 +21,7 @@ struct YmVectorTraits<DirectX::XMFLOAT3>
 		case 2: return v.z;
 		}
 		YM_THROW_ERROR("not supported index");
+		return 0;	// not reached
 	}
 	static void SetAt(VectorType& v, int i, CoordType coord)
 	{

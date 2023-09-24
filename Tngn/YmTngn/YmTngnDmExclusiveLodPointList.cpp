@@ -10,6 +10,7 @@ using namespace Ymcpp;
 YmTngnDmExclusiveLodPointList::YmTngnDmExclusiveLodPointList(YmMemoryMappedFile& imageFile, int64_t imagePos)
 	: m_imageFile(imageFile), m_imageByteBegin(imagePos)
 {
+	PrepareLodTable();
 }
 
 YmTngnDmExclusiveLodPointList::~YmTngnDmExclusiveLodPointList()
@@ -29,22 +30,20 @@ void YmTngnDmExclusiveLodPointList::ResetScannerPosition()
 	m_isUseScannerPosition = false;
 }
 
-#if 0
-bool YmTngnDmExclusiveLodPointList::FindPointBySelectionTargetId(D3DSelectionTargetId id, Vertex* pFoundVertex) const
+bool YmTngnDmExclusiveLodPointList::FindPointByPickTargetId(YmTngnPickTargetId id, PointType* pFoundVertex) const
 {
-	if (m_pointStIdFirst != D3D_SELECTION_TARGET_NULL) {
-		uint64_t pointNum = m_pointListHeader.GetPointCount();
-		bool isFound = m_pointStIdFirst <= id && id < m_pointStIdFirst + pointNum;
+	if (m_pointPickTargetIdFirst != YM_TNGN_PICK_TARGET_NULL) {
+		uint64_t pointNum = m_lodTable.GetPointCount();
+		bool isFound = m_pointPickTargetIdFirst <= id && id < m_pointPickTargetIdFirst + pointNum;
 		if (isFound && pFoundVertex != nullptr) {
-			int64_t vertexIndex = id - m_pointStIdFirst;
-			auto pSrc = m_imageFile.MapView(m_pointByteBegin + vertexIndex * sizeof(Vertex), sizeof(Vertex));
-			*pFoundVertex = pSrc.ToConstArray<Vertex>()[0];
+			int64_t vertexIndex = id - m_pointPickTargetIdFirst;
+			auto pSrc = m_imageFile.MapView(m_pointByteBegin + vertexIndex * sizeof(PointType), sizeof(PointType));
+			*pFoundVertex = pSrc.ToConstArray<PointType>()[0];
 		}
 		return isFound;
 	}
 	return false;
 }
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -54,16 +53,7 @@ bool YmTngnDmExclusiveLodPointList::FindPointBySelectionTargetId(D3DSelectionTar
 void YmTngnDmExclusiveLodPointList::PrepareFirstDraw(YmTngnDraw* pDraw)
 {
 	if (m_lodTable.GetLevelCount() == 0) {
-		using HeaderType = YmTngnModel::ExclusiveLodPointList::Header;
-		auto pSrc = m_imageFile.MapView(m_imageByteBegin, sizeof(HeaderType));
-		HeaderType header = pSrc.ToConstArray<HeaderType>()[0];
-		if (YmTngnModel::CURRENT_FILE_VERSION < header.version) {
-			YM_THROW_ERROR("New file cannot be read.");
-		}
-
-		m_lodTable.ReadFrom(m_imageFile, header.lodTablePos);
-		m_pointByteBegin = m_imageByteBegin + sizeof(HeaderType);
-
+		PrepareLodTable();
 		YM_IS_TRUE(0 < m_lodTable.GetLevelCount());
 	}
 
@@ -116,23 +106,28 @@ void YmTngnDmExclusiveLodPointList::DrawAfterPreparation(YmTngnDraw* pDraw)
 		size_t nVertex = static_cast<size_t>(endVertex - m_nextVertex);
 		UINT dataSize = static_cast<UINT>(nVertex * sizeof(PointType));
 		auto pSrc = m_imageFile.MapView(m_pointByteBegin + m_nextVertex * sizeof(PointType), dataSize);
-#if 1
+
+		YmTngnPickTargetId firstId = YM_TNGN_PICK_TARGET_NULL;
+		if (IsPickEnabled() && m_pointPickTargetIdFirst != YM_TNGN_PICK_TARGET_NULL) {
+			firstId = m_pointPickTargetIdFirst + m_nextVertex;
+		}
 		if (m_isUseScannerPosition) {
-			pDraw->DrawPointListWithSingleScannerPosition(pSrc.ToConstArray<PointType>(), nVertex, m_scannerPosition);
+			pDraw->DrawPointListWithSingleScannerPosition(pSrc.ToConstArray<PointType>(), nVertex, m_scannerPosition, firstId);
 		}
 		else {
-			pDraw->DrawPointList(pSrc.ToConstArray<PointType>(), nVertex);
+			pDraw->DrawPointList(pSrc.ToConstArray<PointType>(), nVertex, firstId);
 		}
-#else
-		D3DSelectionTargetId firstId = (m_pointStIdFirst == D3D_SELECTION_TARGET_NULL ? D3D_SELECTION_TARGET_NULL : m_pointStIdFirst + m_nextVertex);
-		pDraw->DrawPointList(pSrc.ToConstArray<Vertex>(), nVertex, firstId);
-#endif
 
 		m_nextVertex = endVertex;
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+bool YmTngnDmExclusiveLodPointList::OnSetPickEnabled(bool bEnable)
+{
+	return bEnable && (m_pointPickTargetIdFirst != YM_TNGN_PICK_TARGET_NULL);
+}
 
 void YmTngnDmExclusiveLodPointList::OnDraw(YmTngnDraw* pDraw)
 {
@@ -141,6 +136,21 @@ void YmTngnDmExclusiveLodPointList::OnDraw(YmTngnDraw* pDraw)
 	}
 
 	DrawAfterPreparation(pDraw);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void YmTngnDmExclusiveLodPointList::PrepareLodTable()
+{
+	using HeaderType = YmTngnModel::ExclusiveLodPointList::Header;
+	auto pSrc = m_imageFile.MapView(m_imageByteBegin, sizeof(HeaderType));
+	HeaderType header = pSrc.ToConstArray<HeaderType>()[0];
+	if (YmTngnModel::CURRENT_FILE_VERSION < header.version) {
+		YM_THROW_ERROR("New file cannot be read.");
+	}
+
+	m_lodTable.ReadFrom(m_imageFile, header.lodTablePos);
+	m_pointByteBegin = m_imageByteBegin + sizeof(HeaderType);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

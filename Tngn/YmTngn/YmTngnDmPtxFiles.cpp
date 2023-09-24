@@ -100,9 +100,21 @@ YmTString YmTngnDmPtxFiles::ReadPtxFile(const YmTString& filePath)
 	return filePath;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+bool YmTngnDmPtxFiles::OnSetPickEnabled(bool bEnable)
+{
+	return m_blockListImpl.SetPickEnabled(bEnable);
+}
+
 void YmTngnDmPtxFiles::OnDraw(YmTngnDraw* pDraw)
 {
 	m_blockListImpl.Draw(pDraw);
+}
+
+std::vector<YmTngnPointListVertex> YmTngnDmPtxFiles::OnFindPickedPoints(YmTngnPickTargetId id)
+{
+	return m_blockListImpl.FindPickedPoints(id);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

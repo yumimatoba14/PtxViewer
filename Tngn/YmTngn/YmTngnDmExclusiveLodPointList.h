@@ -18,6 +18,8 @@ public:
 	explicit YmTngnDmExclusiveLodPointList(YmMemoryMappedFile& imageFile, int64_t imagePos);
 	virtual ~YmTngnDmExclusiveLodPointList();
 
+	int64_t GetPointCount() const { return m_lodTable.GetPointCount(); }
+
 	void SetScannerPosition(const YmVector3d& scannerPos);
 	void ResetScannerPosition();
 	bool IsUseScannerPosition() const { return m_isUseScannerPosition; }
@@ -25,9 +27,9 @@ public:
 
 	void SetDrawingPrecision(double length) { m_drawingPrecision = length; }
 	void SetMaxPointCountDrawnPerFrame(int64_t nPoint) { m_maxPointCountDrawnPerFrame = nPoint; }
-	//void SetPointSelectionTargetIdFirst(D3DSelectionTargetId id) { m_pointStIdFirst = id; }
+	void SetPointPickTargetIdFirst(YmTngnPickTargetId id) { m_pointPickTargetIdFirst = id; }
 
-	//bool FindPointBySelectionTargetId(D3DSelectionTargetId id, Vertex* pFoundVertex) const;
+	bool FindPointByPickTargetId(YmTngnPickTargetId id, PointType* pFoundVertex) const;
 
 	void PrepareFirstDraw(YmTngnDraw* pDraw);
 	bool IsDrawingEnded() const { return m_drawingVertexEnd <= m_nextVertex; }
@@ -35,16 +37,20 @@ public:
 	void DrawAfterPreparation(YmTngnDraw* pDraw);
 
 protected:
+	virtual bool OnSetPickEnabled(bool bEnable);
 	virtual void OnDraw(YmTngnDraw* pDraw);
+
+private:
+	void PrepareLodTable();
 
 private:
 	YmMemoryMappedFile& m_imageFile;
 	int64_t m_imageByteBegin = 0;
 	double m_drawingPrecision = 0;
 	int64_t m_maxPointCountDrawnPerFrame = 1 << 20;	/// used only in case of progressive mode.
-	//D3DSelectionTargetId m_pointStIdFirst = D3D_SELECTION_TARGET_NULL;
+	YmTngnPickTargetId m_pointPickTargetIdFirst = YM_TNGN_PICK_TARGET_NULL;
 
-	// point list data initialized in OnDrawTo() once.
+	// point list data initialized in PrepareFirstDraw() once.
 private:
 	YmTngnExclusiveLodPointListLodTable m_lodTable;
 	int64_t m_pointByteBegin = 0;
