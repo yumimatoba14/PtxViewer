@@ -157,7 +157,7 @@ int64_t YmTngnExclusiveLodPointListCreator::CreateImage(
 	using HeaderType = YmTngnModel::ExclusiveLodPointList::Header;
 	HeaderType header = { YmTngnModel::CURRENT_FILE_VERSION, 0 };
 
-	YmBinaryFormatter resultFileFormatter(pResultFileBuf);
+	YmBinaryFormatter resultFileFormatter = YmBinaryFormatter::CreateForMemoryImage(pResultFileBuf);
 	int64_t heaerPos = resultFileFormatter.GetCurrentPosition();
 
 	// Write temporary value.
@@ -177,8 +177,8 @@ int64_t YmTngnExclusiveLodPointListCreator::CreateImage(
 	int64_t pointListBeginPos = resultFileFormatter.GetCurrentPosition();
 	int64_t pointListEndPos = pointListBeginPos + nInputPoint * sizeof(PointType);
 
-	YmMemoryMappedFile resultFile;
-	resultFile.AttachFileToWrite(pResultFileBuf->GetHandle(), pointListEndPos);
+	YmMemoryMappedFile resultMmFile;
+	resultMmFile.AttachFileToWrite(pResultFileBuf->GetHandle(), pointListEndPos);
 
 	int64_t nCurrVertex = nInputPoint;
 	int64_t levelDataBegin = pointListBeginPos;
@@ -186,7 +186,7 @@ int64_t YmTngnExclusiveLodPointListCreator::CreateImage(
 	for (int i = 0; i < nLevelOfLattice; ++i) {
 		inputPointFormatter.SetCurrentPosition(inputPointFileByteBegin);
 		int64_t nAddedLattice = Build1Level(
-			inputPointFormatter, nCurrVertex, inputPointAabb, latticeLength, resultFile, levelDataBegin
+			inputPointFormatter, nCurrVertex, inputPointAabb, latticeLength, resultMmFile, levelDataBegin
 		);
 		if (nAddedLattice == 0) {
 			// vertices are less than making lattices.
@@ -202,10 +202,10 @@ int64_t YmTngnExclusiveLodPointListCreator::CreateImage(
 
 	if (0 < nCurrVertex) {
 		inputPointFormatter.SetCurrentPosition(inputPointFileByteBegin);
-		CopyVertices(inputPointFormatter, nCurrVertex, resultFile, levelDataBegin, pointListEndPos);
+		CopyVertices(inputPointFormatter, nCurrVertex, resultMmFile, levelDataBegin, pointListEndPos);
 	}
 
-	resultFile.Close();
+	resultMmFile.Close();
 	resultFileFormatter.SetCurrentPosition(pointListEndPos);
 	lodTable.WriteTo(resultFileFormatter);
 
@@ -213,6 +213,7 @@ int64_t YmTngnExclusiveLodPointListCreator::CreateImage(
 	header.lodTablePos = pointListEndPos;
 	resultFileFormatter.SetCurrentPosition(heaerPos);
 	resultFileFormatter.WriteBytes(reinterpret_cast<const char*>(&header), sizeof(HeaderType));
+	YM_IS_TRUE(resultFileFormatter.GetCurrentPosition() == pointListBeginPos);
 
 	return (int64_t)(resultFileEndPos - heaerPos);
 }

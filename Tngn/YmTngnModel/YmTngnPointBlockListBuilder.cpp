@@ -211,9 +211,10 @@ void YmTngnPointBlockListBuilder::BuildPointBlockFile()
 
 	YmWin32FileBuf dividedFile;
 	dividedFile.OpenTempFile();
+	auto dividedFileFormatter = YmBinaryFormatter::CreateForMemoryImage(&dividedFile);
 	vector<BlockData> dividedBlocks;
 	Build1Level(*m_pInputPointFormatter, GetPointCount(), m_inputPointAabb, targetPointCount,
-		YmBinaryFormatter(&dividedFile), 0, &dividedBlocks);
+		dividedFileFormatter, 0, &dividedBlocks);
 
 	size_t nBlock = dividedBlocks.size();
 	YM_IS_TRUE(nBlock < (size_t(1) << 31));
@@ -243,7 +244,7 @@ void YmTngnPointBlockListBuilder::BuildPointBlockFile()
 		const double latticeLength = DecideLodBaseLatticeLength(inBlock.aabb, inBlock.nPoint);
 		YmTngnExclusiveLodPointListCreator creator(latticeLength);
 		image.nImageByte = creator.CreateImage(
-			YmBinaryFormatter(&dividedFile), inBlock.blockByteBegin, inBlock.nPoint,
+			dividedFileFormatter, inBlock.blockByteBegin, inBlock.nPoint,
 			inBlock.aabb, m_pOutputFile
 		);
 		endOfFilePos += image.nImageByte;
