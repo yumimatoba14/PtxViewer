@@ -20,11 +20,11 @@ public:
 
 	virtual ~YmBinaryFormatter();
 
-	YmBinaryFormatter(const YmBinaryFormatter& other) = delete;
-	YmBinaryFormatter(YmBinaryFormatter&& other) noexcept = delete;
+	YmBinaryFormatter(const YmBinaryFormatter& other) = default;
+	YmBinaryFormatter& operator = (const YmBinaryFormatter& other) = default;
 
-	YmBinaryFormatter& operator = (const YmBinaryFormatter& other) = delete;
-	YmBinaryFormatter& operator = (YmBinaryFormatter&& other) noexcept = delete;
+public:
+	static YmBinaryFormatter CreateForMemoryImage(std::streambuf* pStreamBuf);
 
 public:
 	uint32_t GetFormatFlags() const { return m_formatFlags; }

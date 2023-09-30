@@ -18,6 +18,26 @@ YmBinaryFormatter::~YmBinaryFormatter()
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/// <summary>
+/// Create an object to read/write images which are compatible to memory.
+/// </summary>
+/// <param name="pStreamBuf">streambuf which is used by returned object.
+/// It can be nullptr. A returned object could be used to get flags.</param>
+/// <returns></returns>
+YmBinaryFormatter YmBinaryFormatter::CreateForMemoryImage(std::streambuf* pStreamBuf)
+{
+	YmBinaryFormatter result(pStreamBuf);
+	result.SetFormatFlag(BIG_ENDIAN, !IsNativeLittleEndianByInt32());
+#if defined(_M_IX86) || defined(_M_X64)
+	// No other changes are necessary.
+#else
+#error Not supported environment.
+#endif
+	return result;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void YmBinaryFormatter::SetFormatFlag(FormatFlags flag, bool enable)
 {
 	if (enable) {

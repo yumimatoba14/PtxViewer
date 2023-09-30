@@ -73,7 +73,7 @@ namespace YmVectorUtil
 			VRet ret;
 			for (int i = 0; i < dim; ++i) {
 				YmVectorTraits<VRet>::SetAt(ret, i,
-					static_cast<YmVectorTraits<VRet>::CoordType>(YmVectorTraits<VIn>::GetAt(vecFrom, i))
+					static_cast<typename YmVectorTraits<VRet>::CoordType>(YmVectorTraits<VIn>::GetAt(vecFrom, i))
 				);
 			}
 			return ret;
@@ -83,7 +83,7 @@ namespace YmVectorUtil
 	template<class VRet, class VIn>
 	static VRet StaticCast(const VIn& vecFrom)
 	{
-		return Detail::StaticCastImpl<VRet>(vecFrom, std::is_same<std::decay_t<VRet>, std::decay_t<VIn>>::type());
+		return Detail::StaticCastImpl<VRet>(vecFrom, typename std::is_same<std::decay_t<VRet>, std::decay_t<VIn>>::type());
 	}
 
 	template<class V>
@@ -103,7 +103,7 @@ namespace YmVectorUtil
 		/// <param name="dim">for validation of dimension. It must be 3.</param>
 		/// <returns></returns>
 		template<class V>
-		V OuterProductImpl(const V& lhs, const V& rhs, std::integral_constant<int, 3> dim = YmVectorTraits<V>::DimensionValueType())
+		V OuterProductImpl(const V& lhs, const V& rhs, std::integral_constant<int, 3> dim = typename YmVectorTraits<V>::DimensionValueType())
 		{
 			using VTraits = YmVectorTraits<V>;
 			V retValue;
