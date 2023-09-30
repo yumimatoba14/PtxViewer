@@ -51,8 +51,19 @@ void YmTngnDmMemoryPointList::SetupXZRectanglePoints(const YmVector3d& basePos, 
 
 ////////////////////////////////////////////////////////////////////////////////
 
+bool YmTngnDmMemoryPointList::OnSetPickEnabled(bool bEnable)
+{
+	if (bEnable && GetPointPickTargetIdFirst() == YM_TNGN_PICK_TARGET_NULL) {
+		SetPointPickTargetIdFirst(1);
+	}
+	return bEnable;
+}
+
 void YmTngnDmMemoryPointList::OnDraw(YmTngnDraw* pDraw)
 {
+	if (pDraw->IsProgressiveViewFollowingFrame()) {
+		return;
+	}
 	if (!m_pVertexBuffer) {
 		m_nVertex = m_dataSource.size();
 		if (m_dataSource.empty()) {
@@ -63,14 +74,30 @@ void YmTngnDmMemoryPointList::OnDraw(YmTngnDraw* pDraw)
 		);
 	}
 
+	YmTngnPickTargetId firstId = YM_TNGN_PICK_TARGET_NULL;
+	if (IsPickEnabled()) {
+		firstId = GetPointPickTargetIdFirst();
+	}
+
 	if (m_isUseScannerPoint) {
 		pDraw->DrawPointListWithSingleScannerPosition(
-			m_pVertexBuffer, sizeof(YmTngnPointListVertex), m_nVertex, m_scannerPosition
+			m_pVertexBuffer, sizeof(YmTngnPointListVertex), m_nVertex, m_scannerPosition, firstId
 		);
 	}
 	else {
-		pDraw->DrawPointList(m_pVertexBuffer, sizeof(YmTngnPointListVertex), m_nVertex);
+		pDraw->DrawPointList(m_pVertexBuffer, sizeof(YmTngnPointListVertex), m_nVertex, firstId);
 	}
+}
+
+std::vector<YmTngnPointListVertex> YmTngnDmMemoryPointList::OnFindPickedPoints(YmTngnPickTargetId id)
+{
+	vector<YmTngnPointListVertex> points;
+	if (GetPointPickTargetIdFirst() != YM_TNGN_PICK_TARGET_NULL) {
+		if (GetPointPickTargetIdFirst() <= id && id < GetPointPickTargetIdFirst() + m_dataSource.size()) {
+			points.push_back(m_dataSource[size_t(id - GetPointPickTargetIdFirst())]);
+		}
+	}
+	return points;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -28,8 +28,13 @@ public:
 
 	void SetupXZRectanglePoints(const YmVector3d& basePos, const YmRgba4b& color);
 
+	YmTngnPickTargetId GetPointPickTargetIdFirst() const { return m_pointPickTargetIdFirst; }
+	void SetPointPickTargetIdFirst(YmTngnPickTargetId id) { m_pointPickTargetIdFirst = id; }
+
 protected:
+	virtual bool OnSetPickEnabled(bool bEnable);
 	virtual void OnDraw(YmTngnDraw* pDraw);
+	virtual std::vector<YmTngnPointListVertex> OnFindPickedPoints(YmTngnPickTargetId id);
 
 private:
 	std::vector<YmTngnPointListVertex> CreateXZRectanglePoints(const YmVector3d& basePos, const YmRgba4b& color);
@@ -37,6 +42,7 @@ private:
 private:
 	D3DBufferPtr m_pVertexBuffer;
 	size_t m_nVertex;
+	YmTngnPickTargetId m_pointPickTargetIdFirst = YM_TNGN_PICK_TARGET_NULL;
 	bool m_isUseScannerPoint;
 	YmVector3d m_scannerPosition;
 	std::vector<YmTngnPointListVertex> m_dataSource;

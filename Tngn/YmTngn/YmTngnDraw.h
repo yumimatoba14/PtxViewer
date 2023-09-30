@@ -45,19 +45,27 @@ public:
 	D3DBufferPtr CreateVertexBufferWithSize(UINT bufferByte, const void* aVertex, bool writeByCpu);
 
 public:
-	void DrawPointList(const YmTngnPointListVertex aVertex[], size_t nVertex, YmTngnPickTargetId firstId);
 	void DrawPointList(
-		const D3DBufferPtr& pVertexBuf, size_t vertexSize, size_t nVertex
+		const YmTngnPointListVertex aVertex[], size_t nVertex, YmTngnPickTargetId firstId = YM_TNGN_PICK_TARGET_NULL
+	);
+	void DrawPointList(
+		const D3DBufferPtr& pVertexBuf, size_t vertexSize, size_t nVertex,
+		YmTngnPickTargetId firstId = YM_TNGN_PICK_TARGET_NULL
 	);
 
 	void DrawPointListWithSingleScannerPosition(
-		const YmTngnPointListVertex aVertex[], size_t nVertex, const YmVector3d& scannerPos, YmTngnPickTargetId firstId
+		const YmTngnPointListVertex aVertex[], size_t nVertex, const YmVector3d& scannerPos,
+		YmTngnPickTargetId firstId = YM_TNGN_PICK_TARGET_NULL
 	);
 	void DrawPointListWithSingleScannerPosition(
-		const D3DBufferPtr& pVertexBuf, size_t vertexSize, size_t nVertex, const YmVector3d& scannerPos
+		const D3DBufferPtr& pVertexBuf, size_t vertexSize, size_t nVertex, const YmVector3d& scannerPos,
+		YmTngnPickTargetId firstId = YM_TNGN_PICK_TARGET_NULL
 	);
 
 private:
+	void DrawPointListImpl(
+		const D3DBufferPtr& pVertexBuf, size_t nVertex, YmTngnPickTargetId firstId
+	);
 	YmDx11BufferWithSize PrepareTempVertexBuffer();
 	void DrawPointListWithTempBuffer(const YmTngnPointListVertex aVertex[], size_t nVertex, YmTngnPickTargetId firstId);
 

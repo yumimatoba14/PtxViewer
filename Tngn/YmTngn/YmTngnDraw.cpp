@@ -91,12 +91,11 @@ void YmTngnDraw::DrawPointList(const YmTngnPointListVertex aVertex[], size_t nVe
 }
 
 void YmTngnDraw::DrawPointList(
-	const D3DBufferPtr& pVertexBuf, size_t vertexSize, size_t nVertex
+	const D3DBufferPtr& pVertexBuf, size_t vertexSize, size_t nVertex, YmTngnPickTargetId firstId
 )
 {
 	m_pShaderImpl->PrepareShaderParam();
-	m_pShaderImpl->DrawPointList(pVertexBuf, vertexSize, nVertex);
-	m_nDrawnPoint += nVertex;
+	DrawPointListImpl(pVertexBuf, nVertex, firstId);
 }
 
 void YmTngnDraw::DrawPointListWithSingleScannerPosition(
@@ -108,15 +107,51 @@ void YmTngnDraw::DrawPointListWithSingleScannerPosition(
 }
 
 void YmTngnDraw::DrawPointListWithSingleScannerPosition(
-	const D3DBufferPtr& pVertexBuf, size_t vertexSize, size_t nVertex, const YmVector3d& scannerPos
+	const D3DBufferPtr& pVertexBuf, size_t vertexSize, size_t nVertex, const YmVector3d& scannerPos, YmTngnPickTargetId firstId
 )
 {
 	m_pShaderImpl->PrepareShaderParamToDrawPointListWithSingleScannerPosition(scannerPos);
-	m_pShaderImpl->DrawPointList(pVertexBuf, vertexSize, nVertex);
-	m_nDrawnPoint += nVertex;
+	DrawPointListImpl(pVertexBuf, nVertex, firstId);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+void YmTngnDraw::DrawPointListImpl(
+	const D3DBufferPtr& pVertexBuf, size_t nVertex, YmTngnPickTargetId firstId
+)
+{
+	const bool isPickMode = (firstId != YM_TNGN_PICK_TARGET_NULL);
+
+	if (isPickMode) {
+		YmDx11BufferWithSize pickIdBuffer = m_pShaderImpl->GetTempVertexBuffer(TEMP_VERTEX_BUF_PICK_ID);
+
+		const size_t nNecessaryBufByte = nVertex * sizeof(YmTngnPickTargetId);
+		if (UINT_MAX < nNecessaryBufByte) {
+			YM_THROW_ERROR("nVertex is too large. (Not supported case.)");
+		}
+		if (!pickIdBuffer.pBuffer || pickIdBuffer.nBufferByte < nNecessaryBufByte) {
+			pickIdBuffer.nBufferByte = static_cast<UINT>(nNecessaryBufByte);
+			pickIdBuffer.pBuffer = CreateVertexBufferWithSize(pickIdBuffer.nBufferByte, nullptr, true);
+			m_pShaderImpl->SetTempVertexBuffer(TEMP_VERTEX_BUF_PICK_ID, pickIdBuffer);
+		}
+
+		{
+			YmDx11MappedSubResource mappedMemory = m_pShaderImpl->MapDynamicBuffer(pickIdBuffer.pBuffer);
+			YmTngnPickTargetId* aIdInBuf = mappedMemory.ToArray<YmTngnPickTargetId>(0);
+			for (size_t iVertexInBuf = 0; iVertexInBuf < nVertex; ++iVertexInBuf) {
+				YmTngnPickTargetId pickId = firstId + iVertexInBuf;
+				aIdInBuf[iVertexInBuf] = pickId;
+			}
+		}
+
+		m_pShaderImpl->DrawPickablePointList(pVertexBuf, pickIdBuffer.pBuffer, nVertex);
+	}
+	else {
+		m_pShaderImpl->DrawPointList(pVertexBuf, sizeof(YmTngnPointListVertex), nVertex);
+	}
+
+	m_nDrawnPoint += nVertex;
+}
 
 YmDx11BufferWithSize YmTngnDraw::PrepareTempVertexBuffer()
 {
