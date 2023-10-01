@@ -26,6 +26,9 @@ public:
 	void SetProgressiveViewMode(bool enableProgressiveView, bool isFollowingFrame);
 	bool IsViewContentUpdated() { return m_pImpl->IsViewContentUpdated(); }
 
+	bool IsDrawWithScannerPosition();
+	void SetDrawWithScannerPosition(bool isUse);
+
 	bool IsPickEnabled();
 	void SetPickEnabled(bool isEnabled);
 

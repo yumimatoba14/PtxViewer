@@ -36,6 +36,7 @@ namespace PtxViewer
             this.exitMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.mainView = new Tngn.FormView();
             this.testMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.drawWithScannerPosMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.enablePickMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.viewTimer = new System.Windows.Forms.Timer(this.components);
             this.mainMenuStrip.SuspendLayout();
@@ -95,10 +96,19 @@ namespace PtxViewer
             // testMenu
             // 
             this.testMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.drawWithScannerPosMenu,
             this.enablePickMenu});
             this.testMenu.Name = "testMenu";
             this.testMenu.Size = new System.Drawing.Size(39, 20);
             this.testMenu.Text = "&Test";
+            // 
+            // drawWithScannerPosMenu
+            // 
+            this.drawWithScannerPosMenu.CheckOnClick = true;
+            this.drawWithScannerPosMenu.Name = "drawWithScannerPosMenu";
+            this.drawWithScannerPosMenu.Size = new System.Drawing.Size(196, 22);
+            this.drawWithScannerPosMenu.Text = "Draw with scanner pos.";
+            this.drawWithScannerPosMenu.Click += new System.EventHandler(this.drawWithScannerPosMenu_Click);
             // 
             // enablePickMenu
             // 
@@ -140,6 +150,7 @@ namespace PtxViewer
         private System.Windows.Forms.Timer viewTimer;
         private System.Windows.Forms.ToolStripMenuItem testMenu;
         private System.Windows.Forms.ToolStripMenuItem enablePickMenu;
+        private System.Windows.Forms.ToolStripMenuItem drawWithScannerPosMenu;
     }
 }
 

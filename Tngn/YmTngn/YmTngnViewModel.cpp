@@ -175,6 +175,23 @@ void YmTngnViewModel::SetProgressiveViewMode(bool enableProgressiveView, bool is
 	m_pShaderImpl->SetProgressiveViewMode(enableProgressiveView, isFollowingFrame);
 }
 
+bool YmTngnViewModel::IsDrawWithScannerPosition() const
+{
+	if (m_pContent != m_pDmPtxFiles) {
+		return false;
+	}
+	else {
+		return m_pDmPtxFiles->IsDrawWithScannerPosition();
+	}
+}
+
+void YmTngnViewModel::SetDrawWithScannerPosition(bool isUse)
+{
+	if (m_pContent == m_pDmPtxFiles) {
+		m_pDmPtxFiles->SetDrawWithScannerPosition(isUse);
+	}
+}
+
 void YmTngnViewModel::SetPickEnabled(bool isEnabled)
 {
 	if (!m_isPickEnabled && isEnabled) {

@@ -71,6 +71,16 @@ void ViewModel::SetProgressiveViewMode(bool enableProgressiveView, bool isFollow
 	m_pImpl->SetProgressiveViewMode(enableProgressiveView, isFollowingFrame);
 }
 
+bool ViewModel::IsDrawWithScannerPosition()
+{
+	return m_pImpl->IsDrawWithScannerPosition();
+}
+
+void ViewModel::SetDrawWithScannerPosition(bool isUse)
+{
+	m_pImpl->SetDrawWithScannerPosition(isUse);
+}
+
 bool ViewModel::IsPickEnabled()
 {
 	return m_pImpl->IsPickEnabled();

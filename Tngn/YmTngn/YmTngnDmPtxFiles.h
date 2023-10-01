@@ -20,6 +20,9 @@ public:
 	explicit YmTngnDmPtxFiles(const YmTngnViewConfig& config);
 	virtual ~YmTngnDmPtxFiles();
 
+	bool IsDrawWithScannerPosition() const { return m_isDrawWithScannerPosition; }
+	void SetDrawWithScannerPosition(bool isUse);
+
 	YmTString ReadPtxFile(const YmTString& filePath);
 protected:
 	virtual bool OnSetPickEnabled(bool bEnable);
@@ -30,6 +33,7 @@ private:
 	YmTngnViewConfig m_config;
 	YmTngnDmPointBlockList m_blockListImpl;
 	std::vector<Content> m_contents;
+	bool m_isDrawWithScannerPosition = true;
 };
 
 }

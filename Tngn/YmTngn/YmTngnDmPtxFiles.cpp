@@ -33,6 +33,12 @@ YmTngnDmPtxFiles::~YmTngnDmPtxFiles()
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void YmTngnDmPtxFiles::SetDrawWithScannerPosition(bool isUse)
+{
+	m_isDrawWithScannerPosition = isUse;
+	m_blockListImpl.SetUseScannerPosition(m_isDrawWithScannerPosition);
+}
+
 static int MakeRgb(const int rgb[3])
 {
 	return rgb[0] | (rgb[1] << 8) | (rgb[2] << 16);
@@ -90,15 +96,13 @@ static shared_ptr<YmTngnDmPointBlockList> ReadPtxFileImpl(const YmTngnViewConfig
 
 
 	auto pModel = make_shared<YmTngnDmPointBlockListFile>(move(pOutputBuf));
-	if (isImageReliable) {
-		pModel->SetUseScannerPosition(true);
-	}
 	return pModel;
 }
 
 YmTString YmTngnDmPtxFiles::ReadPtxFile(const YmTString& filePath)
 {
 	auto pModel = ReadPtxFileImpl(m_config, ATL::CT2A(filePath.c_str()));
+	pModel->SetUseScannerPosition(IsDrawWithScannerPosition());
 	Content content = { filePath, true, pModel };
 	m_contents.push_back(content);
 	m_blockListImpl.AddInstances(*pModel);

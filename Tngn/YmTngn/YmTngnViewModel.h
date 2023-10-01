@@ -39,6 +39,9 @@ public:
 
 	void SetSelectedContent(const YmTngnDrawingModelPtr& pContent) { m_pSelectedContent = pContent; m_isNeedDraw = true; }
 
+	bool IsDrawWithScannerPosition() const;
+	void SetDrawWithScannerPosition(bool isUse);
+
 	bool IsPickEnabled() const { return m_isPickEnabled; }
 	void SetPickEnabled(bool isEnabled);
 

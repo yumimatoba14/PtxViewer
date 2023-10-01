@@ -100,6 +100,7 @@ namespace PtxViewer
                             }
                         }
                     }
+                    drawWithScannerPosMenu.Checked = viewModel.IsDrawWithScannerPosition();
                     mainView.Invalidate();
                 }
             }
@@ -194,6 +195,22 @@ namespace PtxViewer
         private void enablePickMenu_Click(object sender, EventArgs e)
         {
             viewModel.SetPickEnabled(enablePickMenu.Checked);
+        }
+
+        private void drawWithScannerPosMenu_Click(object sender, EventArgs e)
+        {
+            if (viewModel != null)
+            {
+                if (drawWithScannerPosMenu.Checked != viewModel.IsDrawWithScannerPosition())
+                {
+                    viewModel.SetDrawWithScannerPosition(drawWithScannerPosMenu.Checked);
+                    if (drawWithScannerPosMenu.Checked != viewModel.IsDrawWithScannerPosition())
+                    {
+                        drawWithScannerPosMenu.Checked = viewModel.IsDrawWithScannerPosition();
+                    }
+                }
+                mainView.Invalidate();
+            }
         }
     }
 }
