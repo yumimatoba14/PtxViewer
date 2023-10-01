@@ -35,6 +35,13 @@ public:
 	void AddPoint(const PointType& point);
 	int64_t GetPointCount() const { return m_nInputPoint; }
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns>NULL if not set.</returns>
+	const YmVector3d* GetScannerPosition() const { return m_pScannerPosition.get(); }
+	void SetScannerPosition(const YmVector3d& pos);
+
 	void BuildPointBlockFile();
 
 private:
@@ -50,6 +57,7 @@ private:
 	std::unique_ptr<YmBinaryFormatter> m_pInputPointFormatter;
 	YmAabBox3d m_inputPointAabb;
 	int64_t m_nInputPoint = 0;
+	std::unique_ptr<YmVector3d> m_pScannerPosition;
 private:
 	int64_t m_targetPointCountPerBlock = 1024 * 1024;
 };

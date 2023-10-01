@@ -15,6 +15,8 @@
 #include <string>
 
 namespace Ymcpp {
+	class YmBinaryFormatter;
+
 	class YmStdFileCloser {
 	public:
 		void operator () (FILE* pFile) noexcept {

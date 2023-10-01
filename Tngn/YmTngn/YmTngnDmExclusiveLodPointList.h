@@ -12,6 +12,12 @@ namespace Ymcpp {
 /// </summary>
 class YmTngnDmExclusiveLodPointList : public YmTngnDrawingModel
 {
+private:
+	enum class ScannerPositionFlags : uint8_t {
+		DEFAULT_VALUE = 0,
+		HAS_SCANNER_POSITION = 0x01,
+		USE_SCANNER_POSITION = 0x02
+	};
 public:
 	using PointType = YmTngnPointListVertex;
 public:
@@ -21,9 +27,11 @@ public:
 	int64_t GetPointCount() const { return m_lodTable.GetPointCount(); }
 
 	void SetScannerPosition(const YmVector3d& scannerPos);
-	void ResetScannerPosition();
-	bool IsUseScannerPosition() const { return m_isUseScannerPosition; }
+	void ResetScannerPosition() { SetScannerPositionFlag(ScannerPositionFlags::HAS_SCANNER_POSITION, false); }
 	YmVector3d GetScannerPosition() const { return m_scannerPosition; }
+
+	bool IsUseScannerPosition() const { return (m_scannerPositionFlags & 0x03) == 0x03; }
+	void SetUseScannerPosition(bool isUse) { SetScannerPositionFlag(ScannerPositionFlags::USE_SCANNER_POSITION, isUse); }
 
 	void SetDrawingPrecision(double length) { m_drawingPrecision = length; }
 	void SetMaxPointCountDrawnPerFrame(int64_t nPoint) { m_maxPointCountDrawnPerFrame = nPoint; }
@@ -42,6 +50,7 @@ protected:
 
 private:
 	void PrepareLodTable();
+	void SetScannerPositionFlag(ScannerPositionFlags bit, bool value);
 
 private:
 	YmMemoryMappedFile& m_imageFile;
@@ -61,7 +70,7 @@ private:
 	int64_t m_drawingVertexEnd = 0;
 	int64_t m_nextVertex = 0;
 	YmVector3d m_scannerPosition;
-	bool m_isUseScannerPosition = false;
+	uint8_t m_scannerPositionFlags = static_cast<uint8_t>(ScannerPositionFlags::DEFAULT_VALUE);
 };
 
 using YmTngnDmExclusiveLodPointListPtr = std::shared_ptr<YmTngnDmExclusiveLodPointList>;

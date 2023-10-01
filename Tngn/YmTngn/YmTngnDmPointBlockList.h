@@ -26,6 +26,8 @@ public:
 
 public:
 	void SetScannerPosition(const YmVector3d& scannerPos);
+	bool IsUseScannerPosition() const;
+	void SetUseScannerPosition(bool isUse);
 
 	int64_t GetMaxDrawnPointCountPerFrame() const { return m_maxDrawnPointCountPerFrame; }
 	void SetMaxDrawnPointCountPerFrame(int64_t numPoint) { m_maxDrawnPointCountPerFrame = numPoint; }

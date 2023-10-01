@@ -22,12 +22,7 @@ YmTngnDmExclusiveLodPointList::~YmTngnDmExclusiveLodPointList()
 void YmTngnDmExclusiveLodPointList::SetScannerPosition(const YmVector3d& scannerPos)
 {
 	m_scannerPosition = scannerPos;
-	m_isUseScannerPosition = true;
-}
-
-void YmTngnDmExclusiveLodPointList::ResetScannerPosition()
-{
-	m_isUseScannerPosition = false;
+	SetScannerPositionFlag(ScannerPositionFlags::HAS_SCANNER_POSITION, true);
 }
 
 bool YmTngnDmExclusiveLodPointList::FindPointByPickTargetId(YmTngnPickTargetId id, PointType* pFoundVertex) const
@@ -111,7 +106,7 @@ void YmTngnDmExclusiveLodPointList::DrawAfterPreparation(YmTngnDraw* pDraw)
 		if (IsPickEnabled() && m_pointPickTargetIdFirst != YM_TNGN_PICK_TARGET_NULL) {
 			firstId = m_pointPickTargetIdFirst + m_nextVertex;
 		}
-		if (m_isUseScannerPosition) {
+		if (IsUseScannerPosition()) {
 			pDraw->DrawPointListWithSingleScannerPosition(pSrc.ToConstArray<PointType>(), nVertex, m_scannerPosition, firstId);
 		}
 		else {
@@ -151,6 +146,16 @@ void YmTngnDmExclusiveLodPointList::PrepareLodTable()
 
 	m_lodTable.ReadFrom(m_imageFile, header.lodTablePos);
 	m_pointByteBegin = m_imageByteBegin + sizeof(HeaderType);
+}
+
+void YmTngnDmExclusiveLodPointList::SetScannerPositionFlag(ScannerPositionFlags bit, bool value)
+{
+	if (value) {
+		m_scannerPositionFlags |= static_cast<uint8_t>(bit);
+	}
+	else {
+		m_scannerPositionFlags &= ~static_cast<uint8_t>(bit);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

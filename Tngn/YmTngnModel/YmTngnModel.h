@@ -47,6 +47,10 @@ public:
 		YmRgba4b rgba;
 	};
 
+
+	static void WriteVector3d(YmBinaryFormatter& output, const YmVector3d& value);
+	static YmVector3d ReadVector3d(YmBinaryFormatter& input);
+
 private:
 	YmTngnModel();
 	virtual ~YmTngnModel();

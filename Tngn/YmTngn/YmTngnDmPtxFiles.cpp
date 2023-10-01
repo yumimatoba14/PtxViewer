@@ -42,7 +42,7 @@ static shared_ptr<YmTngnDmPointBlockList> ReadPtxFileImpl(const YmTngnViewConfig
 {
 	auto pOutputBuf = make_unique<YmWin32FileBuf>();
 	pOutputBuf->OpenTempFile();
-	YmPtxFileParser::FileHeader header;
+	bool isImageReliable = false;
 	{
 		YmTngnPointBlockListBuilder builder(pOutputBuf.get());
 		builder.SetTargetPointCountPerBlock(
@@ -50,11 +50,11 @@ static shared_ptr<YmTngnDmPointBlockList> ReadPtxFileImpl(const YmTngnViewConfig
 		);
 		YmOrtho3dXform<double> localToGlobal;
 		bool isFirstPoint = true;
-		auto onParsePoint = [&](const YmPtxFileParser::FileHeader& header, int64_t col, int64_t row, const YmPtxFileParser::PointData& point) {
+		auto onParsePoint = [&](const YmPtxFileParser::FileHeader& h, int64_t col, int64_t row, const YmPtxFileParser::PointData& point) {
 			if (isFirstPoint) {
 				isFirstPoint = false;
 				localToGlobal = YmOrtho3dXform<double>::MakeFromXy(
-					header.scannerOrg, header.scannerDirX, header.scannerDirY
+					h.scannerOrg, h.scannerDirX, h.scannerDirY
 				);
 			}
 			YmTngnModel::PointType tngnPoint;
@@ -68,25 +68,30 @@ static shared_ptr<YmTngnDmPointBlockList> ReadPtxFileImpl(const YmTngnViewConfig
 		if (0 < config.GetDoubleValue(YmTngnViewConfig::DM_PTX_FILE_RADIUS_UPPER_BOUND)) {
 			parser.SetRadiusUpperBound(config.GetDoubleValue(YmTngnViewConfig::DM_PTX_FILE_RADIUS_UPPER_BOUND));
 		}
-		header = parser.ParseFile(pPtxFilePath, onParsePoint);
+		YmPtxFileParser::FileHeader header = parser.ParseFile(pPtxFilePath, onParsePoint);
+
+		// isImageReliable represents whether this point set would construct a image.
+		const int64_t pixelCountLowerBound = 16;
+		isImageReliable = pixelCountLowerBound < header.numberOfColumn&& pixelCountLowerBound < header.numberOfRow;
+		if (isImageReliable) {
+			double aspectRatio = 5;
+			if (header.numberOfColumn * aspectRatio < header.numberOfRow || header.numberOfRow * aspectRatio < header.numberOfColumn) {
+				isImageReliable = false;
+			}
+		}
+
+		if (isImageReliable) {
+			// Rely on the scanner position when this ptx constructs an image.
+			builder.SetScannerPosition(header.scannerOrg);
+		}
 
 		builder.BuildPointBlockFile();
 	}
 
-	// isImageReliable represents whether this point set would construct a image.
-	const int64_t pixelCountLowerBound = 16;
-	bool isImageReliable = pixelCountLowerBound < header.numberOfColumn && pixelCountLowerBound < header.numberOfRow;
-	if (isImageReliable) {
-		double aspectRatio = 5;
-		if (header.numberOfColumn * aspectRatio < header.numberOfRow || header.numberOfRow * aspectRatio < header.numberOfColumn) {
-			isImageReliable = false;
-		}
-	}
 
 	auto pModel = make_shared<YmTngnDmPointBlockListFile>(move(pOutputBuf));
 	if (isImageReliable) {
-		// Rely on the scanner position when this ptx constructs an image.
-		pModel->SetScannerPosition(header.scannerOrg);
+		pModel->SetUseScannerPosition(true);
 	}
 	return pModel;
 }

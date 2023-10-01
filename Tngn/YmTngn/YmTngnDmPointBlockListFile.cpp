@@ -53,8 +53,14 @@ void YmTngnDmPointBlockListFile::LoadBlockData(std::unique_ptr<YmWin32FileBuf> p
 
 		instance.aabb.Extend(blockHeader.aAabbPoint[0]);
 		instance.aabb.Extend(blockHeader.aAabbPoint[1]);
-		instance.pPointBlock = make_unique<YmTngnDmExclusiveLodPointList>(m_mmFile, blockHeader.firstBytePos);
+		instance.pPointBlock = make_shared<YmTngnDmExclusiveLodPointList>(m_mmFile, blockHeader.firstBytePos);
 		AddInstance(move(instance));
+	}
+
+	int8_t hasScannerPos = input.ReadInt8();
+	YmVector3d scannerPos = YmTngnModel::ReadVector3d(input);
+	if (hasScannerPos) {
+		SetScannerPosition(scannerPos);
 	}
 }
 

@@ -17,6 +17,24 @@ YmTngnModel::~YmTngnModel()
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void YmTngnModel::WriteVector3d(YmBinaryFormatter& output, const YmVector3d& value)
+{
+	output.WriteDouble(value[0]);
+	output.WriteDouble(value[1]);
+	output.WriteDouble(value[2]);
+}
+
+YmVector3d YmTngnModel::ReadVector3d(YmBinaryFormatter& input)
+{
+	YmVector3d value;
+	value[0] = input.ReadDouble();
+	value[1] = input.ReadDouble();
+	value[2] = input.ReadDouble();
+	return value;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void YmTngnModel::FileHeader::WriteTo(std::streambuf* pStreamBuf)
 {
 	YM_IS_TRUE(pStreamBuf != nullptr);

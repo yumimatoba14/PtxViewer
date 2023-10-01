@@ -30,6 +30,11 @@ void YmTngnPointBlockListBuilder::AddPoint(const PointType& point)
 	++m_nInputPoint;
 }
 
+void YmTngnPointBlockListBuilder::SetScannerPosition(const YmVector3d& pos)
+{
+	m_pScannerPosition = make_unique<YmVector3d>(pos);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 /// <summary>
@@ -225,8 +230,9 @@ void YmTngnPointBlockListBuilder::BuildPointBlockFile()
 	// Write temporary data. To be over written, later.
 	int64_t headerBeginPos = m_output.GetCurrentPosition();
 	fileHeader.WriteTo(m_output.GetStreamBuf());
+	const int64_t headerEndPos = m_output.GetCurrentPosition();
 
-	int64_t endOfFilePos = m_output.GetCurrentPosition();
+	int64_t endOfFilePos = headerEndPos;
 
 	using PointBlockHeader = YmTngnModel::PointBlockHeader;
 	vector<YmTngnModel::PointBlockHeader> blockImages;
@@ -251,20 +257,31 @@ void YmTngnPointBlockListBuilder::BuildPointBlockFile()
 	}
 
 	m_output.SetCurrentPosition(endOfFilePos);
+
+	// write list contents
 	int64_t blockHeaderListBeginPos = endOfFilePos;
 	m_output.WriteInt32(static_cast<int32_t>(nBlock));
 	for (size_t iBlock = 0; iBlock < nBlock; ++iBlock) {
 		PointBlockHeader& image = blockImages[iBlock];
 		m_output.WriteBytes(reinterpret_cast<const char*>(&image), sizeof(PointBlockHeader));
 	}
-	int64_t blockHeaderListEndPos = m_output.GetCurrentPosition();
+	if (m_pScannerPosition) {
+		m_output.WriteInt8(1);
+		YmTngnModel::WriteVector3d(m_output, *m_pScannerPosition);
+	}
+	else {
+		m_output.WriteInt8(0);
+		YmTngnModel::WriteVector3d(m_output, YmVector3d::MakeZero());
+	}
+	int64_t listCntentsEndPos = m_output.GetCurrentPosition();
 
 	// update file header.
 	fileHeader.contentPosition = blockHeaderListBeginPos;
 	m_output.SetCurrentPosition(headerBeginPos);
 	fileHeader.WriteTo(m_output.GetStreamBuf());
+	YM_IS_TRUE(m_output.GetCurrentPosition() == headerEndPos);
 
-	m_output.SetCurrentPosition(blockHeaderListEndPos);	// back to the end of the output image.
+	m_output.SetCurrentPosition(listCntentsEndPos);	// back to the end of the output image.
 }
 
 ////////////////////////////////////////////////////////////////////////////////

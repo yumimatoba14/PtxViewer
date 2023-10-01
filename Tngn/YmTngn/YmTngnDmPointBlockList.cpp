@@ -26,6 +26,23 @@ void YmTngnDmPointBlockList::SetScannerPosition(const YmVector3d& scannerPos)
 	}
 }
 
+bool YmTngnDmPointBlockList::IsUseScannerPosition() const
+{
+	for (auto& inst : m_instanceList) {
+		if (inst.pPointBlock->IsUseScannerPosition()) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void YmTngnDmPointBlockList::SetUseScannerPosition(bool isUse)
+{
+	for (auto& inst : m_instanceList) {
+		inst.pPointBlock->SetUseScannerPosition(isUse);
+	}
+}
+
 void YmTngnDmPointBlockList::AddInstance(InstanceData instance)
 {
 	m_instanceList.push_back(move(instance));
