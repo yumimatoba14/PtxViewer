@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "YmTngnDmPointBlockListFile.h"
+#include <sstream>
 
 using namespace std;
 using namespace Ymcpp;
@@ -17,6 +18,10 @@ YmTngnDmPointBlockListFile::~YmTngnDmPointBlockListFile()
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/// <summary>
+/// Read a file image written by YmTngnPointBlockListBuilder.
+/// </summary>
+/// <param name="pBaseFile"></param>
 void YmTngnDmPointBlockListFile::LoadBlockData(std::unique_ptr<YmWin32FileBuf> pBaseFile)
 {
 	YM_IS_TRUE(pBaseFile);
@@ -27,16 +32,24 @@ void YmTngnDmPointBlockListFile::LoadBlockData(std::unique_ptr<YmWin32FileBuf> p
 	m_pBaseFile->pubseekpos(0);
 	ClearInstance();
 
-	YmTngnModel::FileHeader fileHeader;
-	fileHeader.ReadFrom(m_pBaseFile.get());
-	if (YmTngnModel::CURRENT_FILE_VERSION < fileHeader.version) {
-		YM_THROW_ERROR("This file is newer than this module.");
+	YmTngnModel::SchemaHeader schemaHeader;
+	schemaHeader.ReadFrom(m_pBaseFile.get());
+	if (schemaHeader.fileHeaderText != YmTngnModel::HEAD_TEXT_POINT_BLOCK_LIST) {
+		YM_THROW_ERROR("This file is not point-block-list file.");
 	}
 
 	YmBinaryFormatter input(m_pBaseFile.get());
-	input.SetFormatFlags(fileHeader.formatterBitFlags);
+	input.SetFormatFlags(schemaHeader.formatterBitFlags);
 
-	input.SetCurrentPosition(fileHeader.contentPosition);
+	YmTngnModel::DocHeader docHeader;
+	docHeader.ReadFrom(input);
+	if (YmTngnModel::CURRENT_FILE_VERSION < docHeader.readableVersion) {
+		ostringstream oss;
+		oss << "This module cannot read this file.(readableVersion = " << docHeader.readableVersion << ")";
+		YM_THROW_ERROR(oss.str().c_str());
+	}
+
+	input.SetCurrentPosition(docHeader.contentPosition);
 	size_t nBlock = static_cast<size_t>(input.ReadInt32());
 	ReserveInstanceList(nBlock);
 	for (size_t iBlock = 0; iBlock < nBlock; ++iBlock) {

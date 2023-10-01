@@ -14,16 +14,30 @@ public:
 		FILE_HEADER = 0x01,
 	};
 
-	static constexpr int32_t CURRENT_FILE_VERSION = 0;
+	// CURRENT_FILE_VERSION usually incremnts by 10.
+	static constexpr int32_t CURRENT_FILE_VERSION = 10;
 
-	struct FileHeader {
+#if defined(_M_IX86) || defined(_M_X64)
+	static constexpr char* HEAD_TEXT_POINT_BLOCK_LIST = "PointBlockList.LE";	// file type for little endian platform
+#else
+	//static constexpr char* HEAD_TEXT_POINT_BLOCK_LIST = "PointBlockList.Unknown";
+#endif
+
+	struct SchemaHeader {
 		int32_t version;
 		uint32_t formatterBitFlags;
 		std::string fileHeaderText;
-		int64_t contentPosition;
 
 		void WriteTo(std::streambuf* pStreamBuf);
 		void ReadFrom(std::streambuf* pStreamBuf);
+	};
+
+	struct DocHeader {
+		int64_t contentPosition;
+		int32_t readableVersion;	//< If the module is older than this value, this file cannot be read.
+
+		void WriteTo(YmBinaryFormatter& formatter);
+		void ReadFrom(YmBinaryFormatter& formatter);
 	};
 
 	struct PointBlockHeader {

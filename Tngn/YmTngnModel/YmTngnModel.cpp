@@ -35,7 +35,7 @@ YmVector3d YmTngnModel::ReadVector3d(YmBinaryFormatter& input)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void YmTngnModel::FileHeader::WriteTo(std::streambuf* pStreamBuf)
+void YmTngnModel::SchemaHeader::WriteTo(std::streambuf* pStreamBuf)
 {
 	YM_IS_TRUE(pStreamBuf != nullptr);
 	YmBinaryFormatter out(pStreamBuf);
@@ -44,10 +44,9 @@ void YmTngnModel::FileHeader::WriteTo(std::streambuf* pStreamBuf)
 	out.WriteInt32(this->version);
 	out.WriteInt32(this->formatterBitFlags);
 	out.WriteString(this->fileHeaderText);
-	out.WriteInt64(this->contentPosition);
 }
 
-void YmTngnModel::FileHeader::ReadFrom(std::streambuf* pStreamBuf)
+void YmTngnModel::SchemaHeader::ReadFrom(std::streambuf* pStreamBuf)
 {
 	YM_IS_TRUE(pStreamBuf != nullptr);
 	YmBinaryFormatter input(pStreamBuf);
@@ -56,7 +55,24 @@ void YmTngnModel::FileHeader::ReadFrom(std::streambuf* pStreamBuf)
 	this->version = input.ReadInt32();
 	this->formatterBitFlags = input.ReadInt32();
 	this->fileHeaderText = input.ReadString();
-	this->contentPosition = input.ReadInt64();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+constexpr uint8_t currentHeaderSize = 12;
+
+void YmTngnModel::DocHeader::WriteTo(YmBinaryFormatter& formatter)
+{
+	YmBinaryFormatter::AutoSkipConstSizeBytes<uint8_t>::WriteWrittenSize(formatter, currentHeaderSize);
+	formatter.WriteInt64(this->contentPosition);
+	formatter.WriteInt32(this->readableVersion);
+}
+
+void YmTngnModel::DocHeader::ReadFrom(YmBinaryFormatter& formatter)
+{
+	YmBinaryFormatter::AutoSkipConstSizeBytes<uint8_t> autoSkip(formatter, currentHeaderSize);
+	this->contentPosition = formatter.ReadInt64();
+	this->readableVersion = formatter.ReadInt32();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

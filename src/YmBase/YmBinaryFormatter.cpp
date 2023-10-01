@@ -84,8 +84,22 @@ void YmBinaryFormatter::WriteBytes(const char* aByte, size_t nByte)
 void YmBinaryFormatter::ReadBytes(char* aByte, size_t nByte)
 {
 	YM_IS_TRUE(m_pStreamBuf);
+	YM_ASSERT(aByte != nullptr);
 	streamsize nRead = m_pStreamBuf->sgetn(aByte, nByte);
 	YM_IS_TRUE(nRead == nByte);
+}
+
+void YmBinaryFormatter::ReadBytes(size_t nByte)
+{
+	YM_IS_TRUE(m_pStreamBuf);
+	size_t nRemainingByte = nByte;
+	while (0 < nRemainingByte) {
+		char aBufferByte[1024];
+		size_t nBufferByte = min(nRemainingByte, sizeof(aBufferByte));
+		streamsize nRead = m_pStreamBuf->sgetn(aBufferByte, nBufferByte);
+		YM_IS_TRUE(nRead == nBufferByte);
+		nRemainingByte -= static_cast<size_t>(nRead);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

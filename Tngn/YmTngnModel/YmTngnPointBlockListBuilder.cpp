@@ -9,7 +9,8 @@ using namespace Ymcpp;
 ////////////////////////////////////////////////////////////////////////////////
 
 YmTngnPointBlockListBuilder::YmTngnPointBlockListBuilder(YmWin32FileBuf* pOutputStreamBuf)
-	: m_pOutputFile(pOutputStreamBuf), m_output(pOutputStreamBuf)
+	: m_pOutputFile(pOutputStreamBuf),
+	m_output(YmBinaryFormatter::CreateForMemoryImage(pOutputStreamBuf))
 {
 	YM_IS_TRUE(pOutputStreamBuf != nullptr);
 	m_inputPointFile.OpenTempFile();
@@ -204,13 +205,43 @@ static double DecideLodBaseLatticeLength(const YmAabBox3d& blockAabb, int64_t nu
 	return baseLength;
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <details>
+/// Abstract of file format (version = 10 or later)
+///
+/// --------------------------------
+/// YmTngnModel::SchemaHeader (Native endian)
+/// --------------------------------
+/// YmTngnModel::DocHeader
+/// --------------------------------
+/// ELodPointList[0] (Native endian)
+/// --------------------------------
+/// ELodPointList[1]
+/// --------------------------------
+/// ...
+/// --------------------------------
+/// ELodPointList[nBlock-1]
+/// --------------------------------
+/// nBlock : int32_t
+/// --------------------------------
+/// YmTngnModel::PointBlockHeader[0] (Native endian)
+/// --------------------------------
+/// YmTngnModel::PointBlockHeader[1]
+/// --------------------------------
+/// ...
+/// --------------------------------
+/// YmTngnModel::PointBlockHeader[nBlock-1]
+/// --------------------------------
+/// hasScannerPoint : int8_t
+/// scannerPosition : double[3]
+/// --------------------------------
+/// </details>
 void YmTngnPointBlockListBuilder::BuildPointBlockFile()
 {
 	YM_IS_TRUE(m_pInputPointFormatter);
 	m_pInputPointFormatter->Flush();
-
-	// TODO: maintain output format flag.
-	//m_output.SetFormatFlags(0);
 
 	int64_t targetPointCount = GetTargetPointCountPerBlock();
 
@@ -224,12 +255,22 @@ void YmTngnPointBlockListBuilder::BuildPointBlockFile()
 	size_t nBlock = dividedBlocks.size();
 	YM_IS_TRUE(nBlock < (size_t(1) << 31));
 
-	YmTngnModel::FileHeader fileHeader = {
-		YmTngnModel::CURRENT_FILE_VERSION, m_output.GetFormatFlags(), "PointBlockList", 0
+	{
+		YmTngnModel::SchemaHeader schemaHeader = {
+			YmTngnModel::CURRENT_FILE_VERSION, m_output.GetFormatFlags(), YmTngnModel::HEAD_TEXT_POINT_BLOCK_LIST
+		};
+		// Write temporary data. To be over written, later.
+		schemaHeader.WriteTo(m_output.GetStreamBuf());
+	}
+
+	// Current verion doesn't have implementation to skip unknown data.
+	// So readableVersion shall be the same as the current version.
+	const int32_t readableVersion = YmTngnModel::CURRENT_FILE_VERSION;
+	YmTngnModel::DocHeader docHeader = {
+		0, readableVersion
 	};
-	// Write temporary data. To be over written, later.
-	int64_t headerBeginPos = m_output.GetCurrentPosition();
-	fileHeader.WriteTo(m_output.GetStreamBuf());
+	int64_t docHeaderBeginPos = m_output.GetCurrentPosition();
+	docHeader.WriteTo(m_output);
 	const int64_t headerEndPos = m_output.GetCurrentPosition();
 
 	int64_t endOfFilePos = headerEndPos;
@@ -276,9 +317,9 @@ void YmTngnPointBlockListBuilder::BuildPointBlockFile()
 	int64_t listCntentsEndPos = m_output.GetCurrentPosition();
 
 	// update file header.
-	fileHeader.contentPosition = blockHeaderListBeginPos;
-	m_output.SetCurrentPosition(headerBeginPos);
-	fileHeader.WriteTo(m_output.GetStreamBuf());
+	docHeader.contentPosition = blockHeaderListBeginPos;
+	m_output.SetCurrentPosition(docHeaderBeginPos);
+	docHeader.WriteTo(m_output);
 	YM_IS_TRUE(m_output.GetCurrentPosition() == headerEndPos);
 
 	m_output.SetCurrentPosition(listCntentsEndPos);	// back to the end of the output image.

@@ -13,6 +13,37 @@ public:
 		BIG_ENDIAN = 0x01,
 		ALL_FORMAT_FLAGS = (uint32_t)-1
 	};
+
+	// Utility class to skip some bytes.
+	// This class is used in case when written/read size are known in advance.
+	template<typename SizeType>
+	class AutoSkipConstSizeBytes {
+	public:
+		explicit AutoSkipConstSizeBytes(YmBinaryFormatter& formatter, SizeType nReadByte)
+			: m_input(formatter), m_nReadByte(nReadByte)
+		{
+			ReadSize(&m_nWrittenByte);
+			YM_IS_TRUE(m_nReadByte <= m_nWrittenByte);
+		}
+
+		~AutoSkipConstSizeBytes()
+		{
+			if (m_nReadByte < m_nWrittenByte) {
+				m_input.ReadBytes(m_nWrittenByte - m_nReadByte);
+			}
+		}
+
+		static void WriteWrittenSize(YmBinaryFormatter& output, SizeType nByte) { WriteSize(output, nByte); }
+	private:
+		// nByte is not const reference in order to avoid unexpected type conversion.
+		static void WriteSize(YmBinaryFormatter& output, uint8_t& nByte) { output.WriteUInt8(nByte); }
+
+		void ReadSize(uint8_t* pValue) { *pValue = m_input.ReadUInt8(); }
+	private:
+		YmBinaryFormatter& m_input;
+		SizeType m_nReadByte;
+		SizeType m_nWrittenByte = 0;
+	};
 protected:
 	YmBinaryFormatter() {}
 public:
@@ -43,18 +74,31 @@ public:
 
 	void WriteBytes(const char* aByte, size_t nByte);
 	void ReadBytes(char* aByte, size_t nByte);
+	void ReadBytes(size_t nByte);
 public:
 	void WriteInt8(int8_t value) { WriteValue<int8_t>(1, value); }
 	int8_t ReadInt8() { return ReadValue<int8_t>(1); }
 
+	void WriteUInt8(uint8_t value) { WriteValue<int8_t>(1, (int8_t)value); }
+	uint8_t ReadUInt8() { return (uint8_t)ReadValue<int8_t>(1); }
+
 	void WriteInt16(int16_t value) { WriteValue<int16_t>(2, value); }
 	int16_t ReadInt16() { return ReadValue<int16_t>(2); }
+
+	void WriteUInt16(uint16_t value) { WriteValue<int16_t>(2, (int16_t)value); }
+	uint16_t ReadUInt16() { return (uint16_t)ReadValue<int16_t>(2); }
 
 	void WriteInt32(int32_t value) { WriteValue<int32_t>(4, value); }
 	int32_t ReadInt32() { return ReadValue<int32_t>(4); }
 
+	void WriteUInt32(uint32_t value) { WriteValue<int32_t>(4, (int32_t)value); }
+	uint32_t ReadUInt32() { return (uint32_t)ReadValue<int32_t>(4); }
+
 	void WriteInt64(int64_t value) { WriteValue<int64_t>(8, value); }
 	int64_t ReadInt64() { return ReadValue<int64_t>(8); }
+
+	void WriteUInt64(uint64_t value) { WriteValue<int64_t>(8, (int64_t)value); }
+	uint64_t ReadUInt64() { return (uint64_t)ReadValue<int64_t>(8); }
 
 	void WriteFloat(float value) { WriteValue<float>(4, value); }
 	float ReadFloat() { return ReadValue<float>(4); }
