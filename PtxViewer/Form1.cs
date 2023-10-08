@@ -212,5 +212,33 @@ namespace PtxViewer
                 mainView.Invalidate();
             }
         }
+
+        private void saveViewImageMenu_Click(object sender, EventArgs e)
+        {
+            if (viewModel == null)
+            {
+                return;
+            }
+            using (SaveFileDialog fileDialog = new SaveFileDialog())
+            {
+                fileDialog.Filter = "PNG File(*.png)|*.png|"
+                    + "JPEG file(*.jpg, *.jpeg)|*.jpg;*.jpeg|"
+                    + "Bitmap file(*.bmp)|*.bmp|"
+                    + "All file(*.*)|*.*";
+                if (fileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        viewModel.SaveViewToFile(fileDialog.FileName);
+                    }
+                    catch (Exception)
+                    {
+                        MessageBox.Show(
+                            "Failed to save image file : " + fileDialog.FileName,
+                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
     }
 }

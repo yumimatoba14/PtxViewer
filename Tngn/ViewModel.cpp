@@ -6,6 +6,7 @@
 #include "YmTngn/YmTngnViewConfig.h"
 #include "YmBase/YmFilePath.h"
 #include <msclr/marshal_cppstd.h>
+#include <wincodec.h>
 
 using namespace System;
 using namespace Tngn;
@@ -89,6 +90,31 @@ bool ViewModel::IsPickEnabled()
 void ViewModel::SetPickEnabled(bool isEnabled)
 {
 	m_pImpl->SetPickEnabled(isEnabled);
+}
+
+void ViewModel::SaveViewToFile(System::String^ imageFilePath)
+{
+	YmFilePath filePath = marshal_as<YmTString>(imageFilePath);
+	YmTString fileExt = filePath.GetExtension();
+
+	GUID fileType = GUID_ContainerFormatPng;
+	if (_tcsicmp(fileExt.c_str(), _T("png")) == 0) {
+		fileType = GUID_ContainerFormatPng;
+	}
+	else if (_tcsicmp(fileExt.c_str(), _T("jpeg")) == 0) {
+		fileType = GUID_ContainerFormatJpeg;
+	}
+	else if (_tcsicmp(fileExt.c_str(), _T("jpg")) == 0) {
+		fileType = GUID_ContainerFormatJpeg;
+	}
+	else if (_tcsicmp(fileExt.c_str(), _T("bmp")) == 0) {
+		fileType = GUID_ContainerFormatBmp;
+	}
+
+	bool isOk = m_pImpl->SaveViewToFile(fileType, filePath.ToTString().c_str());
+	if (!isOk) {
+		throw gcnew System::InvalidOperationException(marshal_as<System::String^>("Failed to save image."));
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

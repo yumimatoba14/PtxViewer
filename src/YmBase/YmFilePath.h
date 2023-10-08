@@ -22,6 +22,8 @@ public:
 	std::string ToString() const { return std::string(ATL::CT2A(m_content.c_str())); }
 	YmTString ToTString() const { return m_content; }
 	YmFilePath GetParentDirectory() const;
+	YmTString GetFileName() const;
+	YmTString GetExtension() const;
 
 	// Function to edit file path.
 public:

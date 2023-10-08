@@ -6,6 +6,7 @@
 #include "YmTngnDmPtxFiles.h"
 #include "YmTngnShaderImpl.h"
 #include "YmTngnViewConfig.h"
+#include "ScreenGrab.h"
 
 using namespace std;
 using namespace Ymcpp;
@@ -322,6 +323,33 @@ std::vector<YmTngnPointListVertex> YmTngnViewModel::TryToPickPoint(const YmVecto
 		return vector<YmTngnPointListVertex>();
 	}
 	return m_pContent->FindPickedPoints(pickedId);
+}
+
+/// <summary>
+/// Save view image to file.
+/// </summary>
+/// <param name="targetFormat">GUID_ContainerFormatPng for example.</param>
+/// <param name="targetFilePath"></param>
+/// <returns>false if failed.</returns>
+/// This function may throw an exception, also.
+bool YmTngnViewModel::SaveViewToFile(REFGUID targetFormat, LPCTSTR targetFilePath)
+{
+	using namespace ATL;
+	YM_IS_TRUE(targetFilePath != nullptr);
+	YM_IS_TRUE(m_pRenderTargetViewForNormalRendering);
+
+	D3DResourcePtr pResource;
+	m_pRenderTargetViewForNormalRendering->GetResource(&pResource);
+	YM_IS_TRUE(pResource);
+
+	HRESULT hr = DirectX::SaveWICTextureToFile(
+		m_pDc.Get(), pResource.Get(), targetFormat, CT2W(targetFilePath)
+	);
+	if (FAILED(hr)) {
+		YM_IGNORE_ERROR("DirectX::SaveWICTextureToFile");
+		return false;
+	}
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

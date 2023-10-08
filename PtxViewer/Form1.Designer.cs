@@ -39,6 +39,7 @@ namespace PtxViewer
             this.drawWithScannerPosMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.enablePickMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.viewTimer = new System.Windows.Forms.Timer(this.components);
+            this.saveViewImageMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -97,7 +98,8 @@ namespace PtxViewer
             // 
             this.testMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.drawWithScannerPosMenu,
-            this.enablePickMenu});
+            this.enablePickMenu,
+            this.saveViewImageMenu});
             this.testMenu.Name = "testMenu";
             this.testMenu.Size = new System.Drawing.Size(39, 20);
             this.testMenu.Text = "&Test";
@@ -114,7 +116,7 @@ namespace PtxViewer
             // 
             this.enablePickMenu.CheckOnClick = true;
             this.enablePickMenu.Name = "enablePickMenu";
-            this.enablePickMenu.Size = new System.Drawing.Size(180, 22);
+            this.enablePickMenu.Size = new System.Drawing.Size(196, 22);
             this.enablePickMenu.Text = "Enable &pick";
             this.enablePickMenu.Click += new System.EventHandler(this.enablePickMenu_Click);
             // 
@@ -122,6 +124,14 @@ namespace PtxViewer
             // 
             this.viewTimer.Interval = 1;
             this.viewTimer.Tick += new System.EventHandler(this.viewTimer_Tick);
+            // 
+            // saveViewImageMenu
+            // 
+            this.saveViewImageMenu.Name = "saveViewImageMenu";
+            this.saveViewImageMenu.Size = new System.Drawing.Size(196, 22);
+            this.saveViewImageMenu.Text = "Save view &image...";
+            this.saveViewImageMenu.ToolTipText = "Save view to image file.";
+            this.saveViewImageMenu.Click += new System.EventHandler(this.saveViewImageMenu_Click);
             // 
             // Form1
             // 
@@ -151,6 +161,7 @@ namespace PtxViewer
         private System.Windows.Forms.ToolStripMenuItem testMenu;
         private System.Windows.Forms.ToolStripMenuItem enablePickMenu;
         private System.Windows.Forms.ToolStripMenuItem drawWithScannerPosMenu;
+        private System.Windows.Forms.ToolStripMenuItem saveViewImageMenu;
     }
 }
 

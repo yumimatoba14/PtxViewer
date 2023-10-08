@@ -38,6 +38,28 @@ YmFilePath YmFilePath::GetParentDirectory() const
 	return YmFilePath();
 }
 
+YmTString YmFilePath::GetFileName() const
+{
+	if (m_content.empty()) {
+		return YmTString();
+	}
+	LPCTSTR pLastSep = _tcsrchr(m_content.c_str(), _T('\\'));
+	if (pLastSep != nullptr) {
+		return YmTString(pLastSep + 1);
+	}
+	return m_content;
+}
+
+YmTString YmFilePath::GetExtension() const
+{
+	YmTString fileName = GetFileName();
+	LPCTSTR pLastDot = _tcsrchr(fileName.c_str(), _T('.'));
+	if (pLastDot == nullptr) {
+		return YmTString();
+	}
+	return pLastDot + 1;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 YmFilePath& YmFilePath::RemoveTailSeparator()

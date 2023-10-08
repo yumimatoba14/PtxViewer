@@ -46,6 +46,9 @@ public:
 	void SetPickEnabled(bool isEnabled);
 
 	std::vector<YmTngnPointListVertex> TryToPickPoint(const YmVector2i& mousePos);
+
+	bool SaveViewToFile(REFGUID targetFormat, LPCTSTR targetFilePath);
+
 public:
 	std::shared_ptr<YmTngnDmPtxFiles> PreparePtxFileContent();
 	std::shared_ptr<YmTngnDmMemoryPointList> PrepareSelectedPointList();

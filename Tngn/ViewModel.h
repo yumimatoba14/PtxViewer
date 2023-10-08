@@ -32,6 +32,8 @@ public:
 	bool IsPickEnabled();
 	void SetPickEnabled(bool isEnabled);
 
+	void SaveViewToFile(System::String^ imageFilePath);
+
 public:
 	void OnSize(System::Drawing::Size viewSize);
 	void Draw();
