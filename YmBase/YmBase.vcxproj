@@ -192,9 +192,6 @@
     </ClCompile>
     <ClCompile Include="YmBase.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\CodingRule.md" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

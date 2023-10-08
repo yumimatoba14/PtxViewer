@@ -114,7 +114,4 @@
       <Filter>public</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\CodingRule.md" />
-  </ItemGroup>
 </Project>
