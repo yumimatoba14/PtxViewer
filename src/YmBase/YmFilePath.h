@@ -22,8 +22,8 @@ public:
 	std::string ToString() const { return std::string(ATL::CT2A(m_content.c_str())); }
 	YmTString ToTString() const { return m_content; }
 	YmFilePath GetParentDirectory() const;
-	YmTString GetFileName() const;
-	YmTString GetExtension() const;
+	YmFilePath GetFileName() const;
+	std::string GetExtension() const;
 
 	// Function to edit file path.
 public:
@@ -36,9 +36,12 @@ public:
 	YmFilePath& AppendFileName(const wchar_t* pFileName) { return AppendFileNameImpl(ATL::CW2T(pFileName)); }
 	YmFilePath& AppendFileName(const YmTString& fileName) { return AppendFileNameImpl(fileName.c_str()); }
 
+	YmFilePath& ReplaceExtension(const char* pFileName) { return ReplaceExtensionImpl(ATL::CA2T(pFileName)); }
+	YmFilePath& ReplaceExtension(const wchar_t* pFileName) { return ReplaceExtensionImpl(ATL::CW2T(pFileName)); }
 private:
 	void SetContent(LPCTSTR pFileName);
 	YmFilePath& AppendFileNameImpl(LPCTSTR pFileName);
+	YmFilePath& ReplaceExtensionImpl(LPCTSTR pNewExt);
 private:
 	YmTString m_content;
 };

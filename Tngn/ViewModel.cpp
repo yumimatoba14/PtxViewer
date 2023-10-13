@@ -95,19 +95,19 @@ void ViewModel::SetPickEnabled(bool isEnabled)
 void ViewModel::SaveViewToFile(System::String^ imageFilePath)
 {
 	YmFilePath filePath = marshal_as<YmTString>(imageFilePath);
-	YmTString fileExt = filePath.GetExtension();
+	std::string fileExt = filePath.GetExtension();
 
 	GUID fileType = GUID_ContainerFormatPng;
-	if (_tcsicmp(fileExt.c_str(), _T("png")) == 0) {
+	if (_stricmp(fileExt.c_str(), "png") == 0) {
 		fileType = GUID_ContainerFormatPng;
 	}
-	else if (_tcsicmp(fileExt.c_str(), _T("jpeg")) == 0) {
+	else if (_stricmp(fileExt.c_str(), "jpeg") == 0) {
 		fileType = GUID_ContainerFormatJpeg;
 	}
-	else if (_tcsicmp(fileExt.c_str(), _T("jpg")) == 0) {
+	else if (_stricmp(fileExt.c_str(), "jpg") == 0) {
 		fileType = GUID_ContainerFormatJpeg;
 	}
-	else if (_tcsicmp(fileExt.c_str(), _T("bmp")) == 0) {
+	else if (_stricmp(fileExt.c_str(), "bmp") == 0) {
 		fileType = GUID_ContainerFormatBmp;
 	}
 
