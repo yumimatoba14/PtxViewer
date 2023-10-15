@@ -1,6 +1,7 @@
 #pragma once
 
 #include "YmWin32.h"
+#include "YmBase.h"
 
 namespace Ymcpp {
 

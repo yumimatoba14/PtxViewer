@@ -1,5 +1,6 @@
 #pragma once
 
+#include "YmTngnModelFwd.h"
 #include "YmBase/YmVector.h"
 #include <functional>
 

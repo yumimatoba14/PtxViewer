@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "YmTngnDmPointBlockListFile.h"
+#include "YmBase/YmBinaryFormatter.h"
 #include <sstream>
 
 using namespace std;

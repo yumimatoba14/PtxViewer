@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "YmBase", "YmBase\YmBase.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestPtxCreator", "TestPtxCreator\TestPtxCreator.vcxproj", "{79B6A410-914F-4FD3-BD3A-DE9734C499FD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "YmTngnModel", "YmTngnModel\YmTngnModel.vcxproj", "{CF5232EC-23D6-468A-80DB-2CD0714A23AC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -51,6 +53,14 @@ Global
 		{79B6A410-914F-4FD3-BD3A-DE9734C499FD}.Release|x64.Build.0 = Release|x64
 		{79B6A410-914F-4FD3-BD3A-DE9734C499FD}.Release|x86.ActiveCfg = Release|Win32
 		{79B6A410-914F-4FD3-BD3A-DE9734C499FD}.Release|x86.Build.0 = Release|Win32
+		{CF5232EC-23D6-468A-80DB-2CD0714A23AC}.Debug|x64.ActiveCfg = Debug|x64
+		{CF5232EC-23D6-468A-80DB-2CD0714A23AC}.Debug|x64.Build.0 = Debug|x64
+		{CF5232EC-23D6-468A-80DB-2CD0714A23AC}.Debug|x86.ActiveCfg = Debug|Win32
+		{CF5232EC-23D6-468A-80DB-2CD0714A23AC}.Debug|x86.Build.0 = Debug|Win32
+		{CF5232EC-23D6-468A-80DB-2CD0714A23AC}.Release|x64.ActiveCfg = Release|x64
+		{CF5232EC-23D6-468A-80DB-2CD0714A23AC}.Release|x64.Build.0 = Release|x64
+		{CF5232EC-23D6-468A-80DB-2CD0714A23AC}.Release|x86.ActiveCfg = Release|Win32
+		{CF5232EC-23D6-468A-80DB-2CD0714A23AC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

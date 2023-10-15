@@ -6,11 +6,12 @@
 
 #ifndef PCH_H
 #define PCH_H
-#pragma warning(disable: 4561)
+
+#define _CRT_SECURE_NO_WARNINGS
 
 // プリコンパイルするヘッダーをここに追加します
-#include <Windows.h>
-#include "YmBase/YmBase.h"
-#include "YmTngn/YmTngnFwd.h"
+#include "framework.h"
+#include "YmTngnModel/YmTngnModel.h"
+#include "YmBase/YmBinaryFormatter.h"
 
 #endif //PCH_H

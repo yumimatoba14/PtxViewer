@@ -28,7 +28,7 @@ public:
 	}
 
 	template<typename C>
-	explicit YmVectorN(const C aCoord[DIM])
+	explicit YmVectorN(C aCoord[DIM])
 	{
 		for (int i = 0; i < DIM; ++i) {
 			m_aCoord[i] = aCoord[i];

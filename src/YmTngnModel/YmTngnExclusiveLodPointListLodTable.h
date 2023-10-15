@@ -1,7 +1,6 @@
 #pragma once
 
 #include "YmTngnModel.h"
-#include "YmBase/YmBinaryFormatter.h"
 #include "YmBase/YmMemoryMappedFile.h"
 #include <map>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "YmBase/YmBaseFwd.h"
+#include "YmTngnModelFwd.h"
 
 namespace Ymcpp {
 

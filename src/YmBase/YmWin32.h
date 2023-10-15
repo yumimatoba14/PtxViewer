@@ -8,6 +8,7 @@
 // To use CA2T(), the following 2 header files are needed.
 #include <atlconv.h>
 #include <atlexcept.h>
+#include <atlchecked.h>	// ATL::CW2T() requires ATL::Checked::memcpy_s().
 
 namespace Ymcpp {
 

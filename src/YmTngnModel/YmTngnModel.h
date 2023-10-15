@@ -1,6 +1,6 @@
 #pragma once
 
-#include "YmBase/YmBaseFwd.h"
+#include "YmTngnModelFwd.h"
 #include "YmBase/YmVector.h"
 #include "YmTngnModel/YmRgba.h"
 #include <map>
@@ -18,7 +18,7 @@ public:
 	static constexpr int32_t CURRENT_FILE_VERSION = 10;
 
 #if defined(_M_IX86) || defined(_M_X64)
-	static constexpr char* HEAD_TEXT_POINT_BLOCK_LIST = "PointBlockList.LE";	// file type for little endian platform
+	static constexpr char HEAD_TEXT_POINT_BLOCK_LIST[] = "PointBlockList.LE";	// file type for little endian platform
 #else
 	//static constexpr char* HEAD_TEXT_POINT_BLOCK_LIST = "PointBlockList.Unknown";
 #endif

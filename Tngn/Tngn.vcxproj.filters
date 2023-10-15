@@ -22,9 +22,6 @@
     <Filter Include="Cli">
       <UniqueIdentifier>{5605e3ad-a391-4daf-a80e-4b9924b85913}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Ymcpp\YmTngnModel">
-      <UniqueIdentifier>{3ef2fa48-e0b5-4a41-90f0-a1a12eb5901e}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tngn.h">
@@ -75,26 +72,8 @@
     <ClInclude Include="FormView.h">
       <Filter>Cli</Filter>
     </ClInclude>
-    <ClInclude Include="YmTngn\YmPtxFileParser.h">
-      <Filter>Ymcpp\YmTngn</Filter>
-    </ClInclude>
     <ClInclude Include="YmTngn\YmTngnDmPtxFiles.h">
       <Filter>Ymcpp\YmTngn</Filter>
-    </ClInclude>
-    <ClInclude Include="YmTngnModel\YmTngnModel.h">
-      <Filter>Ymcpp\YmTngnModel</Filter>
-    </ClInclude>
-    <ClInclude Include="YmTngnModel\YmRgba.h">
-      <Filter>Ymcpp\YmTngnModel</Filter>
-    </ClInclude>
-    <ClInclude Include="YmTngnModel\YmTngnPointBlockListBuilder.h">
-      <Filter>Ymcpp\YmTngnModel</Filter>
-    </ClInclude>
-    <ClInclude Include="YmTngnModel\YmTngnExclusiveLodPointListCreator.h">
-      <Filter>Ymcpp\YmTngnModel</Filter>
-    </ClInclude>
-    <ClInclude Include="YmTngnModel\YmTngnExclusiveLodPointListLodTable.h">
-      <Filter>Ymcpp\YmTngnModel</Filter>
     </ClInclude>
     <ClInclude Include="YmTngn\YmTngnDmExclusiveLodPointList.h">
       <Filter>Ymcpp\YmTngn</Filter>
@@ -152,26 +131,8 @@
     <ClCompile Include="FormView.cpp">
       <Filter>Cli</Filter>
     </ClCompile>
-    <ClCompile Include="YmTngn\YmPtxFileParser.cpp">
-      <Filter>Ymcpp\YmTngn</Filter>
-    </ClCompile>
     <ClCompile Include="YmTngn\YmTngnDmPtxFiles.cpp">
       <Filter>Ymcpp\YmTngn</Filter>
-    </ClCompile>
-    <ClCompile Include="YmTngnModel\YmTngnModel.cpp">
-      <Filter>Ymcpp\YmTngnModel</Filter>
-    </ClCompile>
-    <ClCompile Include="YmTngnModel\YmRgba.cpp">
-      <Filter>Ymcpp\YmTngnModel</Filter>
-    </ClCompile>
-    <ClCompile Include="YmTngnModel\YmTngnPointBlockListBuilder.cpp">
-      <Filter>Ymcpp\YmTngnModel</Filter>
-    </ClCompile>
-    <ClCompile Include="YmTngnModel\YmTngnExclusiveLodPointListCreator.cpp">
-      <Filter>Ymcpp\YmTngnModel</Filter>
-    </ClCompile>
-    <ClCompile Include="YmTngnModel\YmTngnExclusiveLodPointListLodTable.cpp">
-      <Filter>Ymcpp\YmTngnModel</Filter>
     </ClCompile>
     <ClCompile Include="YmTngn\YmTngnDmExclusiveLodPointList.cpp">
       <Filter>Ymcpp\YmTngn</Filter>

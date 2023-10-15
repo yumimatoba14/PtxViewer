@@ -128,14 +128,8 @@
     <ClInclude Include="Tngn.h" />
     <ClInclude Include="TngnCli.h" />
     <ClInclude Include="ViewModel.h" />
-    <ClInclude Include="YmTngnModel\YmRgba.h" />
-    <ClInclude Include="YmTngnModel\YmTngnExclusiveLodPointListCreator.h" />
-    <ClInclude Include="YmTngnModel\YmTngnExclusiveLodPointListLodTable.h" />
-    <ClInclude Include="YmTngnModel\YmTngnModel.h" />
-    <ClInclude Include="YmTngnModel\YmTngnPointBlockListBuilder.h" />
     <ClInclude Include="YmTngn\YmComPtr.h" />
     <ClInclude Include="YmTngn\YmDx11MappedSubResource.h" />
-    <ClInclude Include="YmTngn\YmPtxFileParser.h" />
     <ClInclude Include="YmTngn\YmTngn.h" />
     <ClInclude Include="YmTngn\YmTngnDmExclusiveLodPointList.h" />
     <ClInclude Include="YmTngn\YmTngnDmMemoryPointList.h" />
@@ -163,13 +157,7 @@
     </ClCompile>
     <ClCompile Include="Tngn.cpp" />
     <ClCompile Include="ViewModel.cpp" />
-    <ClCompile Include="YmTngnModel\YmRgba.cpp" />
-    <ClCompile Include="YmTngnModel\YmTngnExclusiveLodPointListCreator.cpp" />
-    <ClCompile Include="YmTngnModel\YmTngnExclusiveLodPointListLodTable.cpp" />
-    <ClCompile Include="YmTngnModel\YmTngnModel.cpp" />
-    <ClCompile Include="YmTngnModel\YmTngnPointBlockListBuilder.cpp" />
     <ClCompile Include="YmTngn\YmDx11MappedSubResource.cpp" />
-    <ClCompile Include="YmTngn\YmPtxFileParser.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmExclusiveLodPointList.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmMemoryPointList.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmPointBlockList.cpp" />
@@ -207,6 +195,9 @@
   <ItemGroup>
     <ProjectReference Include="..\YmBase\YmBase.vcxproj">
       <Project>{855f694f-5647-4d20-ba31-a7deb27f9525}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\YmTngnModel\YmTngnModel.vcxproj">
+      <Project>{cf5232ec-23d6-468a-80db-2cd0714a23ac}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

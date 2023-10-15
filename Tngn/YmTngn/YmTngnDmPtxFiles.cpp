@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "YmTngnDmPtxFiles.h"
-#include "YmPtxFileParser.h"
 #include "YmTngnDraw.h"
 #include "YmTngnDmPointBlockListFile.h"
+#include "YmTngnModel/YmPtxFileParser.h"
 #include "YmTngnModel/YmTngnPointBlockListBuilder.h"
 #include "YmBase/YmOrtho3dXform.h"
 
