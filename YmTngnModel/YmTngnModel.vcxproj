@@ -159,6 +159,7 @@
     <ClInclude Include="..\src\YmTngnModel\YmRgba.h" />
     <ClInclude Include="..\src\YmTngnModel\YmTngnExclusiveLodPointListCreator.h" />
     <ClInclude Include="..\src\YmTngnModel\YmTngnExclusiveLodPointListLodTable.h" />
+    <ClInclude Include="..\src\YmTngnModel\YmTngnIndexedTriangleList.h" />
     <ClInclude Include="..\src\YmTngnModel\YmTngnModel.h" />
     <ClInclude Include="..\src\YmTngnModel\YmTngnModelFwd.h" />
     <ClInclude Include="..\src\YmTngnModel\YmTngnPointBlockListBuilder.h" />
@@ -170,6 +171,7 @@
     <ClCompile Include="..\src\YmTngnModel\YmRgba.cpp" />
     <ClCompile Include="..\src\YmTngnModel\YmTngnExclusiveLodPointListCreator.cpp" />
     <ClCompile Include="..\src\YmTngnModel\YmTngnExclusiveLodPointListLodTable.cpp" />
+    <ClCompile Include="..\src\YmTngnModel\YmTngnIndexedTriangleList.cpp" />
     <ClCompile Include="..\src\YmTngnModel\YmTngnModel.cpp" />
     <ClCompile Include="..\src\YmTngnModel\YmTngnPointBlockListBuilder.cpp" />
     <ClCompile Include="pch.cpp">
