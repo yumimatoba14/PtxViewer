@@ -37,6 +37,8 @@ public:
 	DirectX::XMFLOAT4X4 GetLocalToGlobalMatrix() const { return m_localToGlobalMatrix; }
 	void SetLocalToGlobalMatrix(const DirectX::XMFLOAT4X4& matrix) { m_localToGlobalMatrix = matrix; }
 
+	static std::shared_ptr<YmTngnDmTriangleMesh> MakeSampleData(YmVector3d origin);
+
 protected:
 	//virtual bool OnSetPickEnabled(bool bEnable);
 	virtual void OnDraw(YmTngnDraw* pDraw);

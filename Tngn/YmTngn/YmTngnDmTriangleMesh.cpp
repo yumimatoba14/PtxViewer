@@ -28,6 +28,66 @@ void YmTngnDmTriangleMesh::AddIndexedTriangleList(const YmTngnIndexedTriangleLis
 
 ////////////////////////////////////////////////////////////////////////////////
 
+std::shared_ptr<YmTngnDmTriangleMesh> YmTngnDmTriangleMesh::MakeSampleData(YmVector3d origin)
+{
+	auto pMesh = make_shared<YmTngnDmTriangleMesh>();
+	pMesh->m_localToGlobalMatrix.m[3][0] = static_cast<float>(origin[0]);
+	pMesh->m_localToGlobalMatrix.m[3][1] = static_cast<float>(origin[1]);
+	pMesh->m_localToGlobalMatrix.m[3][2] = static_cast<float>(origin[2]);
+
+	double y = -1;
+	YmTngnIndexedTriangleList::VertexType vertex;
+
+	YmTngnIndexedTriangleListPtr pTestData = make_shared<YmTngnIndexedTriangleList>();
+	vertex.normalDir = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make(0, 1, 0));
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(-1, y, 0));
+	pTestData->AddVertex(vertex);
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(1, y, 0));
+	pTestData->AddVertex(vertex);
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(1, y, 1));
+	pTestData->AddVertex(vertex);
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(-1, y, 1));
+	pTestData->AddVertex(vertex);
+	pTestData->SetColor(YmRgba4b(255, 255, 0));
+	pTestData->AddTriangle(0, 1, 2);
+	pTestData->AddTriangle(2, 3, 0);
+	pMesh->AddIndexedTriangleList(pTestData);
+
+	y = 0;
+	pTestData = make_shared<YmTngnIndexedTriangleList>();
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(-1, y, 0));
+	pTestData->AddVertex(vertex);
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(1, y, 0));
+	pTestData->AddVertex(vertex);
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(1, y, 1));
+	pTestData->AddVertex(vertex);
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(-1, y, 1));
+	pTestData->AddVertex(vertex);
+	pTestData->SetColor(YmRgba4b(0, 255, 255, 128));
+	pTestData->AddTriangle(0, 1, 2);
+	pTestData->AddTriangle(2, 3, 0);
+	pMesh->AddIndexedTriangleList(pTestData);
+
+	y = 1;
+	pTestData = make_shared<YmTngnIndexedTriangleList>();
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(-1, y, 0));
+	pTestData->AddVertex(vertex);
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(1, y, 0));
+	pTestData->AddVertex(vertex);
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(1, y, 1));
+	pTestData->AddVertex(vertex);
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(-1, y, 1));
+	pTestData->AddVertex(vertex);
+	pTestData->SetColor(YmRgba4b(255, 0, 255));
+	pTestData->AddTriangle(0, 1, 2);
+	pTestData->AddTriangle(2, 3, 0);
+	pMesh->AddIndexedTriangleList(pTestData);
+
+	return pMesh;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void YmTngnDmTriangleMesh::OnDraw(YmTngnDraw* pDraw)
 {
 	PrepareTestData();
