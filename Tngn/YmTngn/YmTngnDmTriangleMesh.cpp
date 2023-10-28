@@ -90,8 +90,6 @@ std::shared_ptr<YmTngnDmTriangleMesh> YmTngnDmTriangleMesh::MakeSampleData(YmVec
 
 void YmTngnDmTriangleMesh::OnDraw(YmTngnDraw* pDraw)
 {
-	PrepareTestData();
-
 	pDraw->SetModelMatrix(m_localToGlobalMatrix);
 	for (auto pObj : m_indexedTriangleLists) {
 		pObj->Draw(pDraw);
