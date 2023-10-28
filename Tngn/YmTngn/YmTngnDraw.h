@@ -29,7 +29,12 @@ public:
 	int64_t GetDrawnPointCount() const { return m_nDrawnPoint; }
 
 public:
+	/// <summary>
+	/// Set a transformation matrix which converts vertex coordintes to model coordinate system.
+	/// </summary>
+	/// <param name="matrix">matrix is pre-multiplied by vertex coordinates.</param>
 	void SetModelMatrix(const DirectX::XMFLOAT4X4& matrix);
+	void ClearModelMatrix();
 
 	double GetPerspectiveViewNearZ();
 
