@@ -135,6 +135,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(SolutionDir)Tngn\YmTngn\DefaultShader.hlsl" . /Y</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(SolutionDir)Tngn\YmTngn\DefaultShader.hlsl" . /Y
+xcopy "$(SolutionDir)Tngn\YmTngn\TriangleListShader.hlsl" . /Y</PostBuildEvent>
   </PropertyGroup>
 </Project>

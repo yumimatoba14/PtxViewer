@@ -11,4 +11,11 @@ struct YmTngnPointListVertex
 	UINT rgba;
 };
 
+struct YmTngnTriangleVertex
+{
+	DirectX::XMFLOAT3 position;
+	DirectX::XMFLOAT3 normalDir;
+	UINT rgba;
+};
+
 }

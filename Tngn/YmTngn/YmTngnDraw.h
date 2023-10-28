@@ -44,6 +44,8 @@ public:
 
 	D3DBufferPtr CreateVertexBufferWithSize(UINT bufferByte, const void* aVertex, bool writeByCpu);
 
+	D3DBufferPtr CreateInexBuffer(const UINT aIndex[], UINT nIndex);
+
 public:
 	void DrawPointList(
 		const YmTngnPointListVertex aVertex[], size_t nVertex, YmTngnPickTargetId firstId = YM_TNGN_PICK_TARGET_NULL
@@ -60,6 +62,10 @@ public:
 	void DrawPointListWithSingleScannerPosition(
 		const D3DBufferPtr& pVertexBuf, size_t vertexSize, size_t nVertex, const YmVector3d& scannerPos,
 		YmTngnPickTargetId firstId = YM_TNGN_PICK_TARGET_NULL
+	);
+
+	void DrawTriangleList(
+		const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pIndexBuf, size_t nIndex
 	);
 
 private:
