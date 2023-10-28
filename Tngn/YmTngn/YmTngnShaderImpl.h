@@ -109,6 +109,10 @@ public:
 		const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pPickIdBuf, size_t nVertex
 	);
 
+	void DrawTriangleList(
+		const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pIndexBuf, size_t nIndex
+	);
+
 private:
 	void Initialize();
 	void UpdateShaderParam();
@@ -119,6 +123,7 @@ private:
 
 	void InitializeShaderContextsForNormalRendering();
 	void InitializeShaderContextsForPickableRendering();
+	void InitializeShaderContextsForTriangleListNormalRendering();
 
 	static YmTString GetHslsFilePath(const YmTString& fileName);
 
@@ -151,6 +156,7 @@ private:
 	D3DBufferPtr m_pShaderParamConstBuf;
 	YmTngnShaderContext m_pointListSc;
 	YmTngnShaderContext m_pickablePointListSc;
+	YmTngnShaderContext m_triangleListSc;
 	YmVector2i m_viewSize;
 	double m_pointSize;
 	double m_fovAngleYDeg;

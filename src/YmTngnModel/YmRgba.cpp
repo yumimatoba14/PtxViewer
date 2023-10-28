@@ -6,9 +6,9 @@ using namespace Ymcpp;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-YmRgba4b::YmRgba4b(int r, int g, int b)
+YmRgba4b::YmRgba4b(int r, int g, int b, int a)
 {
-	m_rgba = (0xFF & r) | (0xFF & g) << 8 | (0xFF & b) << 16;
+	m_rgba = (0xFF & r) | (0xFF & g) << 8 | (0xFF & b) << 16 | (0xFF & a) << 24;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

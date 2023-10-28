@@ -1,6 +1,7 @@
 #pragma once
 
 #include "YmBase/YmWin32.h"
+#include "YmTngnModel/YmTngnModelFwd.h"
 #include <d3d11.h>
 #pragma warning(push)
 #pragma warning(disable: 4793)
@@ -16,6 +17,7 @@ namespace Ymcpp {
 class YmTngnDraw;
 class YmTngnDrawingModel;
 struct YmTngnPointListVertex;
+struct YmTngnTriangleVertex;
 class YmTngnViewConfig;
 class YmViewOp;
 
@@ -30,6 +32,7 @@ using DXGIAdapterPtr = YmComPtr<IDXGIAdapter>;
 using D3DDevicePtr = YmComPtr<ID3D11Device> ;
 using D3DDeviceContextPtr = YmComPtr<ID3D11DeviceContext>;
 using DXGISwapChainPtr = YmComPtr<IDXGISwapChain>;
+using D3DBlendStatePtr = YmComPtr<ID3D11BlendState>;
 using D3DDepthStencilStatePtr = YmComPtr<ID3D11DepthStencilState>;
 using D3DRasterizerStatePtr = YmComPtr<ID3D11RasterizerState>;
 

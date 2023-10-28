@@ -11,6 +11,6 @@
 // プリコンパイルするヘッダーをここに追加します
 #include <Windows.h>
 #include "YmBase/YmBase.h"
-#include "YmTngn/YmTngnFwd.h"
+#include "YmTngn/YmTngn.h"
 
 #endif //PCH_H

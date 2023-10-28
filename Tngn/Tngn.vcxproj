@@ -136,6 +136,7 @@
     <ClInclude Include="YmTngn\YmTngnDmPointBlockList.h" />
     <ClInclude Include="YmTngn\YmTngnDmPointBlockListFile.h" />
     <ClInclude Include="YmTngn\YmTngnDmPtxFiles.h" />
+    <ClInclude Include="YmTngn\YmTngnDmTriangleMesh.h" />
     <ClInclude Include="YmTngn\YmTngnDraw.h" />
     <ClInclude Include="YmTngn\YmTngnDrawingModel.h" />
     <ClInclude Include="YmTngn\YmTngnFwd.h" />
@@ -163,6 +164,7 @@
     <ClCompile Include="YmTngn\YmTngnDmPointBlockList.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmPointBlockListFile.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmPtxFiles.cpp" />
+    <ClCompile Include="YmTngn\YmTngnDmTriangleMesh.cpp" />
     <ClCompile Include="YmTngn\YmTngnDraw.cpp" />
     <ClCompile Include="YmTngn\YmTngnDrawingModel.cpp" />
     <ClCompile Include="YmTngn\YmTngnShaderContext.cpp" />
@@ -189,6 +191,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="YmTngn\TriangleListShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>

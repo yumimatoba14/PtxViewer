@@ -93,6 +93,9 @@
     <ClInclude Include="YmTngn\YmTngn.h">
       <Filter>Ymcpp\YmTngn</Filter>
     </ClInclude>
+    <ClInclude Include="YmTngn\YmTngnDmTriangleMesh.h">
+      <Filter>Ymcpp\YmTngn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tngn.cpp">
@@ -149,6 +152,9 @@
     <ClCompile Include="YmTngn\YmTngnViewConfig.cpp">
       <Filter>Ymcpp\YmTngn</Filter>
     </ClCompile>
+    <ClCompile Include="YmTngn\YmTngnDmTriangleMesh.cpp">
+      <Filter>Ymcpp\YmTngn</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
@@ -162,6 +168,9 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="YmTngn\DefaultShader.hlsl">
+      <Filter>Ymcpp\YmTngn</Filter>
+    </FxCompile>
+    <FxCompile Include="YmTngn\TriangleListShader.hlsl">
       <Filter>Ymcpp\YmTngn</Filter>
     </FxCompile>
   </ItemGroup>

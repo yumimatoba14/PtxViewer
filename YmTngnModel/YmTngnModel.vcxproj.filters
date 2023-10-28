@@ -45,6 +45,9 @@
     <ClInclude Include="..\src\YmTngnModel\YmPtxFileParser.h">
       <Filter>public</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\YmTngnModel\YmTngnIndexedTriangleList.h">
+      <Filter>public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -66,6 +69,9 @@
       <Filter>public</Filter>
     </ClCompile>
     <ClCompile Include="..\src\YmTngnModel\YmPtxFileParser.cpp">
+      <Filter>public</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\YmTngnModel\YmTngnIndexedTriangleList.cpp">
       <Filter>public</Filter>
     </ClCompile>
   </ItemGroup>

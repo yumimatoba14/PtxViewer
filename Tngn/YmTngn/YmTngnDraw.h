@@ -29,7 +29,12 @@ public:
 	int64_t GetDrawnPointCount() const { return m_nDrawnPoint; }
 
 public:
+	/// <summary>
+	/// Set a transformation matrix which converts vertex coordintes to model coordinate system.
+	/// </summary>
+	/// <param name="matrix">matrix is pre-multiplied by vertex coordinates.</param>
 	void SetModelMatrix(const DirectX::XMFLOAT4X4& matrix);
+	void ClearModelMatrix();
 
 	double GetPerspectiveViewNearZ();
 
@@ -43,6 +48,8 @@ public:
 	}
 
 	D3DBufferPtr CreateVertexBufferWithSize(UINT bufferByte, const void* aVertex, bool writeByCpu);
+
+	D3DBufferPtr CreateInexBuffer(const UINT aIndex[], UINT nIndex);
 
 public:
 	void DrawPointList(
@@ -60,6 +67,10 @@ public:
 	void DrawPointListWithSingleScannerPosition(
 		const D3DBufferPtr& pVertexBuf, size_t vertexSize, size_t nVertex, const YmVector3d& scannerPos,
 		YmTngnPickTargetId firstId = YM_TNGN_PICK_TARGET_NULL
+	);
+
+	void DrawTriangleList(
+		const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pIndexBuf, size_t nIndex
 	);
 
 private:

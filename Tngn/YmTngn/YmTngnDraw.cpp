@@ -34,6 +34,13 @@ void YmTngnDraw::SetModelMatrix(const DirectX::XMFLOAT4X4& matrix)
 	m_pShaderImpl->SetModelMatrix(matrix);
 }
 
+void YmTngnDraw::ClearModelMatrix()
+{
+	DirectX::XMFLOAT4X4 matrix;
+	DirectX::XMStoreFloat4x4(&matrix, DirectX::XMMatrixIdentity());
+	SetModelMatrix(matrix);
+}
+
 double YmTngnDraw::GetPerspectiveViewNearZ()
 {
 	return m_pShaderImpl->GetPerspectiveViewNearZ();
@@ -82,6 +89,33 @@ D3DBufferPtr YmTngnDraw::CreateVertexBufferWithSize(UINT bufferByte, const void*
 	return pBuffer;
 }
 
+D3DBufferPtr YmTngnDraw::CreateInexBuffer(const UINT aIndex[], UINT nIndex)
+{
+	D3D11_BUFFER_DESC hBufferDesc;
+	ZeroMemory(&hBufferDesc, sizeof(hBufferDesc));
+	hBufferDesc.ByteWidth = sizeof(UINT) * nIndex;
+	hBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	hBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	hBufferDesc.CPUAccessFlags = 0;
+	//hBufferDesc.MiscFlags = 0;
+	//hBufferDesc.StructureByteStride = sizeof(float);
+
+	D3D11_SUBRESOURCE_DATA hSubResourceData;
+	if (aIndex) {
+		ZeroMemory(&hSubResourceData, sizeof(hSubResourceData));
+		hSubResourceData.pSysMem = aIndex;
+		//hSubResourceData.SysMemPitch = 0;
+		//hSubResourceData.SysMemSlicePitch = 0;
+	}
+
+	D3DBufferPtr pBuffer;
+	HRESULT hr = m_pDevice->CreateBuffer(&hBufferDesc, aIndex ? &hSubResourceData : nullptr, &pBuffer);
+	if (FAILED(hr)) {
+		YM_THROW_ERROR("CreateBuffer");
+	}
+	return pBuffer;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void YmTngnDraw::DrawPointList(const YmTngnPointListVertex aVertex[], size_t nVertex, YmTngnPickTargetId firstId)
@@ -112,6 +146,14 @@ void YmTngnDraw::DrawPointListWithSingleScannerPosition(
 {
 	m_pShaderImpl->PrepareShaderParamToDrawPointListWithSingleScannerPosition(scannerPos);
 	DrawPointListImpl(pVertexBuf, nVertex, firstId);
+}
+
+void YmTngnDraw::DrawTriangleList(
+	const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pIndexBuf, size_t nIndex
+)
+{
+	m_pShaderImpl->PrepareShaderParam();
+	m_pShaderImpl->DrawTriangleList(pVertexBuf, pIndexBuf, nIndex);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
