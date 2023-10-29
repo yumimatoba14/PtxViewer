@@ -60,8 +60,9 @@ private:
 	void PrepareRenderTargetViewForNormalRendering();
 	void PrepareRenderTargetViewForPick();
 
-	void BeginDraw(bool isEraseBackground);
+	void BeginDraw(bool isEraseBackground, bool isUseLastRenderingResources);
 	void EndDraw();
+	void CaptureRenderTargetResourcesForProgressiveView();
 
 private:
 	std::unique_ptr<YmTngnViewConfig> m_pConfig;
@@ -76,6 +77,10 @@ private:
 	D3DRenderTargetViewPtr m_pRenderTargetViewForNormalRendering;
 	D3DRenderTargetViewPtr m_pRenderTargetViewForPick;
 	D3D11_VIEWPORT m_viewport = { 0, 0, 0, 0, 0, 0 };
+
+	bool m_isLastRenderingResourcesCaptured = false;
+	D3DResourcePtr m_apLastRenderingTextureForProgressiveView[2];
+	D3DResourcePtr m_pLastRenderingDepthStencilTextureForProgressiveView;
 
 	std::unique_ptr<YmTngnShaderImpl> m_pShaderImpl;
 	bool m_isNeedDraw = false;

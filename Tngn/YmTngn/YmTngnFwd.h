@@ -41,6 +41,7 @@ using D3DVertexShaderPtr = YmComPtr<ID3D11VertexShader>;
 using D3DGeometryShaderPtr = YmComPtr<ID3D11GeometryShader>;
 using D3DPixelShaderPtr = YmComPtr<ID3D11PixelShader>;
 
+using D3DViewPtr = YmComPtr<ID3D11View>;
 using D3DDepthStencilViewPtr = YmComPtr<ID3D11DepthStencilView>;
 using D3DRenderTargetViewPtr = YmComPtr<ID3D11RenderTargetView>;
 using D3DTexture2DPtr = YmComPtr<ID3D11Texture2D>;

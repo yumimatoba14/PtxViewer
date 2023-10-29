@@ -113,6 +113,9 @@ void YmTngnViewModel::ResizeBuffer(const YmVector2i& size)
 		m_pRenderTargetViewForNormalRendering.Reset();
 		m_pRenderTargetViewForPick.Reset();
 		m_pDepthStencilView.Reset();
+		m_apLastRenderingTextureForProgressiveView[0].Reset();
+		m_apLastRenderingTextureForProgressiveView[1].Reset();
+		m_pLastRenderingDepthStencilTextureForProgressiveView.Reset();
 
 		HRESULT hr = m_pSwapChain->ResizeBuffers(
 			0, 0, 0, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
@@ -131,15 +134,28 @@ void YmTngnViewModel::Draw()
 	m_isNeedDraw = false;
 	m_isViewUpdated = false;
 
-	bool isEraseBackground = !(IsProgressiveViewMode() && IsProgressiveViewFollowingFrame());
-	BeginDraw(isEraseBackground);
+	const bool isProgressiveViewMode = IsProgressiveViewMode();
+	bool isEraseBackground = !(isProgressiveViewMode && IsProgressiveViewFollowingFrame());
+	bool useCapturedRenderTargetResource = false;
+	if (!isEraseBackground && m_pSelectedContent && m_isLastRenderingResourcesCaptured) {
+		useCapturedRenderTargetResource = true;
+	}
+	BeginDraw(isEraseBackground, useCapturedRenderTargetResource);
 
+	bool isContinueProgressiveView = false;
 	if (m_pContent) {
 		YmTngnDraw draw(m_pShaderImpl.get(), m_pDevice);
 		m_pContent->SetPickEnabled(IsPickEnabled());
 		m_pContent->Draw(&draw);
 		m_isViewUpdated = m_isViewUpdated || 0 < draw.GetDrawnPointCount();
+		isContinueProgressiveView = isProgressiveViewMode && 0 < draw.GetDrawnPointCount();
 	}
+
+	bool isCaptureRenderTargetResource = isContinueProgressiveView && m_pSelectedContent;
+	if (isCaptureRenderTargetResource) {
+		CaptureRenderTargetResourcesForProgressiveView();
+	}
+	m_isLastRenderingResourcesCaptured = isCaptureRenderTargetResource;
 
 	if (m_pSelectedContent) {
 		m_pDc->OMSetDepthStencilState(m_pDepthStencilStateForForegroundDraw.Get(), 1);
@@ -572,7 +588,23 @@ void YmTngnViewModel::PrepareRenderTargetViewForPick()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void YmTngnViewModel::BeginDraw(bool isEraseBackground)
+static void CopyResourceToView(
+	const D3DDeviceContextPtr& pDc, const D3DResourcePtr& pSource, const D3DViewPtr& pView
+)
+{
+	YM_IS_TRUE(pDc);
+	if (!pSource || !pView) {
+		return;
+	}
+	
+	D3DResourcePtr pDestination;
+	pView->GetResource(&pDestination);
+	YM_IS_TRUE(pDestination);
+
+	pDc->CopyResource(pDestination.Get(), pSource.Get());
+}
+
+void YmTngnViewModel::BeginDraw(bool isEraseBackground, bool isUseLastRenderingResources)
 {
 	PrepareDepthStencilView();
 	PrepareRenderTargetView();
@@ -585,6 +617,11 @@ void YmTngnViewModel::BeginDraw(bool isEraseBackground)
 		aClearColor[3] = 0.0f;
 		m_pDc->ClearRenderTargetView(m_pRenderTargetViewForPick.Get(), aClearColor);
 		m_pDc->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	}
+	else if (isUseLastRenderingResources) {
+		CopyResourceToView(m_pDc, m_apLastRenderingTextureForProgressiveView[0], m_pRenderTargetViewForNormalRendering);
+		CopyResourceToView(m_pDc, m_apLastRenderingTextureForProgressiveView[1], m_pRenderTargetViewForPick);
+		CopyResourceToView(m_pDc, m_pLastRenderingDepthStencilTextureForProgressiveView, m_pDepthStencilView);
 	}
 
 	m_pDc->RSSetViewports(1, &m_viewport);
@@ -603,5 +640,66 @@ void YmTngnViewModel::EndDraw()
 	}
 }
 
+static D3DResourcePtr CopyViewResource(
+	const D3DDevicePtr& pDevice, const D3DDeviceContextPtr& pDc, const D3DViewPtr& pView, const D3DResourcePtr& pDestinationIn
+)
+{
+	if (!pView) {
+		return nullptr;
+	}
+	D3DResourcePtr pSource;
+	pView->GetResource(&pSource);
+
+	D3DResourcePtr pDestination = pDestinationIn;
+	if (!pDestination) {
+		D3D11_RESOURCE_DIMENSION resType = D3D11_RESOURCE_DIMENSION_UNKNOWN;
+		pSource->GetType(&resType);
+		if (resType == D3D11_RESOURCE_DIMENSION_TEXTURE2D) {
+			D3DTexture2DPtr pSourceTexture;
+			HRESULT hr = pSource->QueryInterface(IID_PPV_ARGS(&pSourceTexture));
+			if (FAILED(hr)) {
+				YM_THROW_ERROR("QueryInterface");
+			}
+
+			D3D11_TEXTURE2D_DESC desc;
+			pSourceTexture->GetDesc(&desc);
+
+			if (1 < desc.SampleDesc.Count) {
+				YM_THROW_ERROR("Not supported case (1 < desc.SampleDesc.Count)");
+			}
+
+			D3DTexture2DPtr pDestinationTexture;
+			hr = pDevice->CreateTexture2D(&desc, nullptr, &pDestinationTexture);
+			if (FAILED(hr)) {
+				YM_THROW_ERROR("CreateTexture2D");
+			}
+			YM_IS_TRUE(pDestinationTexture);
+
+			pDestination = pDestinationTexture;
+		}
+		else {
+			YM_THROW_ERROR("not supported resource");
+		}
+	}
+	YM_IS_TRUE(pDestination);
+
+	pDc->CopyResource(pDestination.Get(), pSource.Get());
+
+	return pDestination;
+}
+
+void YmTngnViewModel::CaptureRenderTargetResourcesForProgressiveView()
+{
+	D3DRenderTargetViewPtr apRtView[2] = { m_pRenderTargetViewForNormalRendering, m_pRenderTargetViewForPick };
+	for (int i = 0; i < 2; ++i) {
+		m_apLastRenderingTextureForProgressiveView[i] = CopyViewResource(
+			m_pDevice, m_pDc, apRtView[i], m_apLastRenderingTextureForProgressiveView[i]
+		);
+	}
+
+	m_pLastRenderingDepthStencilTextureForProgressiveView = CopyViewResource(
+		m_pDevice, m_pDc, m_pDepthStencilView, m_pLastRenderingDepthStencilTextureForProgressiveView
+	);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
