@@ -31,8 +31,10 @@ ViewModel::ViewModel(IContainer^ container, System::IntPtr handleWnd)
 #if defined(_DEBUG)
 	m_pImpl->SetContent(std::make_unique<YmTngnDmMemoryPointListXZRectangle>());
 	m_pImpl->SetContent(YmTngnDmTriangleMesh::MakeSampleData(YmVectorUtil::Make(2, 1, 0)));
-	m_pImpl->SetSelectedContent(std::make_shared<YmTngnDmMemoryPointListXZRectangle>(
-		YmVectorUtil::Make(0, 1, 0), YmRgba4b(0xFF, 0, 0)));
+	auto pSelPointList = std::make_shared<YmTngnDmMemoryPointListXZRectangle>(
+		YmVectorUtil::Make(0, 1, 0), YmRgba4b(0xFF, 0, 0));
+	pSelPointList->SetSupportProgressiveMode(false);
+	m_pImpl->SetSelectedContent(pSelPointList);
 #endif
 }
 

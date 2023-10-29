@@ -17,6 +17,15 @@ public:
 	explicit YmTngnDmMemoryPointList(std::vector<YmTngnPointListVertex> dataSource);
 	virtual ~YmTngnDmMemoryPointList();
 
+	/// <summary>
+	/// Returns whether this object supports progressive view mode.
+	/// If it is supported, this object is drawn only once in a drawing.
+	/// If not supported, object is drawn evry time when OnDraw() is called.
+	/// </summary>
+	/// <returns></returns>
+	bool IsSupportProgressiveMode() const { return m_isSupportProgressiveMode; }
+	void SetSupportProgressiveMode(bool isSupport) { m_isSupportProgressiveMode = isSupport; }
+
 	void SetScannerPosition(const YmVector3d& scannerPos);
 	void ResetScannerPosition();
 	bool IsUseScannerPosition() const { return m_isUseScannerPoint; }
@@ -43,6 +52,7 @@ private:
 	D3DBufferPtr m_pVertexBuffer;
 	size_t m_nVertex;
 	YmTngnPickTargetId m_pointPickTargetIdFirst = YM_TNGN_PICK_TARGET_NULL;
+	bool m_isSupportProgressiveMode = true;
 	bool m_isUseScannerPoint;
 	YmVector3d m_scannerPosition;
 	std::vector<YmTngnPointListVertex> m_dataSource;

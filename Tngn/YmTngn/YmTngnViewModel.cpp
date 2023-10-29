@@ -367,6 +367,7 @@ shared_ptr<YmTngnDmMemoryPointList> YmTngnViewModel::PrepareSelectedPointList()
 {
 	if (!m_pSelectedPoints) {
 		m_pSelectedPoints = make_shared<YmTngnDmMemoryPointList>();
+		m_pSelectedPoints->SetSupportProgressiveMode(false);
 	}
 	SetSelectedContent(m_pSelectedPoints);
 	return m_pSelectedPoints;

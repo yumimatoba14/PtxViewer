@@ -61,7 +61,7 @@ bool YmTngnDmMemoryPointList::OnSetPickEnabled(bool bEnable)
 
 void YmTngnDmMemoryPointList::OnDraw(YmTngnDraw* pDraw)
 {
-	if (pDraw->IsProgressiveViewFollowingFrame()) {
+	if (IsSupportProgressiveMode() && pDraw->IsProgressiveViewFollowingFrame()) {
 		return;
 	}
 	if (!m_pVertexBuffer) {
