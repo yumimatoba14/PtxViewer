@@ -34,6 +34,7 @@ public:
 
 	YmRgba4b GetColor() const { return m_color; }
 	void SetColor(const YmRgba4b& rgba) { m_color = rgba; }
+	bool IsTransparent() const { return m_color.GetA() != 255; }
 private:
 	std::vector<VertexType> m_vertices;
 	std::vector<TriangleType> m_triangles;

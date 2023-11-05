@@ -1,6 +1,7 @@
 #pragma once
 
 #include "YmTngn/YmTngnDrawingModel.h"
+#include "YmTngnDrawableObject.h"
 
 namespace Ymcpp {
 
@@ -10,12 +11,15 @@ public:
 	using VertexType = YmTngnTriangleVertex;
 	using IndexType = UINT;
 
-	class IndexedTriangleList
+	class IndexedTriangleList : public YmTngnDrawableObject
 	{
 	public:
 		IndexedTriangleList(YmTngnIndexedTriangleListPtr pModel) : m_pModel(std::move(pModel)) {}
 
+		bool IsTransparent() const;
 		void Draw(YmTngnDraw* pDraw);
+	protected:
+		void virtual OnDraw(YmTngnDraw* pDraw) { Draw(pDraw); }
 	private:
 		void PrepareData(YmTngnDraw* pDraw);
 	private:
@@ -34,8 +38,8 @@ public:
 
 	void AddIndexedTriangleList(const YmTngnIndexedTriangleListPtr& pTriList);
 
-	DirectX::XMFLOAT4X4 GetLocalToGlobalMatrix() const { return m_localToGlobalMatrix; }
-	void SetLocalToGlobalMatrix(const DirectX::XMFLOAT4X4& matrix) { m_localToGlobalMatrix = matrix; }
+	DirectX::XMFLOAT4X4 GetLocalToGlobalMatrix() const { return *m_pLocalToGlobalMatrix; }
+	void SetLocalToGlobalMatrix(const DirectX::XMFLOAT4X4& matrix) { *m_pLocalToGlobalMatrix = matrix; }
 
 	static std::shared_ptr<YmTngnDmTriangleMesh> MakeSampleData(YmVector3d origin);
 
@@ -45,7 +49,7 @@ protected:
 	//virtual std::vector<YmTngnPointListVertex> OnFindPickedPoints(YmTngnPickTargetId id);
 
 private:
-	DirectX::XMFLOAT4X4 m_localToGlobalMatrix;	// row-major, pre-multiplied
+	YmTngnModelMatrixPtr m_pLocalToGlobalMatrix;
 	std::vector<IndexedTriangleListPtr> m_indexedTriangleLists;
 };
 

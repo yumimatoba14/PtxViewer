@@ -10,8 +10,9 @@ using namespace DirectX;
 ////////////////////////////////////////////////////////////////////////////////
 
 YmTngnDmTriangleMesh::YmTngnDmTriangleMesh()
+	: m_pLocalToGlobalMatrix(make_shared<XMFLOAT4X4>())
 {
-	XMStoreFloat4x4(&m_localToGlobalMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(m_pLocalToGlobalMatrix.get(), XMMatrixIdentity());
 }
 
 YmTngnDmTriangleMesh::~YmTngnDmTriangleMesh()
@@ -31,9 +32,9 @@ void YmTngnDmTriangleMesh::AddIndexedTriangleList(const YmTngnIndexedTriangleLis
 std::shared_ptr<YmTngnDmTriangleMesh> YmTngnDmTriangleMesh::MakeSampleData(YmVector3d origin)
 {
 	auto pMesh = make_shared<YmTngnDmTriangleMesh>();
-	pMesh->m_localToGlobalMatrix.m[3][0] = static_cast<float>(origin[0]);
-	pMesh->m_localToGlobalMatrix.m[3][1] = static_cast<float>(origin[1]);
-	pMesh->m_localToGlobalMatrix.m[3][2] = static_cast<float>(origin[2]);
+	pMesh->m_pLocalToGlobalMatrix->m[3][0] = static_cast<float>(origin[0]);
+	pMesh->m_pLocalToGlobalMatrix->m[3][1] = static_cast<float>(origin[1]);
+	pMesh->m_pLocalToGlobalMatrix->m[3][2] = static_cast<float>(origin[2]);
 
 	double y = -1;
 	YmTngnIndexedTriangleList::VertexType vertex;
@@ -90,14 +91,30 @@ std::shared_ptr<YmTngnDmTriangleMesh> YmTngnDmTriangleMesh::MakeSampleData(YmVec
 
 void YmTngnDmTriangleMesh::OnDraw(YmTngnDraw* pDraw)
 {
-	pDraw->SetModelMatrix(m_localToGlobalMatrix);
+	if (pDraw->IsProgressiveViewFollowingFrame()) {
+		return;
+	}
+	pDraw->SetModelMatrix(GetLocalToGlobalMatrix());
 	for (auto pObj : m_indexedTriangleLists) {
-		pObj->Draw(pDraw);
+		if (pObj->IsTransparent()) {
+			pDraw->RegisterTransparentObject(m_pLocalToGlobalMatrix, pObj);
+		}
+		else {
+			pObj->Draw(pDraw);
+		}
 	}
 	pDraw->ClearModelMatrix();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+bool YmTngnDmTriangleMesh::IndexedTriangleList::IsTransparent() const
+{
+	if (m_pModel) {
+		return m_pModel->IsTransparent();
+	}
+	return false;
+}
 
 void YmTngnDmTriangleMesh::IndexedTriangleList::Draw(YmTngnDraw* pDraw)
 {
