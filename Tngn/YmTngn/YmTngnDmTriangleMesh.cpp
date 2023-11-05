@@ -69,6 +69,21 @@ std::shared_ptr<YmTngnDmTriangleMesh> YmTngnDmTriangleMesh::MakeSampleData(YmVec
 	pTestData->AddTriangle(2, 3, 0);
 	pMesh->AddIndexedTriangleList(pTestData);
 
+	y = 0.5;
+	pTestData = make_shared<YmTngnIndexedTriangleList>();
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(-1, y, 0));
+	pTestData->AddVertex(vertex);
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(0, y, 0));
+	pTestData->AddVertex(vertex);
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(0, y, 2));
+	pTestData->AddVertex(vertex);
+	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(-1, y, 2));
+	pTestData->AddVertex(vertex);
+	pTestData->SetColor(YmRgba4b(255, 255, 128, 128));
+	pTestData->AddTriangle(0, 1, 2);
+	pTestData->AddTriangle(2, 3, 0);
+	pMesh->AddIndexedTriangleList(pTestData);
+
 	y = 1;
 	pTestData = make_shared<YmTngnIndexedTriangleList>();
 	vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(YmVectorUtil::Make<double>(-1, y, 0));
