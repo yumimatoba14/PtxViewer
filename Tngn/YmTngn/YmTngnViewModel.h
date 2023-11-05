@@ -71,6 +71,7 @@ private:
 	DXGISwapChainPtr m_pSwapChain;
 	D3DDepthStencilStatePtr m_pDepthStencilState;
 	D3DDepthStencilStatePtr m_pDepthStencilStateForForegroundDraw;
+	D3DBlendStatePtr m_pBlendStateForTransparency;
 	D3DRasterizerStatePtr m_pRasterizerState;
 
 	D3DDepthStencilViewPtr m_pDepthStencilView;

@@ -131,6 +131,7 @@
     <ClInclude Include="YmTngn\YmComPtr.h" />
     <ClInclude Include="YmTngn\YmDx11MappedSubResource.h" />
     <ClInclude Include="YmTngn\YmTngn.h" />
+    <ClInclude Include="YmTngn\YmTngnDmDrawableObjectList.h" />
     <ClInclude Include="YmTngn\YmTngnDmExclusiveLodPointList.h" />
     <ClInclude Include="YmTngn\YmTngnDmMemoryPointList.h" />
     <ClInclude Include="YmTngn\YmTngnDmPointBlockList.h" />
@@ -138,6 +139,7 @@
     <ClInclude Include="YmTngn\YmTngnDmPtxFiles.h" />
     <ClInclude Include="YmTngn\YmTngnDmTriangleMesh.h" />
     <ClInclude Include="YmTngn\YmTngnDraw.h" />
+    <ClInclude Include="YmTngn\YmTngnDrawableObject.h" />
     <ClInclude Include="YmTngn\YmTngnDrawingModel.h" />
     <ClInclude Include="YmTngn\YmTngnFwd.h" />
     <ClInclude Include="YmTngn\YmTngnShaderContext.h" />
@@ -159,6 +161,7 @@
     <ClCompile Include="Tngn.cpp" />
     <ClCompile Include="ViewModel.cpp" />
     <ClCompile Include="YmTngn\YmDx11MappedSubResource.cpp" />
+    <ClCompile Include="YmTngn\YmTngnDmDrawableObjectList.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmExclusiveLodPointList.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmMemoryPointList.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmPointBlockList.cpp" />
@@ -166,6 +169,7 @@
     <ClCompile Include="YmTngn\YmTngnDmPtxFiles.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmTriangleMesh.cpp" />
     <ClCompile Include="YmTngn\YmTngnDraw.cpp" />
+    <ClCompile Include="YmTngn\YmTngnDrawableObject.cpp" />
     <ClCompile Include="YmTngn\YmTngnDrawingModel.cpp" />
     <ClCompile Include="YmTngn\YmTngnShaderContext.cpp" />
     <ClCompile Include="YmTngn\YmTngnShaderImpl.cpp" />

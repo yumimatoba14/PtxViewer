@@ -118,6 +118,15 @@ D3DBufferPtr YmTngnDraw::CreateInexBuffer(const UINT aIndex[], UINT nIndex)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void YmTngnDraw::RegisterTransparentObject(
+	const YmTngnModelMatrixPtr& pMatrix, const YmTngnDrawableObjectPtr& pObject
+)
+{
+	m_pShaderImpl->RegisterTransparentObject(pMatrix, pObject);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void YmTngnDraw::DrawPointList(const YmTngnPointListVertex aVertex[], size_t nVertex, YmTngnPickTargetId firstId)
 {
 	m_pShaderImpl->PrepareShaderParam();

@@ -52,6 +52,9 @@ public:
 	D3DBufferPtr CreateInexBuffer(const UINT aIndex[], UINT nIndex);
 
 public:
+	void RegisterTransparentObject(const YmTngnModelMatrixPtr& pMatrix, const YmTngnDrawableObjectPtr& pObject);
+
+public:
 	void DrawPointList(
 		const YmTngnPointListVertex aVertex[], size_t nVertex, YmTngnPickTargetId firstId = YM_TNGN_PICK_TARGET_NULL
 	);

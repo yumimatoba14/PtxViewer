@@ -101,6 +101,10 @@ public:
 		m_tempVertexBufferList[i] = buffer;
 	}
 
+	YmTngnDmDrawableObjectListPtr GetTransparentObjectList() const { return m_pTransparentObjectList; }
+	void ClearTransparentObject();
+	void RegisterTransparentObject(const YmTngnModelMatrixPtr& pMatrix, const YmTngnDrawableObjectPtr& pObject);
+
 	void DrawPointList(
 		const D3DBufferPtr& pVertexBuf, size_t vertexSize, size_t nVertex
 	);
@@ -173,6 +177,7 @@ private:
 	bool m_isProgressiveViewFollowingFrame = false;
 
 	std::vector<YmDx11BufferWithSize> m_tempVertexBufferList;
+	YmTngnDmDrawableObjectListPtr m_pTransparentObjectList;
 };
 
 }

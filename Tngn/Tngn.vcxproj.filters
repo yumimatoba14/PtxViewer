@@ -96,6 +96,12 @@
     <ClInclude Include="YmTngn\YmTngnDmTriangleMesh.h">
       <Filter>Ymcpp\YmTngn</Filter>
     </ClInclude>
+    <ClInclude Include="YmTngn\YmTngnDrawableObject.h">
+      <Filter>Ymcpp\YmTngn</Filter>
+    </ClInclude>
+    <ClInclude Include="YmTngn\YmTngnDmDrawableObjectList.h">
+      <Filter>Ymcpp\YmTngn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tngn.cpp">
@@ -153,6 +159,12 @@
       <Filter>Ymcpp\YmTngn</Filter>
     </ClCompile>
     <ClCompile Include="YmTngn\YmTngnDmTriangleMesh.cpp">
+      <Filter>Ymcpp\YmTngn</Filter>
+    </ClCompile>
+    <ClCompile Include="YmTngn\YmTngnDrawableObject.cpp">
+      <Filter>Ymcpp\YmTngn</Filter>
+    </ClCompile>
+    <ClCompile Include="YmTngn\YmTngnDmDrawableObjectList.cpp">
       <Filter>Ymcpp\YmTngn</Filter>
     </ClCompile>
   </ItemGroup>

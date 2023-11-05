@@ -6,6 +6,7 @@
 #include "YmTngnVectorUtil.h"
 #include "YmViewOp.h"
 #include "YmTngnViewConfig.h"
+#include "YmTngnDmDrawableObjectList.h"
 #include "YmBase/YmFilePath.h"
 
 using namespace std;
@@ -75,6 +76,25 @@ YmDx11MappedSubResource YmTngnShaderImpl::MapResource(const D3DResourcePtr& pRes
 	}
 
 	return YmDx11MappedSubResource(m_pDc, pResource, move(mappedData));
+}
+
+void YmTngnShaderImpl::ClearTransparentObject()
+{
+	if (m_pTransparentObjectList) {
+		m_pTransparentObjectList->ClearObject();
+	}
+}
+
+void YmTngnShaderImpl::RegisterTransparentObject(
+	const YmTngnModelMatrixPtr& pMatrix, const YmTngnDrawableObjectPtr& pObject
+)
+{
+	if (!m_pTransparentObjectList) {
+		m_pTransparentObjectList = make_shared<YmTngnDmDrawableObjectList>();
+	}
+	if (pObject) {
+		m_pTransparentObjectList->AddObject(pMatrix, pObject);
+	}
 }
 
 void YmTngnShaderImpl::DrawPointList(

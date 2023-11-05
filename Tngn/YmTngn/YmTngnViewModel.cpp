@@ -4,6 +4,7 @@
 #include "YmTngnDrawingModel.h"
 #include "YmTngnDmMemoryPointList.h"
 #include "YmTngnDmPtxFiles.h"
+#include "YmTngnDmDrawableObjectList.h"
 #include "YmTngnShaderImpl.h"
 #include "YmTngnViewConfig.h"
 #include "ScreenGrab.h"
@@ -151,11 +152,27 @@ void YmTngnViewModel::Draw()
 		isContinueProgressiveView = isProgressiveViewMode && 0 < draw.GetDrawnPointCount();
 	}
 
-	bool isCaptureRenderTargetResource = isContinueProgressiveView && m_pSelectedContent;
+	auto pTransparentObjectList = m_pShaderImpl->GetTransparentObjectList();
+	bool isDrawTrnasparentPhase = pTransparentObjectList && 0 < pTransparentObjectList->GetCount();
+	bool isCaptureRenderTargetResource = false;
+	if (isContinueProgressiveView) {
+		isCaptureRenderTargetResource = m_pSelectedContent || isDrawTrnasparentPhase;
+	}
 	if (isCaptureRenderTargetResource) {
 		CaptureRenderTargetResourcesForProgressiveView();
 	}
 	m_isLastRenderingResourcesCaptured = isCaptureRenderTargetResource;
+
+	// Transparency is enabled from here.
+	if (isDrawTrnasparentPhase || m_pSelectedContent) {
+		float aBlendFactor[4] = { 1, 1, 1, 1 };
+		m_pDc->OMSetBlendState(m_pBlendStateForTransparency.Get(), aBlendFactor, 0xFFFFFFFF);
+	}
+
+	if (isDrawTrnasparentPhase) {
+		YmTngnDraw draw(m_pShaderImpl.get(), m_pDevice);
+		pTransparentObjectList->Draw(&draw);
+	}
 
 	if (m_pSelectedContent) {
 		m_pDc->OMSetDepthStencilState(m_pDepthStencilStateForForegroundDraw.Get(), 1);
@@ -459,6 +476,26 @@ void YmTngnViewModel::SetupDevice(HWND hWnd, const YmVector2i& viewSize)
 		YM_THROW_ERROR("CreateDepthStencilState");
 	}
 
+	D3D11_BLEND_DESC blendDesc;
+	ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
+	for (int i = 0; i < 8; ++i) {
+		blendDesc.RenderTarget[i].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	}
+	//blendDesc.AlphaToCoverageEnable = TRUE;
+	blendDesc.IndependentBlendEnable = TRUE;	// TRUE to disable blending of target[1].
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	hr = m_pDevice->CreateBlendState(&blendDesc, &m_pBlendStateForTransparency);
+	if (FAILED(hr)) {
+		YM_THROW_ERROR("CreateBlendState");
+	}
+
 	PrepareDepthStencilView();
 	PrepareRenderTargetView();
 
@@ -617,6 +654,8 @@ void YmTngnViewModel::BeginDraw(bool isEraseBackground, bool isUseLastRenderingR
 		aClearColor[3] = 0.0f;
 		m_pDc->ClearRenderTargetView(m_pRenderTargetViewForPick.Get(), aClearColor);
 		m_pDc->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+		m_pShaderImpl->ClearTransparentObject();
 	}
 	else if (isUseLastRenderingResources) {
 		CopyResourceToView(m_pDc, m_apLastRenderingTextureForProgressiveView[0], m_pRenderTargetViewForNormalRendering);
@@ -627,6 +666,7 @@ void YmTngnViewModel::BeginDraw(bool isEraseBackground, bool isUseLastRenderingR
 	m_pDc->RSSetViewports(1, &m_viewport);
 	m_pDc->RSSetState(m_pRasterizerState.Get());
 	m_pDc->OMSetDepthStencilState(m_pDepthStencilState.Get(), 1);
+	m_pDc->OMSetBlendState(nullptr, nullptr, 0xffffffff);
 
 	ID3D11RenderTargetView* apRtv[2] = { m_pRenderTargetViewForNormalRendering.Get(), m_pRenderTargetViewForPick.Get() };
 	m_pDc->OMSetRenderTargets(2, apRtv, m_pDepthStencilView.Get());

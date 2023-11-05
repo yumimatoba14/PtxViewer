@@ -14,14 +14,22 @@
 
 namespace Ymcpp {
 
+class YmTngnDmDrawableObjectList;
 class YmTngnDraw;
+class YmTngnDrawableObject;
 class YmTngnDrawingModel;
 struct YmTngnPointListVertex;
 struct YmTngnTriangleVertex;
 class YmTngnViewConfig;
 class YmViewOp;
 
+using YmTngnDmDrawableObjectListPtr = std::shared_ptr<YmTngnDmDrawableObjectList>;
+using YmTngnDrawableObjectPtr = std::shared_ptr<YmTngnDrawableObject>;
 using YmTngnDrawingModelPtr = std::shared_ptr<YmTngnDrawingModel>;
+
+/// row-major, pre-multiplied matrix to convert local coordinates to global coordinates.
+using YmTngnModelMatrixPtr = std::shared_ptr<DirectX::XMFLOAT4X4>;
+
 using YmTngnPickTargetId = uint64_t;
 #define YM_TNGN_PICK_TARGET_NULL YmTngnPickTargetId(0)
 
