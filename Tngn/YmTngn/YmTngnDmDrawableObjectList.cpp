@@ -45,45 +45,22 @@ void YmTngnDmDrawableObjectList::OnDraw(YmTngnDraw* pDraw)
 
 void YmTngnDmDrawableObjectList::DrawDirect(YmTngnDraw* pDraw)
 {
-	XMFLOAT4X4* pLastMatrix = nullptr;
-	pDraw->ClearModelMatrix();
+	auto modelMatrix = pDraw->MakeModelMatrixSetter();
 	for (auto& data : m_objectDataList) {
-		if (pLastMatrix != data.m_pModelMatrix.get()) {
-			pLastMatrix = data.m_pModelMatrix.get();
-			if (pLastMatrix == nullptr) {
-				pDraw->ClearModelMatrix();
-			}
-			else {
-				pDraw->SetModelMatrix(*pLastMatrix);
-			}
-		}
+		modelMatrix.Set(data.m_pModelMatrix);
 		YM_ASSERT(data.m_pObject);
 		data.m_pObject->Draw(pDraw);
-	}
-	if (pLastMatrix) {
-		pDraw->ClearModelMatrix();
 	}
 }
 
 void YmTngnDmDrawableObjectList::DrawSorted(YmTngnDraw* pDraw)
 {
-	XMFLOAT4X4* pLastMatrix = nullptr;
+	auto modelMatrix = pDraw->MakeModelMatrixSetter();
 	for (size_t iObject : m_sortedObjectIndexList) {
 		auto& data = m_objectDataList.at(iObject);
-		if (pLastMatrix != data.m_pModelMatrix.get()) {
-			pLastMatrix = data.m_pModelMatrix.get();
-			if (pLastMatrix == nullptr) {
-				pDraw->ClearModelMatrix();
-			}
-			else {
-				pDraw->SetModelMatrix(*pLastMatrix);
-			}
-		}
+		modelMatrix.Set(data.m_pModelMatrix);
 		YM_ASSERT(data.m_pObject);
 		data.m_pObject->Draw(pDraw);
-	}
-	if (pLastMatrix) {
-		pDraw->ClearModelMatrix();
 	}
 }
 
@@ -106,22 +83,16 @@ static double CalcAabBoxDepth(const XMMATRIX& localToViewMatrix, const YmAabBox3
 
 void YmTngnDmDrawableObjectList::SortObjectsByDepth(YmTngnDraw* pDraw)
 {
-	XMFLOAT4X4* pLastMatrix = nullptr;
+	auto modelMatrix = pDraw->MakeModelMatrixSetter();
 	XMMATRIX localToViewMatrix = XMMatrixIdentity();
 	size_t nObject = m_objectDataList.size();
 	multimap<double, size_t> depthToObjectMap;
 	for (size_t iObject = 0; iObject < nObject; ++iObject) {
 		auto& data = m_objectDataList[iObject];
-		if (pLastMatrix != data.m_pModelMatrix.get()) {
-			pLastMatrix = data.m_pModelMatrix.get();
-			if (pLastMatrix == nullptr) {
-				pDraw->ClearModelMatrix();
-			}
-			else {
-				pDraw->SetModelMatrix(*pLastMatrix);
-			}
+		if (modelMatrix.Set(data.m_pModelMatrix)) {
 			localToViewMatrix = pDraw->GetModelToViewMatrix();
 		}
+
 		double depth = CalcAabBoxDepth(localToViewMatrix, data.m_pObject->GetAabBox());
 		if (0 < depth) {
 			continue;

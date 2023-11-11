@@ -102,6 +102,9 @@
     <ClInclude Include="YmTngn\YmTngnDmDrawableObjectList.h">
       <Filter>Ymcpp\YmTngn</Filter>
     </ClInclude>
+    <ClInclude Include="YmTngn\YmTngnDrawUtil.h">
+      <Filter>Ymcpp\YmTngn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tngn.cpp">
@@ -165,6 +168,9 @@
       <Filter>Ymcpp\YmTngn</Filter>
     </ClCompile>
     <ClCompile Include="YmTngn\YmTngnDmDrawableObjectList.cpp">
+      <Filter>Ymcpp\YmTngn</Filter>
+    </ClCompile>
+    <ClCompile Include="YmTngn\YmTngnDrawUtil.cpp">
       <Filter>Ymcpp\YmTngn</Filter>
     </ClCompile>
   </ItemGroup>

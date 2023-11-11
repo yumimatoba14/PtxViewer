@@ -1,6 +1,7 @@
 #pragma once
 
 #include "YmTngn.h"
+#include "YmTngnDrawUtil.h"
 
 namespace Ymcpp {
 
@@ -34,7 +35,8 @@ public:
 	/// </summary>
 	/// <param name="matrix">matrix is pre-multiplied by vertex coordinates.</param>
 	void SetModelMatrix(const DirectX::XMFLOAT4X4& matrix);
-	void ClearModelMatrix();
+	void ClearModelMatrix() { YmTngnDrawModelMatrixSetter::SetIdentity(m_pShaderImpl); }
+	YmTngnDrawModelMatrixSetter MakeModelMatrixSetter() { return m_pShaderImpl; }
 
 	double GetPerspectiveViewNearZ();
 

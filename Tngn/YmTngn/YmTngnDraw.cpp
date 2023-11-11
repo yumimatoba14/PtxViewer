@@ -34,13 +34,6 @@ void YmTngnDraw::SetModelMatrix(const DirectX::XMFLOAT4X4& matrix)
 	m_pShaderImpl->SetModelMatrix(matrix);
 }
 
-void YmTngnDraw::ClearModelMatrix()
-{
-	DirectX::XMFLOAT4X4 matrix;
-	DirectX::XMStoreFloat4x4(&matrix, DirectX::XMMatrixIdentity());
-	SetModelMatrix(matrix);
-}
-
 double YmTngnDraw::GetPerspectiveViewNearZ()
 {
 	return m_pShaderImpl->GetPerspectiveViewNearZ();
