@@ -112,6 +112,7 @@ void YmTngnDmTriangleMesh::OnDraw(YmTngnDraw* pDraw)
 	pDraw->SetModelMatrix(GetLocalToGlobalMatrix());
 	for (auto pObj : m_indexedTriangleLists) {
 		if (pObj->IsTransparent()) {
+			pObj->PrepareAabb();
 			pDraw->RegisterTransparentObject(m_pLocalToGlobalMatrix, pObj);
 		}
 		else {
@@ -140,6 +141,21 @@ void YmTngnDmTriangleMesh::IndexedTriangleList::Draw(YmTngnDraw* pDraw)
 	if (m_pVertexBuffer && m_pIndexBuffer) {
 		pDraw->DrawTriangleList(m_pVertexBuffer, m_pIndexBuffer, m_nIndex);
 	}
+}
+
+void YmTngnDmTriangleMesh::IndexedTriangleList::PrepareAabb()
+{
+	if (GetAabBox().IsInitialized()) {
+		return;
+	}
+
+	YmAabBox3d aabb;
+	size_t nVertex = m_pModel->GetVertexCount();
+	for (size_t i = 0; i < nVertex; ++i) {
+		auto inVtx = m_pModel->GetVertexAt(i);
+		aabb.Extend(inVtx.position);
+	}
+	SetAabBox(aabb);
 }
 
 void YmTngnDmTriangleMesh::IndexedTriangleList::PrepareData(YmTngnDraw* pDraw)

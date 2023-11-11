@@ -27,7 +27,12 @@ protected:
 	//virtual std::vector<YmTngnPointListVertex> OnFindPickedPoints(YmTngnPickTargetId id);
 
 private:
+	void DrawDirect(YmTngnDraw* pDraw);
+	void DrawSorted(YmTngnDraw* pDraw);
+	void SortObjectsByDepth(YmTngnDraw* pDraw);
+private:
 	std::deque<ObjectData> m_objectDataList;
+	std::deque<size_t> m_sortedObjectIndexList;
 };
 
 }

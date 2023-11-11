@@ -18,6 +18,7 @@ public:
 
 		bool IsTransparent() const;
 		void Draw(YmTngnDraw* pDraw);
+		void PrepareAabb();
 	protected:
 		void virtual OnDraw(YmTngnDraw* pDraw) { Draw(pDraw); }
 	private:
