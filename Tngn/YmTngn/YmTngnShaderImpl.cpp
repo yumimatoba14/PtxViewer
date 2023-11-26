@@ -168,6 +168,23 @@ void YmTngnShaderImpl::DrawTriangleList(
 	m_pDc->DrawIndexed((UINT)nIndex, 0, 0);
 }
 
+void YmTngnShaderImpl::DrawLineList(
+	const D3DBufferPtr& pVertexBuf, size_t nVertex
+)
+{
+	YM_ASSERT(nVertex <= UINT_MAX);
+	m_pDc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+	//m_pDc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+	ID3D11Buffer* apVB[1] = { pVertexBuf.Get() };
+	UINT aVertexSize[1] = { (UINT)sizeof(YmTngnPointListVertex) };
+	UINT aOffset[1] = { 0 };
+	m_pDc->IASetVertexBuffers(0, 1, apVB, aVertexSize, aOffset);
+
+	SetShaderContext(m_lineListSc);
+	m_pDc->Draw((UINT)nVertex, 0);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void YmTngnShaderImpl::Initialize()
@@ -180,6 +197,7 @@ void YmTngnShaderImpl::Initialize()
 	InitializeShaderContextsForNormalRendering();
 	InitializeShaderContextsForPickableRendering();
 	InitializeShaderContextsForTriangleListNormalRendering();
+	InitializeShaderContextsForLineListNormalRendering();
 }
 
 void YmTngnShaderImpl::UpdateShaderParam()
@@ -325,6 +343,26 @@ void YmTngnShaderImpl::InitializeShaderContextsForTriangleListNormalRendering()
 		{ "COLOR"	,	0,	DXGI_FORMAT_R8G8B8A8_UNORM,	    0,	24,	D3D11_INPUT_PER_VERTEX_DATA,	0},
 	};
 	m_triangleListSc.Init(
+		CreateInputLayout(aPointListElem, sizeof(aPointListElem) / sizeof(aPointListElem[0]), hlslFilePath, "vsMain", aMacro),
+		CreateVertexShader(hlslFilePath, "vsMain", aMacro),
+		m_pShaderParamConstBuf,
+		nullptr, nullptr,
+		CreatePixelShader(hlslFilePath, "psMain", aMacro)
+	);
+}
+
+void YmTngnShaderImpl::InitializeShaderContextsForLineListNormalRendering()
+{
+	const YmTString hlslFilePath = GetHslsFilePath(_T("LineListShader.hlsl"));
+	const D3D_SHADER_MACRO aMacro[] = {
+		{ nullptr, nullptr }
+	};
+
+	D3D11_INPUT_ELEMENT_DESC aPointListElem[] = {
+		{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0,	0,	D3D11_INPUT_PER_VERTEX_DATA,	0},
+		{ "COLOR"	,	0,	DXGI_FORMAT_R8G8B8A8_UNORM,	    0,	12,	D3D11_INPUT_PER_VERTEX_DATA,	0},
+	};
+	m_lineListSc.Init(
 		CreateInputLayout(aPointListElem, sizeof(aPointListElem) / sizeof(aPointListElem[0]), hlslFilePath, "vsMain", aMacro),
 		CreateVertexShader(hlslFilePath, "vsMain", aMacro),
 		m_pShaderParamConstBuf,

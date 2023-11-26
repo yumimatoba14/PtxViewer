@@ -80,6 +80,10 @@ public:
 		const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pIndexBuf, size_t nIndex
 	);
 
+	void DrawLineList(
+		const YmTngnPointListVertex aVertex[], size_t nVertex
+	);
+
 private:
 	void DrawPointListImpl(
 		const D3DBufferPtr& pVertexBuf, size_t nVertex, YmTngnPickTargetId firstId

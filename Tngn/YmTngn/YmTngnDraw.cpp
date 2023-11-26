@@ -163,6 +163,35 @@ void YmTngnDraw::DrawTriangleList(
 	m_pShaderImpl->DrawTriangleList(pVertexBuf, pIndexBuf, nIndex);
 }
 
+void YmTngnDraw::DrawLineList(
+	const YmTngnPointListVertex aVertex[], size_t nVertex
+)
+{
+	m_pShaderImpl->PrepareShaderParam();
+	YmDx11BufferWithSize vertexBuffer = PrepareTempVertexBuffer();
+	const size_t vertexSize = sizeof(YmTngnPointListVertex);
+	const size_t nVertexInBufUpperBound = vertexBuffer.nBufferByte / vertexSize;
+	YM_IS_TRUE(1 < nVertexInBufUpperBound);
+
+	size_t nRemainingVertex = nVertex;
+	while (0 < nRemainingVertex) {
+		size_t nVertexInBuf = min(nVertexInBufUpperBound, nRemainingVertex);
+		nVertexInBuf = (nVertexInBuf / 2) * 2;
+		if (nVertexInBuf == 0) {
+			break;
+		}
+
+		{
+			YmDx11MappedSubResource mappedMemory = m_pShaderImpl->MapDynamicBuffer(vertexBuffer.pBuffer);
+			UINT dataSize = static_cast<UINT>(nVertexInBuf * vertexSize);
+			mappedMemory.Write(aVertex + (nVertex - nRemainingVertex), dataSize);
+		}
+		m_pShaderImpl->DrawLineList(vertexBuffer.pBuffer, nVertexInBuf);
+
+		nRemainingVertex -= nVertexInBuf;
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void YmTngnDraw::DrawPointListImpl(
