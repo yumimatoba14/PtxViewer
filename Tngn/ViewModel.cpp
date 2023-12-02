@@ -134,6 +134,25 @@ void ViewModel::SaveViewToFile(System::String^ imageFilePath)
 	}
 }
 
+static YmVector3d ConvertToYmVector3d(Vector3d point)
+{
+	YmVector3d out;
+	out[0] = point.X;
+	out[1] = point.Y;
+	out[2] = point.Z;
+	return out;
+}
+
+void ViewModel::AddLengthDimension(Vector3d point0, Vector3d point1)
+{
+	m_pImpl->AddLengthDimension(ConvertToYmVector3d(point0), ConvertToYmVector3d(point1));
+}
+
+void ViewModel::ClearLengthDimension()
+{
+	m_pImpl->ClearLengthDimension();
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void ViewModel::OnSize(System::Drawing::Size viewSize)

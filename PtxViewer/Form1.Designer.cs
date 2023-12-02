@@ -40,6 +40,7 @@ namespace PtxViewer
             this.enablePickMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.viewTimer = new System.Windows.Forms.Timer(this.components);
             this.saveViewImageMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.lengthDimensionMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -99,7 +100,8 @@ namespace PtxViewer
             this.testMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.drawWithScannerPosMenu,
             this.enablePickMenu,
-            this.saveViewImageMenu});
+            this.saveViewImageMenu,
+            this.lengthDimensionMenu});
             this.testMenu.Name = "testMenu";
             this.testMenu.Size = new System.Drawing.Size(39, 20);
             this.testMenu.Text = "&Test";
@@ -133,6 +135,13 @@ namespace PtxViewer
             this.saveViewImageMenu.ToolTipText = "Save view to image file.";
             this.saveViewImageMenu.Click += new System.EventHandler(this.saveViewImageMenu_Click);
             // 
+            // lengthDimensionMenu
+            // 
+            this.lengthDimensionMenu.CheckOnClick = true;
+            this.lengthDimensionMenu.Name = "lengthDimensionMenu";
+            this.lengthDimensionMenu.Size = new System.Drawing.Size(196, 22);
+            this.lengthDimensionMenu.Text = "&Measure distance";
+            this.lengthDimensionMenu.Click += new System.EventHandler(this.lengthDimensionMenu_Click);
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -162,6 +171,7 @@ namespace PtxViewer
         private System.Windows.Forms.ToolStripMenuItem enablePickMenu;
         private System.Windows.Forms.ToolStripMenuItem drawWithScannerPosMenu;
         private System.Windows.Forms.ToolStripMenuItem saveViewImageMenu;
+        private System.Windows.Forms.ToolStripMenuItem lengthDimensionMenu;
     }
 }
 

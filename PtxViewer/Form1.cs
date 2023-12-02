@@ -246,5 +246,17 @@ namespace PtxViewer
                 }
             }
         }
+
+        private void lengthDimensionMenu_Click(object sender, EventArgs e)
+        {
+            if (lengthDimensionMenu.Checked)
+            {
+                viewModel.SetViewEventListener(new LengthDimensionMode(() => lengthDimensionMenu.Checked = false));
+            }
+            else
+            {
+                viewModel.SetViewEventListener(null);
+            }
+        }
     }
 }

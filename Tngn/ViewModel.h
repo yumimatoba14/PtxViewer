@@ -37,6 +37,9 @@ public:
 
 	void SaveViewToFile(System::String^ imageFilePath);
 
+	void AddLengthDimension(Vector3d point0, Vector3d point1);
+	void ClearLengthDimension();
+
 public:
 	void OnSize(System::Drawing::Size viewSize);
 	void Draw();
