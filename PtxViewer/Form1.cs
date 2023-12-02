@@ -194,7 +194,13 @@ namespace PtxViewer
 
         private void enablePickMenu_Click(object sender, EventArgs e)
         {
-            viewModel.SetPickEnabled(enablePickMenu.Checked);
+            if (enablePickMenu.Checked)
+            {
+                viewModel.SetViewEventListener(new PickMode(() => enablePickMenu.Checked = false));
+            } else
+            {
+                viewModel.SetViewEventListener(null);
+            }
         }
 
         private void drawWithScannerPosMenu_Click(object sender, EventArgs e)
