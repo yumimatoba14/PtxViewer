@@ -24,6 +24,7 @@ ViewModel::ViewModel(IContainer^ container, System::IntPtr handleWnd)
 	config.ReadIniFile(
 		YmFilePath(marshal_as<YmTString>(baseDir)).AppendFileName("Tngn.ini").ToString().c_str()
 	);
+	eventListener = ViewEventListener::GetDefaultInstance();
 	m_pImpl = new YmTngnViewModel(config);
 	HWND hWnd = reinterpret_cast<HWND>(handleWnd.ToPointer());
 	m_pImpl->Setup(hWnd);
@@ -55,6 +56,17 @@ ViewModel::!ViewModel()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+void ViewModel::SetViewEventListener(ViewEventListener^ listener)
+{
+	if (listener == nullptr) {
+		listener = ViewEventListener::GetDefaultInstance();
+	}
+
+	eventListener->Detach(this);
+	eventListener = listener;
+	eventListener->Attach(this);
+}
 
 bool ViewModel::OpenPtxFile(System::String^ ptxFilePath)
 {
@@ -171,6 +183,11 @@ void ViewModel::OnMouseButtonDown(System::Windows::Forms::MouseEventArgs^ e)
 	}
 }
 
+static Vector3d MakeVector(const YmVector3d& in)
+{
+	return Vector3d(in[0], in[1], in[2]);
+}
+
 void ViewModel::OnMouseButtonUp(System::Windows::Forms::MouseEventArgs^ e)
 {
 	YmViewOp::MouseStartOption button;
@@ -180,11 +197,16 @@ void ViewModel::OnMouseButtonUp(System::Windows::Forms::MouseEventArgs^ e)
 	if (button == YmViewOp::MouseStartOption::L_BUTTON && isPicking) {
 		auto points = m_pImpl->TryToPickPoint(GetLocation(e));
 		if (points.empty()) {
-			m_pImpl->PrepareSelectedPointList()->ClearPoint();
+			if (eventListener->PickingNone()) {
+				m_pImpl->PrepareSelectedPointList()->ClearPoint();
+			}
 		}
 		else {
 			for (YmTngnPointListVertex& point : points) {
-				m_pImpl->PrepareSelectedPointList()->AddPoint(point.position, YmRgba4b(255, 0, 0));
+				bool isAdd = eventListener->PickingPoint(MakeVector(point.position));
+				if (isAdd) {
+					m_pImpl->PrepareSelectedPointList()->AddPoint(point.position, YmRgba4b(255, 0, 0));
+				}
 			}
 		}
 	}

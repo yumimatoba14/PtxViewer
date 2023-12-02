@@ -3,6 +3,7 @@
 #include "TngnCli.h"
 #include "YmBase/YmVector.h"
 #include "YmTngn/YmTngnViewModel.h"
+#include "ViewEventListener.h"
 
 namespace Tngn {
 using namespace System::ComponentModel;
@@ -20,6 +21,8 @@ public:
 	}
 
 	virtual event System::EventHandler^ Disposed;
+
+	void SetViewEventListener(ViewEventListener^ listener);
 
 	bool OpenPtxFile(System::String^ ptxFilePath);
 	bool IsProgressiveViewMode();
@@ -49,6 +52,7 @@ private:
 	ISite^ site = nullptr;
 	Ymcpp::YmTngnViewModel* m_pImpl = nullptr;
 	bool isPicking = false;
+	ViewEventListener^ eventListener = nullptr;
 };
 
 }

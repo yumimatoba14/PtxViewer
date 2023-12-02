@@ -105,6 +105,12 @@
     <ClInclude Include="YmTngn\YmTngnDrawUtil.h">
       <Filter>Ymcpp\YmTngn</Filter>
     </ClInclude>
+    <ClInclude Include="ViewEventListener.h">
+      <Filter>Cli</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3d.h">
+      <Filter>Cli</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tngn.cpp">
@@ -172,6 +178,12 @@
     </ClCompile>
     <ClCompile Include="YmTngn\YmTngnDrawUtil.cpp">
       <Filter>Ymcpp\YmTngn</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewEventListener.cpp">
+      <Filter>Cli</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector3d.cpp">
+      <Filter>Cli</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
