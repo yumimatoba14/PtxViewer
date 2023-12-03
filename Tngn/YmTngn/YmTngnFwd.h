@@ -3,6 +3,7 @@
 #include "YmBase/YmWin32.h"
 #include "YmTngnModel/YmTngnModelFwd.h"
 #include <d3d11.h>
+#include <d2d1.h>
 #pragma warning(push)
 #pragma warning(disable: 4793)
 #include <DirectXMath.h>
@@ -36,10 +37,11 @@ using YmTngnPickTargetId = uint64_t;
 using DXGIFactoryPtr = YmComPtr<IDXGIFactory>;
 using DXGIOutputPtr = YmComPtr<IDXGIOutput>;
 using DXGIAdapterPtr = YmComPtr<IDXGIAdapter>;
+using DXGISwapChainPtr = YmComPtr<IDXGISwapChain>;
+using DXGISurfacePtr = YmComPtr<IDXGISurface>;
 
 using D3DDevicePtr = YmComPtr<ID3D11Device> ;
 using D3DDeviceContextPtr = YmComPtr<ID3D11DeviceContext>;
-using DXGISwapChainPtr = YmComPtr<IDXGISwapChain>;
 using D3DBlendStatePtr = YmComPtr<ID3D11BlendState>;
 using D3DDepthStencilStatePtr = YmComPtr<ID3D11DepthStencilState>;
 using D3DRasterizerStatePtr = YmComPtr<ID3D11RasterizerState>;
@@ -57,6 +59,11 @@ using D3DResourcePtr = YmComPtr<ID3D11Resource>;
 using D3DBufferPtr = YmComPtr<ID3D11Buffer>;
 using D3DBlobPtr = YmComPtr< ID3DBlob>;
 
+using D2D1FactoryPtr = YmComPtr<ID2D1Factory>;
+using D2D1RenderTargetPtr = YmComPtr<ID2D1RenderTarget>;
+using D2D1BrushPtr = YmComPtr<ID2D1Brush>;
+using D2D1SolidColorBrushPtr = YmComPtr<ID2D1SolidColorBrush>;
+using DWriteTextLayoutPtr = YmComPtr<IDWriteTextLayout>;
 
 struct YmDx11BufferWithSize
 {
@@ -68,3 +75,4 @@ struct YmDx11BufferWithSize
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d2d1.lib")

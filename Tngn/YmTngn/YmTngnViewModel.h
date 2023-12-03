@@ -9,6 +9,7 @@ namespace Ymcpp {
 class YmTngnShaderImpl;
 class YmTngnDmPtxFiles;
 class YmTngnDmMemoryPointList;
+class YmTextDrawerImpl;
 
 class YmTngnViewModel
 {
@@ -59,6 +60,7 @@ private:
 	void PrepareRenderTargetView();
 	void PrepareRenderTargetViewForNormalRendering();
 	void PrepareRenderTargetViewForPick();
+	std::unique_ptr<YmTextDrawerImpl> CreateTextDrawerImpl();
 
 	void BeginDraw(bool isEraseBackground, bool isUseLastRenderingResources);
 	void EndDraw();
@@ -84,6 +86,7 @@ private:
 	D3DResourcePtr m_pLastRenderingDepthStencilTextureForProgressiveView;
 
 	std::unique_ptr<YmTngnShaderImpl> m_pShaderImpl;
+	std::unique_ptr<YmTextDrawerImpl> m_pTextDrawerImpl;
 	bool m_isNeedDraw = false;
 	bool m_isViewUpdated = false;
 	bool m_isPickEnabled = false;

@@ -14,14 +14,15 @@ namespace Detail {
 
 		T* operator * () const { return *m_p; }
 		operator T** () const { return m_pp; }
-		operator void** () const { return reinterpret_cast<void**>(m_pp); }
+		operator IUnknown** () const { return reinterpret_cast<IUnknown**>(m_pp); }
 
 		/// <summary>
 		/// This function is added to support IID_PPV_ARGS by YmComPtr.
 		/// </summary>
 		/// <param name="pp"></param>
 		/// <returns></returns>
-		friend void** IID_PPV_ARGS_Helper(const ComPtrPtr& pp) { return pp; }
+		friend void** IID_PPV_ARGS_Helper(const ComPtrPtr& pp) { return reinterpret_cast<void**>(pp.m_pp); }
+
 	private:
 		T** m_pp;
 	};

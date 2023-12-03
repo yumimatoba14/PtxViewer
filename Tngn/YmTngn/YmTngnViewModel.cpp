@@ -7,6 +7,7 @@
 #include "YmTngnDmDrawableObjectList.h"
 #include "YmTngnShaderImpl.h"
 #include "YmTngnViewConfig.h"
+#include "YmTextDrawerImpl.h"
 #include "ScreenGrab.h"
 
 using namespace std;
@@ -29,7 +30,7 @@ static DXGIAdapterPtr SelectAdapter()
 {
 	DXGIFactoryPtr pFactory;
 
-	HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), &pFactory);
+	HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&pFactory));
 	if (FAILED(hr))
 	{
 		YM_THROW_ERROR("CreateDXGIFactory");
@@ -103,6 +104,8 @@ void YmTngnViewModel::Setup(HWND hWnd)
 	SetupDevice(hWnd, viewSize);
 	m_pShaderImpl = make_unique<YmTngnShaderImpl>(*m_pConfig, m_pDevice, m_pDc);
 	m_pShaderImpl->SetViewSize(viewSize);
+
+	m_pTextDrawerImpl = CreateTextDrawerImpl();
 }
 
 void YmTngnViewModel::ResizeBuffer(const YmVector2i& size)
@@ -117,6 +120,7 @@ void YmTngnViewModel::ResizeBuffer(const YmVector2i& size)
 		m_apLastRenderingTextureForProgressiveView[0].Reset();
 		m_apLastRenderingTextureForProgressiveView[1].Reset();
 		m_pLastRenderingDepthStencilTextureForProgressiveView.Reset();
+		m_pTextDrawerImpl->OnResizeBuffer();
 
 		HRESULT hr = m_pSwapChain->ResizeBuffers(
 			0, 0, 0, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
@@ -126,6 +130,13 @@ void YmTngnViewModel::ResizeBuffer(const YmVector2i& size)
 
 		m_viewport.Width = static_cast<FLOAT>(size[0]);
 		m_viewport.Height = static_cast<FLOAT>(size[1]);
+
+		DXGISurfacePtr pRenderTargetBuffer;
+		hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pRenderTargetBuffer));
+		if (FAILED(hr)) {
+			YM_THROW_ERROR("GetBuffer");
+		}
+		m_pTextDrawerImpl->RecreateRenderTarget(pRenderTargetBuffer);
 	}
 	m_pShaderImpl->SetViewSize(size);
 }
@@ -179,6 +190,19 @@ void YmTngnViewModel::Draw()
 		YmTngnDraw draw(m_pShaderImpl.get(), m_pDevice);
 		m_pSelectedContent->Draw(&draw);
 		// Selected content should not be considered where view is updated or not.
+	}
+
+	if (m_pTextDrawerImpl) {
+		using namespace ATL;
+		m_pTextDrawerImpl->BeginDraw();
+		m_pTextDrawerImpl->SetTextColor(YmRgba4b(255, 255, 255));
+		m_pTextDrawerImpl->SetBackgroundColor(YmRgba4b(64, 64, 64, 192));
+		m_pTextDrawerImpl->DrawTextWithoutBackground(CA2W("ƒeƒXƒg•¶Žš—ñ"), YmVectorUtil::Make(50, 20));
+		m_pTextDrawerImpl->DrawText(CA2W("ABCDEFGHIJKLMNabcdefghijklmn"), YmVectorUtil::Make(50, 50));
+		m_pTextDrawerImpl->SetTextColor(YmRgba4b(255, 255, 0));
+		//m_pTextDrawerImpl->SetBackgroundColor(YmRgba4b(96, 96, 96, 0));
+		m_pTextDrawerImpl->DrawText(CA2W("abcdefghijklmn\nabcdefghijklmn"), YmVectorUtil::Make(50, 80));
+		m_pTextDrawerImpl->EndDraw();
 	}
 
 	EndDraw();
@@ -412,7 +436,7 @@ void YmTngnViewModel::SetupDevice(HWND hWnd, const YmVector2i& viewSize)
 {
 	DXGIAdapterPtr pAdapter = SelectAdapter();
 
-	UINT cdev_flags = 0;
+	UINT cdev_flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #ifdef _DEBUG
 	cdev_flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
@@ -621,6 +645,17 @@ void YmTngnViewModel::PrepareRenderTargetViewForPick()
 	if (FAILED(hr)) {
 		YM_THROW_ERROR("CreateRenderTargetView");
 	}
+}
+
+std::unique_ptr<YmTextDrawerImpl> YmTngnViewModel::CreateTextDrawerImpl()
+{
+	DXGISurfacePtr pRenderTargetBuffer;
+	HRESULT hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pRenderTargetBuffer));
+	if (FAILED(hr)) {
+		YM_THROW_ERROR("GetBuffer");
+	}
+
+	return make_unique<YmTextDrawerImpl>(pRenderTargetBuffer);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
