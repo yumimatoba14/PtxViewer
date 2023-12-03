@@ -165,6 +165,8 @@ void YmTngnViewModel::Draw()
 
 	auto pTransparentObjectList = m_pShaderImpl->GetTransparentObjectList();
 	bool isDrawTrnasparentPhase = pTransparentObjectList && 0 < pTransparentObjectList->GetCount();
+	bool isDrawForegroundPhase = m_pSelectedContent || !m_lengthDimensions.empty();
+
 	bool isCaptureRenderTargetResource = false;
 	if (isContinueProgressiveView) {
 		isCaptureRenderTargetResource = m_pSelectedContent || isDrawTrnasparentPhase;
@@ -185,23 +187,21 @@ void YmTngnViewModel::Draw()
 		pTransparentObjectList->Draw(&draw);
 	}
 
-	if (m_pSelectedContent) {
+	if (isDrawForegroundPhase) {
 		m_pDc->OMSetDepthStencilState(m_pDepthStencilStateForForegroundDraw.Get(), 1);
 		YmTngnDraw draw(m_pShaderImpl.get(), m_pDevice);
 		m_pSelectedContent->Draw(&draw);
 		// Selected content should not be considered where view is updated or not.
 	}
 
-	if (m_pTextDrawerImpl) {
-		using namespace ATL;
+	if (m_pTextDrawerImpl && !m_pShaderImpl->Get2DTextList()->empty()) {
 		m_pTextDrawerImpl->BeginDraw();
 		m_pTextDrawerImpl->SetTextColor(YmRgba4b(255, 255, 255));
 		m_pTextDrawerImpl->SetBackgroundColor(YmRgba4b(64, 64, 64, 192));
-		m_pTextDrawerImpl->DrawTextWithoutBackground(CA2W("ƒeƒXƒg•¶Žš—ñ"), YmVectorUtil::Make(50, 20));
-		m_pTextDrawerImpl->DrawText(CA2W("ABCDEFGHIJKLMNabcdefghijklmn"), YmVectorUtil::Make(50, 50));
-		m_pTextDrawerImpl->SetTextColor(YmRgba4b(255, 255, 0));
-		//m_pTextDrawerImpl->SetBackgroundColor(YmRgba4b(96, 96, 96, 0));
-		m_pTextDrawerImpl->DrawText(CA2W("abcdefghijklmn\nabcdefghijklmn"), YmVectorUtil::Make(50, 80));
+		auto p2DText = m_pShaderImpl->Get2DTextList();
+		for (auto& text : *p2DText) {
+			m_pTextDrawerImpl->DrawText(text.GetText().c_str(), text.GetOrigin());
+		}
 		m_pTextDrawerImpl->EndDraw();
 	}
 
@@ -691,6 +691,7 @@ void YmTngnViewModel::BeginDraw(bool isEraseBackground, bool isUseLastRenderingR
 		m_pDc->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 		m_pShaderImpl->ClearTransparentObject();
+		m_pShaderImpl->Clear2DText();
 	}
 	else if (isUseLastRenderingResources) {
 		CopyResourceToView(m_pDc, m_apLastRenderingTextureForProgressiveView[0], m_pRenderTargetViewForNormalRendering);

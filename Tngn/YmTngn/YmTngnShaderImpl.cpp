@@ -97,6 +97,31 @@ void YmTngnShaderImpl::RegisterTransparentObject(
 	}
 }
 
+void YmTngnShaderImpl::Clear2DText()
+{
+	m_2dTextList.clear();
+}
+
+void YmTngnShaderImpl::Register2DText(LPCWSTR pText, const YmVector2i& origin)
+{
+	if (pText == nullptr) {
+		return;
+	}
+	YmTngn2DText textData;
+	textData.SetText(pText);
+	textData.SetOrigin(origin);
+	m_2dTextList.push_back(move(textData));
+}
+
+void YmTngnShaderImpl::Register3DText(const YmVector3d& origin, const std::string& text)
+{
+	YmVector2i originViewCoord;
+	bool isOk = ConvertGlobalCoordToViewIntCoord(origin, &originViewCoord);
+	if (isOk) {
+		Register2DText(LPCWSTR(CA2W(text.c_str())), originViewCoord);
+	}
+}
+
 void YmTngnShaderImpl::DrawPointList(
 	const D3DBufferPtr& pVertexBuf, size_t vertexSize, size_t nVertex
 )
@@ -209,6 +234,36 @@ double YmTngnShaderImpl::GetAspectRatio() const
 XMMATRIX YmTngnShaderImpl::GetProjectionMatrix(double aspectRatio) const
 {
 	return XMMatrixPerspectiveFovRH(XMConvertToRadians((float)m_fovAngleYDeg), (float)aspectRatio, (float)m_viewNearZ, (float)m_viewFarZ);
+}
+
+static int CastFloatToInt(float f)
+{
+	if (f < 0) {
+		return -static_cast<int>(floor(-f + 0.5));
+	}
+	else {
+		return static_cast<int>(floor(f + 0.5));
+	}
+}
+
+bool YmTngnShaderImpl::ConvertGlobalCoordToViewIntCoord(const YmVector3d& global, YmVector2i* pViewCoord) const
+{
+	XMMATRIX globalToProjMatrix = XMMatrixMultiply(m_pViewOp->GetViewMatrix(), GetProjectionMatrix(GetAspectRatio()));
+	YmVector3f globalF = YmVectorUtil::StaticCast<YmVector3f>(global);
+	XMVECTOR viewCoordHomo = XMVector3Transform(XMVectorSet(globalF[0], globalF[1], globalF[2], 1.0f), globalToProjMatrix);
+	float w = XMVectorGetW(viewCoordHomo);
+	const double tolZero = 1e-6;
+	if (w < tolZero) {
+		return false;
+	}
+	if (pViewCoord != nullptr) {
+		YmVector2i viewSize = GetViewSize();
+		*pViewCoord = YmVectorUtil::Make(
+			CastFloatToInt((XMVectorGetX(viewCoordHomo) / w + 1) / 2 * viewSize[0]),
+			CastFloatToInt((1 - XMVectorGetY(viewCoordHomo) / w) / 2 * viewSize[1])
+		);
+	}
+	return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

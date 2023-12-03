@@ -56,6 +56,8 @@ public:
 public:
 	void RegisterTransparentObject(const YmTngnModelMatrixPtr& pMatrix, const YmTngnDrawableObjectPtr& pObject);
 
+	void Register3DText(const YmVector3d& origin, const std::string& text);
+
 public:
 	void DrawPointList(
 		const YmTngnPointListVertex aVertex[], size_t nVertex, YmTngnPickTargetId firstId = YM_TNGN_PICK_TARGET_NULL

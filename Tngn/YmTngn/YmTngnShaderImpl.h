@@ -3,6 +3,7 @@
 #include "YmTngn.h"
 #include "YmTngnShaderContext.h"
 #include "YmDx11MappedSubResource.h"
+#include "YmTngn2DText.h"
 #include <vector>
 
 namespace Ymcpp {
@@ -105,6 +106,11 @@ public:
 	void ClearTransparentObject();
 	void RegisterTransparentObject(const YmTngnModelMatrixPtr& pMatrix, const YmTngnDrawableObjectPtr& pObject);
 
+	const std::vector<YmTngn2DText>* Get2DTextList() const { return &m_2dTextList; }
+	void Clear2DText();
+	void Register2DText(LPCWSTR pText, const YmVector2i& origin);
+	void Register3DText(const YmVector3d& origin, const std::string& text);
+
 	void DrawPointList(
 		const D3DBufferPtr& pVertexBuf, size_t vertexSize, size_t nVertex
 	);
@@ -124,6 +130,8 @@ private:
 	double GetAspectRatio() const;
 
 	XMMATRIX GetProjectionMatrix(double aspectRatio) const;
+
+	bool ConvertGlobalCoordToViewIntCoord(const YmVector3d& global, YmVector2i* pViewCoord) const;
 
 	void InitializeShaderContextsForNormalRendering();
 	void InitializeShaderContextsForPickableRendering();
@@ -178,6 +186,7 @@ private:
 
 	std::vector<YmDx11BufferWithSize> m_tempVertexBufferList;
 	YmTngnDmDrawableObjectListPtr m_pTransparentObjectList;
+	std::vector<YmTngn2DText> m_2dTextList;
 };
 
 }

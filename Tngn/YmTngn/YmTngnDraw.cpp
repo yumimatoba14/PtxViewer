@@ -118,6 +118,11 @@ void YmTngnDraw::RegisterTransparentObject(
 	m_pShaderImpl->RegisterTransparentObject(pMatrix, pObject);
 }
 
+void YmTngnDraw::Register3DText(const YmVector3d& origin, const std::string& text)
+{
+	m_pShaderImpl->Register3DText(origin, text);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void YmTngnDraw::DrawPointList(const YmTngnPointListVertex aVertex[], size_t nVertex, YmTngnPickTargetId firstId)

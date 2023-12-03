@@ -134,6 +134,7 @@
     <ClInclude Include="YmTngn\YmDx11MappedSubResource.h" />
     <ClInclude Include="YmTngn\YmTextDrawerImpl.h" />
     <ClInclude Include="YmTngn\YmTngn.h" />
+    <ClInclude Include="YmTngn\YmTngn2DText.h" />
     <ClInclude Include="YmTngn\YmTngnDmDrawableObjectList.h" />
     <ClInclude Include="YmTngn\YmTngnDmExclusiveLodPointList.h" />
     <ClInclude Include="YmTngn\YmTngnDmMemoryPointList.h" />
@@ -168,6 +169,7 @@
     <ClCompile Include="ViewModel.cpp" />
     <ClCompile Include="YmTngn\YmDx11MappedSubResource.cpp" />
     <ClCompile Include="YmTngn\YmTextDrawerImpl.cpp" />
+    <ClCompile Include="YmTngn\YmTngn2DText.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmDrawableObjectList.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmExclusiveLodPointList.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmMemoryPointList.cpp" />

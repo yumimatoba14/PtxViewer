@@ -108,6 +108,9 @@
     <ClInclude Include="YmTngn\YmTextDrawerImpl.h">
       <Filter>Ymcpp\YmTngn</Filter>
     </ClInclude>
+    <ClInclude Include="YmTngn\YmTngn2DText.h">
+      <Filter>Ymcpp\YmTngn</Filter>
+    </ClInclude>
     <ClInclude Include="ViewEventListener.h">
       <Filter>Cli</Filter>
     </ClInclude>
@@ -183,6 +186,9 @@
       <Filter>Ymcpp\YmTngn</Filter>
     </ClCompile>
     <ClCompile Include="YmTngn\YmTextDrawerImpl.cpp">
+      <Filter>Ymcpp\YmTngn</Filter>
+    </ClCompile>
+    <ClCompile Include="YmTngn\YmTngn2DText.cpp">
       <Filter>Ymcpp\YmTngn</Filter>
     </ClCompile>
     <ClCompile Include="ViewEventListener.cpp">
