@@ -12,7 +12,7 @@ using DWriteTextFormatPtr = YmComPtr<IDWriteTextFormat>;
 class YmTextDrawerImpl
 {
 public:
-	explicit YmTextDrawerImpl(const DXGISurfacePtr& pSurface);
+	explicit YmTextDrawerImpl(const DXGISurfacePtr& pSurface, const YmTngnViewConfig* pConfig);
 	virtual ~YmTextDrawerImpl();
 
 	YmTextDrawerImpl(const YmTextDrawerImpl& other) = delete;

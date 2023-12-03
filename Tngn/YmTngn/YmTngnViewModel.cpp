@@ -196,8 +196,8 @@ void YmTngnViewModel::Draw()
 
 	if (m_pTextDrawerImpl && !m_pShaderImpl->Get2DTextList()->empty()) {
 		m_pTextDrawerImpl->BeginDraw();
-		m_pTextDrawerImpl->SetTextColor(YmRgba4b(255, 255, 255));
-		m_pTextDrawerImpl->SetBackgroundColor(YmRgba4b(64, 64, 64, 192));
+		m_pTextDrawerImpl->SetTextColor(m_pConfig->GetRgbaValue(YmTngnViewConfig::DEFAULT_TEXT_FG_COLOR));
+		m_pTextDrawerImpl->SetBackgroundColor(m_pConfig->GetRgbaValue(YmTngnViewConfig::DEFAULT_TEXT_BG_COLOR));
 		auto p2DText = m_pShaderImpl->Get2DTextList();
 		for (auto& text : *p2DText) {
 			m_pTextDrawerImpl->DrawText(text.GetText().c_str(), text.GetOrigin());
@@ -655,7 +655,7 @@ std::unique_ptr<YmTextDrawerImpl> YmTngnViewModel::CreateTextDrawerImpl()
 		YM_THROW_ERROR("GetBuffer");
 	}
 
-	return make_unique<YmTextDrawerImpl>(pRenderTargetBuffer);
+	return make_unique<YmTextDrawerImpl>(pRenderTargetBuffer, m_pConfig.get());
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "YmTextDrawerImpl.h"
+#include "YmTngn/YmTngnViewConfig.h"
 #include <atlbase.h>
 #include <atlconv.h>
 #include <vector>
@@ -19,7 +20,7 @@ static D2D1_COLOR_F ToColorF(const YmRgba4b in) {
 	return bgra;
 }
 
-YmTextDrawerImpl::YmTextDrawerImpl(const DXGISurfacePtr& pSurface)
+YmTextDrawerImpl::YmTextDrawerImpl(const DXGISurfacePtr& pSurface, const YmTngnViewConfig* pConfig)
 {
 	RecreateRenderTarget(pSurface);
 
@@ -28,9 +29,9 @@ YmTextDrawerImpl::YmTextDrawerImpl(const DXGISurfacePtr& pSurface)
 		YM_THROW_ERROR("DWriteCreateFactory");
 	}
 
-	YmTString fontName = _T("ƒƒCƒŠƒI");
+	YmTString fontName = pConfig->GetStringValue(YmTngnViewConfig::TEXT_FONT_NAME);
 	YmTString localeName = _T("");
-	FLOAT fontSize = 20;
+	FLOAT fontSize = static_cast<FLOAT>(pConfig->GetDoubleValue(YmTngnViewConfig::DEFAULT_TEXT_FONT_SIZE));
 	hr = m_pDWriteFactory->CreateTextFormat(
 		CT2W(fontName.c_str()), nullptr,
 		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
