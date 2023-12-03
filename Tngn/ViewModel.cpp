@@ -36,6 +36,7 @@ ViewModel::ViewModel(IContainer^ container, System::IntPtr handleWnd)
 		YmVectorUtil::Make(0, 1, 0), YmRgba4b(0xFF, 0, 0));
 	pSelPointList->SetSupportProgressiveMode(false);
 	m_pImpl->SetSelectedContent(pSelPointList);
+	m_pImpl->AddLengthDimension(YmVectorUtil::Make(0, 0, 0), YmVectorUtil::Make(1, 0, 1));
 #endif
 }
 

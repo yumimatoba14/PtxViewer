@@ -5,6 +5,7 @@
 #include "YmTngnDmMemoryPointList.h"
 #include "YmTngnDmPtxFiles.h"
 #include "YmTngnDmDrawableObjectList.h"
+#include "YmTngnDmLengthDimension.h"
 #include "YmTngnShaderImpl.h"
 #include "YmTngnViewConfig.h"
 #include "YmTextDrawerImpl.h"
@@ -190,6 +191,9 @@ void YmTngnViewModel::Draw()
 	if (isDrawForegroundPhase) {
 		m_pDc->OMSetDepthStencilState(m_pDepthStencilStateForForegroundDraw.Get(), 1);
 		YmTngnDraw draw(m_pShaderImpl.get(), m_pDevice);
+		for (auto& pDim : m_lengthDimensions) {
+			pDim->Draw(&draw);
+		}
 		m_pSelectedContent->Draw(&draw);
 		// Selected content should not be considered where view is updated or not.
 	}
@@ -428,6 +432,19 @@ shared_ptr<YmTngnDmMemoryPointList> YmTngnViewModel::PrepareSelectedPointList()
 	}
 	SetSelectedContent(m_pSelectedPoints);
 	return m_pSelectedPoints;
+}
+
+void YmTngnViewModel::AddLengthDimension(const YmVector3d& point0, const YmVector3d& point1)
+{
+	auto pDim = make_shared<YmTngnDmLengthDimension>(point0, point1);
+	m_lengthDimensions.push_back(pDim);
+	m_isNeedDraw = true;
+}
+
+void YmTngnViewModel::ClearLengthDimension()
+{
+	m_lengthDimensions.clear();
+	m_isNeedDraw = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
