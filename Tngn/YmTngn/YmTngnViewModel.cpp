@@ -194,7 +194,9 @@ void YmTngnViewModel::Draw()
 		for (auto& pDim : m_lengthDimensions) {
 			pDim->Draw(&draw);
 		}
-		m_pSelectedContent->Draw(&draw);
+		if (m_pSelectedContent) {
+			m_pSelectedContent->Draw(&draw);
+		}
 		// Selected content should not be considered where view is updated or not.
 	}
 
