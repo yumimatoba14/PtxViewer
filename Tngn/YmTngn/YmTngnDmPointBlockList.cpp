@@ -63,20 +63,27 @@ bool YmTngnDmPointBlockList::OnSetPickEnabled(bool bEnable)
 	return bEnable;
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="modelToViewMatrix">modelToViewMatrix is pre-multiplied matrix by model coordinates.</param>
+/// <param name="aabb"></param>
+/// <param name="distanceLBIn"></param>
+/// <returns></returns>
 static double CalcPointListEnumerationPrecision(
 	const XMFLOAT4X4& modelToViewMatrix, const YmAabBox3d& aabb, double distanceLBIn
 )
 {
 	const double distanceLB = max(0, distanceLBIn);
-	double minDistance = 1e128;
+	double minDistance = DBL_MAX;
 	for (int i = 0; i < 8; ++i) {
 		YmVector3d pnt;
 		pnt[0] = ((i & 0x01) == 0 ? aabb.GetMinPoint()[0] : aabb.GetMaxPoint()[0]);
 		pnt[1] = ((i & 0x02) == 0 ? aabb.GetMinPoint()[1] : aabb.GetMaxPoint()[1]);
 		pnt[2] = ((i & 0x04) == 0 ? aabb.GetMinPoint()[2] : aabb.GetMaxPoint()[2]);
-		double value = modelToViewMatrix.m[2][3];
+		double value = modelToViewMatrix.m[3][2];
 		for (int j = 0; j < 3; ++j) {
-			value += modelToViewMatrix.m[2][j] * pnt[j];
+			value += modelToViewMatrix.m[j][2] * pnt[j];
 		}
 		value *= -1;
 		if (value < minDistance) {
