@@ -282,7 +282,7 @@ void YmTngnPointBlockListBuilder::BuildPointBlockFile()
 		const BlockData& inBlock = dividedBlocks[iBlock];
 		PointBlockHeader& image = blockImages[iBlock];
 
-		YmOrtho3dXform<double>().GetRowMajorMatrix(image.localToGlobalMatrix);
+		YmOrtho3dXform<double>().GetRowMajorPreMultipliedMatrix(image.localToGlobalMatrix);
 		YmVectorUtil::CopyToArray(inBlock.aabb.GetMinPoint(), 3, image.aAabbPoint[0]);
 		YmVectorUtil::CopyToArray(inBlock.aabb.GetMaxPoint(), 3, image.aAabbPoint[1]);
 		image.firstBytePos = endOfFilePos;

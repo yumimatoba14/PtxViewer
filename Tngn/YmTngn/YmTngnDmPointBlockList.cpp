@@ -104,8 +104,6 @@ void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 	if (!pDraw->IsProgressiveViewFollowingFrame()) {
 		UpdateDrawnInstances(pDraw);
 
-		XMFLOAT4X4 modelToViewMatrix;
-		XMStoreFloat4x4(&modelToViewMatrix, pDraw->GetModelToViewMatrix());
 		size_t nDrawnInst = m_drawnInstanceIndices.size();
 		int64_t maxPointPerInst = maxDrawnPointCountPerFrame;
 		const int numInstMax = 3;
@@ -126,6 +124,8 @@ void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 		for (auto iBlock : m_drawnInstanceIndices) {
 			const InstanceData& instance = m_instanceList[iBlock];
 			pDraw->SetModelMatrix(instance.localToGlobalMatrix);
+			XMFLOAT4X4 modelToViewMatrix;
+			XMStoreFloat4x4(&modelToViewMatrix, pDraw->GetModelToViewMatrix());
 			double precision = CalcPointListEnumerationPrecision(modelToViewMatrix, instance.aabb, persNearZ);
 			instance.pPointBlock->SetDrawingPrecision(precision);
 			instance.pPointBlock->SetMaxPointCountDrawnPerFrame(maxPointPerInst);
@@ -153,6 +153,8 @@ void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 			instance.pPointBlock->Draw(pDraw);
 		}
 	}
+
+	pDraw->ClearModelMatrix();
 }
 
 std::vector<YmTngnPointListVertex> YmTngnDmPointBlockList::OnFindPickedPoints(YmTngnPickTargetId id)
@@ -221,14 +223,16 @@ void YmTngnDmPointBlockList::UpdateDrawnInstances(YmTngnDraw* pDraw)
 {
 	m_drawnInstanceIndices.clear();
 
-	XMMATRIX modelViewMatrix = pDraw->GetModelToViewMatrix();
-	XMMATRIX modelProjMatrix = pDraw->GetModelToProjectionMatrix();
-
 	size_t nBlock = m_instanceList.size();
 	using Distance = tuple<double, double>;
 	multimap<Distance, size_t> distanceToBlock;
 	for (size_t iBlock = 0; iBlock < nBlock; ++iBlock) {
 		auto& block = m_instanceList[iBlock];
+		pDraw->SetModelMatrix(block.localToGlobalMatrix);
+
+		XMMATRIX modelViewMatrix = pDraw->GetModelToViewMatrix();
+		XMMATRIX modelProjMatrix = pDraw->GetModelToProjectionMatrix();
+
 		double scannerDistance = m_scannerDistanceForPointBlockWithoutScannerPos;
 		if (block.pPointBlock->IsUseScannerPosition()) {
 			XMFLOAT3 scannerPos = YmVectorUtil::StaticCast<XMFLOAT3>(block.pPointBlock->GetScannerPosition());

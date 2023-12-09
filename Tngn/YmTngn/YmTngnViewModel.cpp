@@ -212,6 +212,9 @@ void YmTngnViewModel::Draw()
 	}
 
 	EndDraw();
+	// In order to clear IsNeedUpdateShaderParam() flag, call PrepareShaderParam().
+	m_pShaderImpl->PrepareShaderParam();
+	YM_ASSERT(!IsNeedDraw());
 }
 
 bool YmTngnViewModel::IsNeedDraw() const

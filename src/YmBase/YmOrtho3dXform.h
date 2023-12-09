@@ -115,7 +115,7 @@ public:
 	/// [ m[12], m[13], m[14], m[15] ]
 	/// </summary>
 	/// <param name="m">Array to store a row major matrix.</param>
-	void GetRowMajorMatrix(CoordType m[16]) const
+	void GetRowMajorPostMultipliedMatrix(CoordType m[16]) const
 	{
 		YM_IS_TRUE(m != nullptr);
 		for (int i = 0; i < 3; ++i) {
@@ -127,6 +127,29 @@ public:
 		m[12] = 0;
 		m[13] = 0;
 		m[14] = 0;
+		m[15] = 1;
+	}
+
+	/// <summary>
+	/// Return 4x4 matrix in row major of this transformation.
+	/// The local coordinate shall be producted from left side of the matrix.
+	/// The matrix can be written like this;
+	/// [ m[0],  m[1],  m[2],  m[3]  ]
+	/// [ m[4],  m[5],  m[6],  m[7]  ]
+	/// [ m[8],  m[9],  m[10], m[11] ]
+	/// [ m[12], m[13], m[14], m[15] ]
+	/// </summary>
+	/// <param name="m">Array to store a row major matrix.</param>
+	void GetRowMajorPreMultipliedMatrix(CoordType m[16]) const
+	{
+		YM_IS_TRUE(m != nullptr);
+		YmVectorUtil::CopyToArray(m_aLocalDir[0], 3, m + 0);
+		YmVectorUtil::CopyToArray(m_aLocalDir[1], 3, m + 4);
+		YmVectorUtil::CopyToArray(m_aLocalDir[2], 3, m + 8);
+		YmVectorUtil::CopyToArray(m_localOrigin, 3, m + 12);
+		m[3] = 0;
+		m[7] = 0;
+		m[11] = 0;
 		m[15] = 1;
 	}
 
