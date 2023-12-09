@@ -4,6 +4,7 @@
 #include "YmBase/YmBinaryFormatter.h"
 #include "YmBase/YmWin32FileBuf.h"
 #include "YmBase/YmAabBox.h"
+#include "YmBase/YmOrtho3dXform.h"
 
 namespace Ymcpp {
 
@@ -35,6 +36,9 @@ public:
 	void AddPoint(const PointType& point);
 	int64_t GetPointCount() const { return m_nInputPoint; }
 
+	const YmOrtho3dXform<double>& GetLocalToGlobalXform() const { return m_localToGlobalXform; }
+	void SetLocalToGlobalXform(const YmOrtho3dXform<double>& xform) { m_localToGlobalXform = xform; }
+
 	/// <summary>
 	/// 
 	/// </summary>
@@ -57,6 +61,7 @@ private:
 	std::unique_ptr<YmBinaryFormatter> m_pInputPointFormatter;
 	YmAabBox3d m_inputPointAabb;
 	int64_t m_nInputPoint = 0;
+	YmOrtho3dXform<double> m_localToGlobalXform;
 	std::unique_ptr<YmVector3d> m_pScannerPosition;
 private:
 	int64_t m_targetPointCountPerBlock = 1024 * 1024;

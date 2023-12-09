@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "YmTngnPointBlockListBuilder.h"
 #include "YmTngnExclusiveLodPointListCreator.h"
-#include "YmBase/YmOrtho3dXform.h"
 
 using namespace std;
 using namespace Ymcpp;
@@ -31,6 +30,10 @@ void YmTngnPointBlockListBuilder::AddPoint(const PointType& point)
 	++m_nInputPoint;
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="pos">Scanner position in local coordinate system.</param>
 void YmTngnPointBlockListBuilder::SetScannerPosition(const YmVector3d& pos)
 {
 	m_pScannerPosition = make_unique<YmVector3d>(pos);
@@ -282,7 +285,7 @@ void YmTngnPointBlockListBuilder::BuildPointBlockFile()
 		const BlockData& inBlock = dividedBlocks[iBlock];
 		PointBlockHeader& image = blockImages[iBlock];
 
-		YmOrtho3dXform<double>().GetRowMajorPreMultipliedMatrix(image.localToGlobalMatrix);
+		m_localToGlobalXform.GetRowMajorPreMultipliedMatrix(image.localToGlobalMatrix);
 		YmVectorUtil::CopyToArray(inBlock.aabb.GetMinPoint(), 3, image.aAabbPoint[0]);
 		YmVectorUtil::CopyToArray(inBlock.aabb.GetMaxPoint(), 3, image.aAabbPoint[1]);
 		image.firstBytePos = endOfFilePos;
