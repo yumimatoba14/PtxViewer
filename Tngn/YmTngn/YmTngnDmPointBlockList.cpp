@@ -126,7 +126,7 @@ void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 			pDraw->SetModelMatrix(instance.localToGlobalMatrix);
 			XMFLOAT4X4 modelToViewMatrix;
 			XMStoreFloat4x4(&modelToViewMatrix, pDraw->GetModelToViewMatrix());
-			double precision = CalcPointListEnumerationPrecision(modelToViewMatrix, instance.aabb, persNearZ);
+			double precision = CalcPointListEnumerationPrecision(modelToViewMatrix, instance.localAabb, persNearZ);
 			instance.pPointBlock->SetDrawingPrecision(precision);
 			instance.pPointBlock->SetMaxPointCountDrawnPerFrame(maxPointPerInst);
 			if (IsPickEnabled()) {
@@ -240,7 +240,7 @@ void YmTngnDmPointBlockList::UpdateDrawnInstances(YmTngnDraw* pDraw)
 			scannerDistance = sqrt(XMVectorGetX(XMVector3Dot(scannerPosInView, scannerPosInView)));
 		}
 		double boxDistance = 0;
-		bool isVisible = CalcBoxDistanceInProjection(modelProjMatrix, block.aabb, &boxDistance);
+		bool isVisible = CalcBoxDistanceInProjection(modelProjMatrix, block.localAabb, &boxDistance);
 		if (!isVisible) {
 			continue;
 		}

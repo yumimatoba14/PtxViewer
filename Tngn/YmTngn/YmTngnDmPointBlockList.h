@@ -17,7 +17,7 @@ public:
 	using PointBlockType = YmTngnDmExclusiveLodPointList;
 	struct InstanceData {
 		DirectX::XMFLOAT4X4 localToGlobalMatrix;
-		YmAabBox3d aabb;	// AABB in model space.
+		YmAabBox3d localAabb;	// AABB in pPointBlock's local coordinate system.
 		std::shared_ptr<PointBlockType> pPointBlock;
 	};
 public:

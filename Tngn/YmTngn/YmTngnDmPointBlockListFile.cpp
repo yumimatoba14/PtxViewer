@@ -65,8 +65,8 @@ void YmTngnDmPointBlockListFile::LoadBlockData(std::unique_ptr<YmWin32FileBuf> p
 			}
 		}
 
-		instance.aabb.Extend(blockHeader.aAabbPoint[0]);
-		instance.aabb.Extend(blockHeader.aAabbPoint[1]);
+		instance.localAabb.Extend(blockHeader.aAabbPoint[0]);
+		instance.localAabb.Extend(blockHeader.aAabbPoint[1]);
 		instance.pPointBlock = make_shared<YmTngnDmExclusiveLodPointList>(m_mmFile, blockHeader.firstBytePos);
 		AddInstance(move(instance));
 	}
