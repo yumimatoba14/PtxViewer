@@ -54,17 +54,9 @@ static shared_ptr<YmTngnDmPointBlockList> ReadPtxFileImpl(const YmTngnViewConfig
 		builder.SetTargetPointCountPerBlock(
 			config.GetDoubleValueAsInt64(YmTngnViewConfig::DM_PTX_FILE_POINT_COUNT_PER_BLOCK, 1024*1024)
 		);
-		YmOrtho3dXform<double> localToGlobal;
-		bool isFirstPoint = true;
 		auto onParsePoint = [&](const YmPtxFileParser::FileHeader& h, int64_t col, int64_t row, const YmPtxFileParser::PointData& point) {
-			if (isFirstPoint) {
-				isFirstPoint = false;
-				localToGlobal = YmOrtho3dXform<double>::MakeFromXy(
-					h.scannerOrg, h.scannerDirX, h.scannerDirY
-				);
-			}
 			YmTngnModel::PointType tngnPoint;
-			tngnPoint.coord = YmVectorUtil::StaticCast<YmVector3f>(localToGlobal.ConvertCoord(point.localPoint));
+			tngnPoint.coord = YmVectorUtil::StaticCast<YmVector3f>(point.localPoint);
 			tngnPoint.rgba = YmRgba4b(point.rgb[0], point.rgb[1], point.rgb[2]);
 			builder.AddPoint(tngnPoint);
 		};
@@ -86,9 +78,14 @@ static shared_ptr<YmTngnDmPointBlockList> ReadPtxFileImpl(const YmTngnViewConfig
 			}
 		}
 
+		YmOrtho3dXform<double> localToGlobal = YmOrtho3dXform<double>::MakeFromXy(
+			header.scannerOrg, header.scannerDirX, header.scannerDirY
+		);
+		builder.SetLocalToGlobalXform(localToGlobal);
 		if (isImageReliable) {
 			// Rely on the scanner position when this ptx constructs an image.
-			builder.SetScannerPosition(header.scannerOrg);
+			// It is assumed that the origin, (0, 0, 0), is the scanner position of ptx file.
+			builder.SetScannerPosition(YmVectorUtil::Make(0, 0, 0));
 		}
 
 		builder.BuildPointBlockFile();
