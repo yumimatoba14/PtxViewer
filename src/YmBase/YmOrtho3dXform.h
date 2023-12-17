@@ -196,7 +196,7 @@ public:
 
 	/// <summary>
 	/// Return a transformation of lhs(rhs(localPoint)),
-	/// where xform(localPoint) corresponds to lhs.ConvertCoord(localPoint).
+	/// where xform(localPoint) corresponds to xform.ConvertCoord(localPoint).
 	/// </summary>
 	/// <param name="lhs"></param>
 	/// <param name="rhs"></param>

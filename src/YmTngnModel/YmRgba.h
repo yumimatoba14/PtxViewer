@@ -20,4 +20,9 @@ private:
 	uint32_t m_rgba;
 };
 
+inline bool operator == (const YmRgba4b& lhs, const YmRgba4b& rhs) { return lhs.ToUint32() == rhs.ToUint32(); }
+inline bool operator != (const YmRgba4b& lhs, const YmRgba4b& rhs) { return lhs.ToUint32() != rhs.ToUint32(); }
+inline bool operator < (const YmRgba4b& lhs, const YmRgba4b& rhs) { return lhs.ToUint32() < rhs.ToUint32(); }
+inline bool operator > (const YmRgba4b& lhs, const YmRgba4b& rhs) { return lhs.ToUint32() > rhs.ToUint32(); }
+
 }

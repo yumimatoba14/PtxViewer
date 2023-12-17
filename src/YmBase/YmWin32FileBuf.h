@@ -19,6 +19,7 @@ public:
 public:
 	void OpenNewFile(LPCTSTR pFilePath);
 	void OpenTempFile(DWORD dwCreationDisposition = CREATE_ALWAYS);
+	void OpenToRead(LPCTSTR pFilePath);
 
 	bool IsOpend() const { return m_hFile.get() != nullptr && m_hFile.get() != INVALID_HANDLE_VALUE; }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "YmTngnModel.h"
+#include <vector>
 
 namespace Ymcpp {
 

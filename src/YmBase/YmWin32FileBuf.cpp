@@ -61,6 +61,23 @@ void YmWin32FileBuf::OpenTempFile(DWORD dwCreationDisposition /*= CREATE_ALWAYS*
 	}
 }
 
+void YmWin32FileBuf::OpenToRead(LPCTSTR pFilePath)
+{
+	Close();
+
+	DWORD dwDesiredAccess = FILE_GENERIC_READ;
+	DWORD dwShareMode = FILE_SHARE_READ;
+	DWORD dwCreationDisposition = OPEN_EXISTING;
+	DWORD dwFlagsAndAttributes = FILE_ATTRIBUTE_NORMAL;
+	m_hFile.reset(::CreateFile(
+		pFilePath, dwDesiredAccess, dwShareMode, nullptr,
+		dwCreationDisposition, dwFlagsAndAttributes, nullptr
+	));
+	if (m_hFile.get() == INVALID_HANDLE_VALUE) {
+		YM_THROW_ERROR("CreateFile");
+	}
+}
+
 void YmWin32FileBuf::Close()
 {
 	OnDetachHandle();
