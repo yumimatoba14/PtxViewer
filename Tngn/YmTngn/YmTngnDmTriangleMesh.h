@@ -2,6 +2,7 @@
 
 #include "YmTngn/YmTngnDrawingModel.h"
 #include "YmTngnDrawableObject.h"
+#include "YmTngnModel/YmRgba.h"
 
 namespace Ymcpp {
 
@@ -43,6 +44,8 @@ public:
 	void SetLocalToGlobalMatrix(const DirectX::XMFLOAT4X4& matrix) { *m_pLocalToGlobalMatrix = matrix; }
 
 	static std::shared_ptr<YmTngnDmTriangleMesh> MakeSampleData(YmVector3d origin);
+	static std::shared_ptr<YmTngnDmTriangleMesh> MakeSampleCylinderData(
+		double approxTol, YmVector3d origin, YmVector3d axisDir, double radius, double height, YmRgba4b color, bool smooth);
 
 protected:
 	//virtual bool OnSetPickEnabled(bool bEnable);

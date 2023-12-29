@@ -102,6 +102,135 @@ std::shared_ptr<YmTngnDmTriangleMesh> YmTngnDmTriangleMesh::MakeSampleData(YmVec
 	return pMesh;
 }
 
+static YmVector3d MakeSeedDir(const YmVector3d& vecN)
+{
+	int minI = 0;
+	for (int i = 1; i < 3; ++i) {
+		if (fabs(vecN[i]) < fabs(vecN[minI])) {
+			minI = i;
+		}
+	}
+	YmVector3d seed = YmVector3d::MakeZero();
+	seed[minI] = 1;
+	return seed;
+}
+
+static std::shared_ptr<YmTngnDmTriangleMesh> MakeExtrudedSideFaceMesh(
+	double zeroTol, const vector<YmVector3d>& profilePoints, const YmVector3d& vecN, double height, YmRgba4b color
+)
+{
+	auto pMesh = make_shared<YmTngnDmTriangleMesh>();
+	YmTngnIndexedTriangleList::VertexType vertex;
+	size_t nProfilePoint = profilePoints.size();
+	for (size_t iProfilePoint = 1; iProfilePoint < nProfilePoint; ++iProfilePoint) {
+		YmVector3d edgeDir = profilePoints[iProfilePoint] - profilePoints[iProfilePoint - 1];
+		bool isOk = YmVectorUtil::TryNormalize(zeroTol, edgeDir, &edgeDir);
+		if (!isOk) {
+			continue;
+		}
+		vertex.normalDir = YmVectorUtil::StaticCast<YmVector3f>(YmVectorUtil::OuterProduct(edgeDir, vecN));
+		vertex.normalDir = YmVectorUtil::Normalize(zeroTol, vertex.normalDir);
+
+		YmTngnIndexedTriangleListPtr pPlane = make_shared<YmTngnIndexedTriangleList>();
+		vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(profilePoints[iProfilePoint - 1]);
+		size_t index = pPlane->AddVertex(vertex);
+		YM_ASSERT(index == 0);
+		vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(profilePoints[iProfilePoint]);
+		pPlane->AddVertex(vertex);
+		vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(profilePoints[iProfilePoint - 1] + vecN * height);
+		pPlane->AddVertex(vertex);
+		vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(profilePoints[iProfilePoint] + vecN * height);
+		pPlane->AddVertex(vertex);
+		pPlane->AddTriangle(0, 1, 2);
+		pPlane->AddTriangle(3, 2, 1);
+		pPlane->SetColor(color);
+		pMesh->AddIndexedTriangleList(pPlane);
+	}
+
+	return pMesh;
+}
+
+static YmTngnIndexedTriangleListPtr MakeExtrudedTangentSideFace(
+	double zeroTol, const vector<YmVector3d>& profilePoints, const vector<YmVector3d>& profileNormal, const YmVector3d& offset, YmRgba4b color
+)
+{
+	YM_IS_TRUE(profilePoints.size() == profileNormal.size());
+	YmTngnIndexedTriangleListPtr pTriangleList = make_shared<YmTngnIndexedTriangleList>();
+
+	YmTngnIndexedTriangleList::VertexType vertex;
+	YM_IS_TRUE(profilePoints.size() <= MAXUINT32);
+	uint32_t nProfilePoint = static_cast<uint32_t>(profilePoints.size());
+	for (uint32_t iProfilePoint = 0; iProfilePoint < nProfilePoint; ++iProfilePoint) {
+		vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(profilePoints[iProfilePoint]);
+		vertex.normalDir = YmVectorUtil::StaticCast<XMFLOAT3>(
+			YmVectorUtil::Normalize(zeroTol, profileNormal[iProfilePoint]));
+
+		size_t index = pTriangleList->AddVertex(vertex);
+		YM_ASSERT(index == iProfilePoint * 2);
+
+		vertex.position = YmVectorUtil::StaticCast<XMFLOAT3>(profilePoints[iProfilePoint] + offset);
+		index = pTriangleList->AddVertex(vertex);
+		YM_ASSERT(index == iProfilePoint * 2 + 1);
+	}
+
+	for (uint32_t iProfilePoint = 0; iProfilePoint < nProfilePoint; ++iProfilePoint) {
+		uint32_t index0 = (iProfilePoint == 0 ? nProfilePoint - 1 : iProfilePoint - 1) * 2;
+		uint32_t index1 = iProfilePoint * 2;
+		pTriangleList->AddTriangle(index0, index1, index0 + 1);
+		pTriangleList->AddTriangle(index1 + 1, index0 + 1, index1);
+	}
+	
+	pTriangleList->SetColor(color);
+	return pTriangleList;
+}
+
+std::shared_ptr<YmTngnDmTriangleMesh>
+YmTngnDmTriangleMesh::MakeSampleCylinderData(
+	double approxTol, YmVector3d origin, YmVector3d axisDir, double radius, double height, YmRgba4b color, bool smooth
+)
+{
+	const double zeroTol = 1e-8;
+	YM_IS_TRUE(zeroTol < approxTol);
+	YM_IS_TRUE(zeroTol < radius);
+
+	YmVector3d vecN = YmVectorUtil::Normalize(zeroTol, axisDir);
+	YmVector3d vecU = MakeSeedDir(vecN);
+	YmVector3d vecV = YmVectorUtil::Normalize(zeroTol, YmVectorUtil::OuterProduct(vecN, vecU));
+	vecU = YmVectorUtil::OuterProduct(vecV, vecN);
+
+	// error = radius - radius * cos(theta/2)
+	// ->
+	// theta = 2*acos((radius - error) / radius)
+	double theta = 2 * acos((radius - approxTol) / radius);
+	int numDiv = static_cast<int>(ceil(2 * M_PI / theta));
+	numDiv = max(4, numDiv);
+
+	vector<YmVector3d> loopPoints, loopNormal;
+	for (int i = 0; i < numDiv; ++i) {
+		double theta = 2 * M_PI / numDiv * i;
+		YmVector3d radiusDir = cos(theta) * vecU + sin(theta) * vecV;
+		YmVector3d point = origin + radius * radiusDir;
+		loopPoints.push_back(point);
+		if (smooth) {
+			loopNormal.push_back(radiusDir);
+		}
+	}
+	if (!smooth) {
+		loopPoints.push_back(loopPoints.front());
+	}
+
+	if (smooth) {
+		auto pMesh = make_shared<YmTngnDmTriangleMesh>();
+		pMesh->AddIndexedTriangleList(
+			MakeExtrudedTangentSideFace(zeroTol, loopPoints, loopNormal, vecN * height, color)
+		);
+		return pMesh;
+	}
+	else {
+		return MakeExtrudedSideFaceMesh(zeroTol, loopPoints, vecN, height, color);
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void YmTngnDmTriangleMesh::OnDraw(YmTngnDraw* pDraw)
