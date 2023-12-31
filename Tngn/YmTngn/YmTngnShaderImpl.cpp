@@ -8,6 +8,7 @@
 #include "YmTngnViewConfig.h"
 #include "YmTngnDmDrawableObjectList.h"
 #include "YmBase/YmFilePath.h"
+#include "YmBase/YmDebugOutputStream.h"
 
 using namespace std;
 using namespace Ymcpp;
@@ -564,7 +565,57 @@ D3DPixelShaderPtr YmTngnShaderImpl::CreatePixelShader(
 		YM_THROW_ERROR("CreatePixelShader");
 	}
 
+	if (false) {
+		DumpShaderReflection("PixelShader", blob);
+	}
+
 	return pShader;
+}
+
+void YmTngnShaderImpl::DumpShaderReflection(const char* pHeader, const D3DBlobPtr& blob)
+{
+	YM_NOEXCEPT_BEGIN("YmTngnShaderImpl::DumpShaderReflection");
+	YmDebugOutputStream dbg;
+	if (pHeader) {
+		dbg << "[[[" << pHeader << "]]]" << endl;
+	}
+
+	YmComPtr<ID3D11ShaderReflection> pReflection;
+	HRESULT hr = D3DReflect(blob->GetBufferPointer(), blob->GetBufferSize(), IID_PPV_ARGS(&pReflection));
+	if (FAILED(hr)) {
+		YM_THROW_ERROR("D3DReflect");
+	}
+
+	D3D11_SHADER_DESC shaderdesc;
+	pReflection->GetDesc(&shaderdesc);
+
+	// analyze input parameter
+	if (0 > shaderdesc.InputParameters) {
+		dbg << " [InputParameter]" << endl;
+
+		for (UINT i = 0; i < shaderdesc.InputParameters; ++i) {
+			D3D11_SIGNATURE_PARAMETER_DESC sigDesc;
+			pReflection->GetInputParameterDesc(i, &sigDesc);
+			dbg << " (" << i << ": " << sigDesc.SemanticName << ") (" << sigDesc.SemanticIndex  << ", " << sigDesc.SemanticIndex << ")"
+				<< sigDesc.ComponentType << " " << sigDesc.Mask << endl;
+		}
+	}
+
+	// analize constant buffer
+	for (UINT i = 0; i < shaderdesc.ConstantBuffers; ++i) {
+		auto buffer = pReflection->GetConstantBufferByIndex(i);
+		D3D11_SHADER_BUFFER_DESC bufferDesc;
+		buffer->GetDesc(&bufferDesc);
+		dbg << " [" << i << ": " << bufferDesc.Name << "]" << endl;
+
+		for (UINT j = 0; j < bufferDesc.Variables; ++j) {
+			auto variable = buffer->GetVariableByIndex(j);
+			D3D11_SHADER_VARIABLE_DESC variableDesc;
+			variable->GetDesc(&variableDesc);
+			dbg << "  (" << j << ") " << variableDesc.Name << " " << variableDesc.StartOffset << " " << variableDesc.Size << endl;
+		}
+	}
+	YM_NOEXCEPT_END;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

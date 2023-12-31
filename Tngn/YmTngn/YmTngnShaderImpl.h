@@ -167,6 +167,8 @@ private:
 		const YmTString& fileName, const std::string& entryPoint, const D3D_SHADER_MACRO* aMacro
 	);
 
+	void DumpShaderReflection(const char* pHeader, const D3DBlobPtr& blob);
+
 private:
 	D3DDevicePtr m_pDevice;
 	D3DDeviceContextPtr m_pDc;
