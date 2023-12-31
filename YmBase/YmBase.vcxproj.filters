@@ -81,6 +81,9 @@
     <ClInclude Include="..\src\YmBase\YmFilePath.h">
       <Filter>public</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmDebugOutputStream.h">
+      <Filter>public\IO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="YmBase.cpp">
@@ -112,6 +115,9 @@
     </ClCompile>
     <ClCompile Include="..\src\YmBase\YmFilePath.cpp">
       <Filter>public</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\YmBase\YmDebugOutputStream.cpp">
+      <Filter>public\IO</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
