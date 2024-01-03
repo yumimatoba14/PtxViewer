@@ -304,7 +304,7 @@ void YmTngnShaderImpl::InitializeShaderContextsForNormalRendering()
 		m_pShaderParamConstBuf,
 		CreateGeometryShader(hlslFilePath, "gsMain", aMacro),
 		m_pShaderParamConstBuf,
-		CreatePixelShader(hlslFilePath, "psMain", aMacro)
+		CreatePixelShader(hlslFilePath, "psMain", aMacro), nullptr
 	);
 }
 
@@ -327,7 +327,7 @@ void YmTngnShaderImpl::InitializeShaderContextsForPickableRendering()
 		m_pShaderParamConstBuf,
 		CreateGeometryShader(hlslFilePath, "gsMain", aMacro),
 		m_pShaderParamConstBuf,
-		CreatePixelShader(hlslFilePath, "psMain", aMacro)
+		CreatePixelShader(hlslFilePath, "psMain", aMacro), nullptr
 	);
 }
 
@@ -348,7 +348,7 @@ void YmTngnShaderImpl::InitializeShaderContextsForTriangleListNormalRendering()
 		CreateVertexShader(hlslFilePath, "vsMain", aMacro),
 		m_pShaderParamConstBuf,
 		nullptr, nullptr,
-		CreatePixelShader(hlslFilePath, "psMain", aMacro)
+		CreatePixelShader(hlslFilePath, "psMain", aMacro), nullptr
 	);
 }
 
@@ -368,7 +368,7 @@ void YmTngnShaderImpl::InitializeShaderContextsForLineListNormalRendering()
 		CreateVertexShader(hlslFilePath, "vsMain", aMacro),
 		m_pShaderParamConstBuf,
 		nullptr, nullptr,
-		CreatePixelShader(hlslFilePath, "psMain", aMacro)
+		CreatePixelShader(hlslFilePath, "psMain", aMacro), nullptr
 	);
 }
 
@@ -416,6 +416,8 @@ void YmTngnShaderImpl::SetShaderContext(const YmTngnShaderContext& context)
 	m_pDc->GSSetConstantBuffers(0, 1, apBuffer);
 
 	m_pDc->PSSetShader(context.GetPixelShader().Get(), nullptr, 0);
+	apBuffer[0] = { context.GetPSConstantBuffer().Get() };
+	m_pDc->PSSetConstantBuffers(0, 1, apBuffer);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
