@@ -1,16 +1,4 @@
-cbuffer ShaderParam : register(b0)
-{
-	matrix viewMatrix;
-	matrix projectionMatrix;
-	float pointSizeX;
-	float pointSizeY;
-	float pixelSizeX;
-	float pixelSizeY;
-	float3 scannerPosition;
-	float scannerDistanceUpperBound;
-	float scannerDistanceDepthOffset;
-	int isUseScannerPosition;
-};
+#include "ShaderParam.hlsl"
 
 struct VS_INPUT
 {

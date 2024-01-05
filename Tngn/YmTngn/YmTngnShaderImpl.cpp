@@ -18,6 +18,11 @@ using namespace DirectX;
 
 ////////////////////////////////////////////////////////////////////////////////
 
+static YmVector3d ConvertRgbToVector3(const YmRgba4b& rgba)
+{
+	return YmVectorUtil::Make(rgba.GetR() / 255.0, rgba.GetG() / 255.0, rgba.GetB() / 255.0);
+}
+
 YmTngnShaderImpl::YmTngnShaderImpl(const YmTngnViewConfig& config, const D3DDevicePtr& pDevice, const D3DDeviceContextPtr& pDc)
 	: m_pDevice(pDevice), m_pDc(pDc), m_scannerPosition(YmVector3d::MakeZero())
 {
@@ -27,6 +32,16 @@ YmTngnShaderImpl::YmTngnShaderImpl(const YmTngnViewConfig& config, const D3DDevi
 	m_viewFarZ = config.GetDoubleValue(YmTngnViewConfig::PERSPECTIVE_VIEW_FAR_Z);
 	m_scannerDistanceUpperBound = config.GetDoubleValue(YmTngnViewConfig::SCANNER_DISTANCE_UB);
 	m_scannerDistanceDepthOffset = config.GetDoubleValue(YmTngnViewConfig::SCANNER_DISTANCE_DEPTH_OFFSET);
+
+	m_isUseLight = config.GetIntValue(YmTngnViewConfig::ENABLE_LIGHT);
+	YmVectorUtil::TryNormalize(1e-6, config.GetVector3dValue(YmTngnViewConfig::LIGHT_DIR), &m_lightToObjectDirection);
+	m_materialAmbientCoef = config.GetDoubleValue(YmTngnViewConfig::MATERIAL_AMBIENT_COEF);
+	m_materialDiffuseCoef = config.GetDoubleValue(YmTngnViewConfig::MATERIAL_DIFFUSE_COEF);
+	m_lightDiffuseCoef = config.GetDoubleValue(YmTngnViewConfig::LIGHT_DIFFUSE_COEF);
+	m_lightSpecularCoef = config.GetDoubleValue(YmTngnViewConfig::LIGHT_SPECULAR_COEF);
+	m_lightSpecularShininess = config.GetDoubleValue(YmTngnViewConfig::LIGHT_SPECULAR_SHININESS);
+	m_lightDiffuseRgb = ConvertRgbToVector3(config.GetRgbaValue(YmTngnViewConfig::LIGHT_DIFFUSE_COLOR));
+	m_lightSpecularRgb = ConvertRgbToVector3(config.GetRgbaValue(YmTngnViewConfig::LIGHT_SPECULAR_COLOR));
 	XMStoreFloat4x4(&m_modelMatrix, XMMatrixIdentity());
 	Initialize();
 }
@@ -236,6 +251,20 @@ void YmTngnShaderImpl::UpdateShaderParam()
 	shaderParam.scannerDistanceDepthOffset = (float)m_scannerDistanceDepthOffset;
 	shaderParam.isUseScannerPosition = m_isUseScannerPosition;
 
+	if (m_isUseLight) {
+		YmVector3f lightDir = YmVectorUtil::StaticCast<YmVector3f>(m_lightToObjectDirection);
+		shaderParam.isUseLight = YmVectorUtil::TryNormalize(1e-6, lightDir, &lightDir);
+		shaderParam.lightToObjectDir = YmVectorUtil::StaticCast<XMFLOAT3A>(lightDir);
+		shaderParam.materialAmbientCoef = static_cast<float>(m_materialAmbientCoef);
+		shaderParam.materialDiffuseCoef = static_cast<float>(m_materialDiffuseCoef);
+		shaderParam.lightDiffuseRgb = YmVectorUtil::StaticCast<XMFLOAT3A>(m_lightDiffuseRgb * m_lightDiffuseCoef);
+		shaderParam.lightSpecularRgb = YmVectorUtil::StaticCast<XMFLOAT3A>(m_lightSpecularRgb * m_lightSpecularCoef);
+		shaderParam.lightSpecularShininess = static_cast<float>(m_lightSpecularShininess);
+	}
+	else {
+		shaderParam.isUseLight = false;
+	}
+
 	SetConstantBufferData(m_pShaderParamConstBuf, shaderParam);
 	m_isNeedUpdateShaderParam = false;
 }
@@ -348,7 +377,7 @@ void YmTngnShaderImpl::InitializeShaderContextsForTriangleListNormalRendering()
 		CreateVertexShader(hlslFilePath, "vsMain", aMacro),
 		m_pShaderParamConstBuf,
 		nullptr, nullptr,
-		CreatePixelShader(hlslFilePath, "psMain", aMacro), nullptr
+		CreatePixelShader(hlslFilePath, "psMain", aMacro), m_pShaderParamConstBuf
 	);
 }
 

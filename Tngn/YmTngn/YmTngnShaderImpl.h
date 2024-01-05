@@ -16,13 +16,15 @@ class YmTngnShaderImpl
 public:
 	// XMFLOAT4X4 is used as type of member variables.
 	using XMFLOAT4X4 = DirectX::XMFLOAT4X4;
-	using XMFLOAT3 = DirectX::XMFLOAT3;
+	using XMFLOAT3 = DirectX::XMFLOAT3;		// size is 12 byte.
+	using XMFLOAT3A = DirectX::XMFLOAT3A;	// size is 16 byte.
 
 	// XMMATRIX is used as calculated values and so on.
 	using XMMATRIX = DirectX::XMMATRIX;
 
 	// Remarks:
 	// XMLFLAT4x4 is row majar and post-multiplied by a vector.
+	// This structure needs 16 byte aligment because it is used as constant buffer.
 	struct ShaderParam {
 		XMFLOAT4X4 viewMatrix;
 		XMFLOAT4X4 projectionMatrix;
@@ -30,10 +32,17 @@ public:
 		float pointSizeY;
 		float pixelSizeX;
 		float pixelSizeY;
-		XMFLOAT3 scannerPosition;	// scanner point of ptx.
+		XMFLOAT3 scannerPosition;	// scanner point of ptx in view coordinate system.
 		float scannerDistanceUpperBound;
 		float scannerDistanceDepthOffset;
 		int isUseScannerPosition;
+		int isUseLight;
+		float materialAmbientCoef;
+		XMFLOAT3 lightToObjectDir;
+		float materialDiffuseCoef;
+		XMFLOAT3A lightDiffuseRgb;
+		XMFLOAT3 lightSpecularRgb;	// To allocate shininess just after this, avoided XMFLOAT3A.
+		float lightSpecularShininess;
 	};
 public:
 	explicit YmTngnShaderImpl(const YmTngnViewConfig& config, const D3DDevicePtr& pDevice, const D3DDeviceContextPtr& pDc);
@@ -192,6 +201,18 @@ private:
 	bool m_isProgressiveViewMode = false;
 	bool m_isProgressiveViewFollowingFrame = false;
 
+	bool m_isUseLight = true;
+	// light direction in view coordinate system.
+	YmVector3d m_lightToObjectDirection = YmVectorUtil::Make(-0.1, -0.1, -1.0);
+	double m_materialAmbientCoef = 0.1;
+	double m_materialDiffuseCoef = 0.6;
+	double m_lightDiffuseCoef = 0.2;
+	double m_lightSpecularCoef = 0.2;
+	YmVector3d m_lightDiffuseRgb = YmVectorUtil::Make(1.0, 1.0, 1.0);
+	YmVector3d m_lightSpecularRgb = YmVectorUtil::Make(1.0, 1.0, 1.0);
+	double m_lightSpecularShininess = 100;
+
+private:
 	std::vector<YmDx11BufferWithSize> m_tempVertexBufferList;
 	YmTngnDmDrawableObjectListPtr m_pTransparentObjectList;
 	std::vector<YmTngn2DText> m_2dTextList;

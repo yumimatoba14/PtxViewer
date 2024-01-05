@@ -147,11 +147,11 @@ namespace YmVectorUtil
 	bool TryNormalize(double zeroTol, const YmVectorN<N, float>& vec, YmVectorN<N, float>* pResult)
 	{
 		if (pResult == nullptr) {
-			return Detail::NormalizeVectorImpl(zeroTol, vec, nullptr);
+			return Detail::NormalizeVectorImpl<N>(zeroTol, vec, nullptr);
 		}
 		YmVectorN<N, double> doubleResult;
-		bool ok = Detail::NormalizeVectorImpl(zeroTol, vec, &doubleResult);
-		*pResult = YmVectorUtil::StaticCast<YmVectorN<N, double>>(doubleResult);
+		bool ok = Detail::NormalizeVectorImpl<N>(zeroTol, vec, &doubleResult);
+		*pResult = YmVectorUtil::StaticCast<YmVectorN<N, float>>(doubleResult);
 		return ok;
 	}
 
