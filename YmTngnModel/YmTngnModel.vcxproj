@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\YmTngnModel\YmObjToIndexedTriangleListConverter.h" />
     <ClInclude Include="..\src\YmTngnModel\YmPtxFileParser.h" />
     <ClInclude Include="..\src\YmTngnModel\YmRgba.h" />
     <ClInclude Include="..\src\YmTngnModel\YmTngnExclusiveLodPointListCreator.h" />
@@ -165,8 +166,10 @@
     <ClInclude Include="..\src\YmTngnModel\YmTngnPointBlockListBuilder.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="tiny_obj_loader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\YmTngnModel\YmObjToIndexedTriangleListConverter.cpp" />
     <ClCompile Include="..\src\YmTngnModel\YmPtxFileParser.cpp" />
     <ClCompile Include="..\src\YmTngnModel\YmRgba.cpp" />
     <ClCompile Include="..\src\YmTngnModel\YmTngnExclusiveLodPointListCreator.cpp" />

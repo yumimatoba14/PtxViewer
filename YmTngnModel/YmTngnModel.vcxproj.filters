@@ -48,6 +48,12 @@
     <ClInclude Include="..\src\YmTngnModel\YmTngnIndexedTriangleList.h">
       <Filter>public</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\YmTngnModel\YmObjToIndexedTriangleListConverter.h">
+      <Filter>public</Filter>
+    </ClInclude>
+    <ClInclude Include="tiny_obj_loader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -72,6 +78,9 @@
       <Filter>public</Filter>
     </ClCompile>
     <ClCompile Include="..\src\YmTngnModel\YmTngnIndexedTriangleList.cpp">
+      <Filter>public</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\YmTngnModel\YmObjToIndexedTriangleListConverter.cpp">
       <Filter>public</Filter>
     </ClCompile>
   </ItemGroup>

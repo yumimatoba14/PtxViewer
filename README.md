@@ -7,4 +7,6 @@
 ## 使用ライブラリ
 * [DirectXTK](https://github.com/microsoft/DirectXTK) version 2023.9.6.1
 	* [MIT license](https://github.com/microsoft/DirectXTK/blob/main/LICENSE)
-
+* [tinyobjloader](https://github.com/tinyobjloader/tinyobjloader.git)
+    * [MIT license](https://github.com/tinyobjloader/tinyobjloader?tab=License-1-ov-file#readme)
+    * earcut は未使用。

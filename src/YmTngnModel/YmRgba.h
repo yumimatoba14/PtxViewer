@@ -16,6 +16,11 @@ public:
 	int GetB() const { return (m_rgba >> 16) & 0xFF; }
 	int GetA() const { return (m_rgba >> 24) & 0xFF; }
 	uint32_t ToUint32() const { return m_rgba; }
+
+	YmRgba4b RemoveAlpha() const
+	{
+		return YmRgba4b(GetR(), GetG(), GetB());
+	}
 private:
 	uint32_t m_rgba;
 };
