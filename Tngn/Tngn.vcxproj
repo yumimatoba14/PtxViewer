@@ -139,6 +139,7 @@
     <ClInclude Include="YmTngn\YmTngnDmExclusiveLodPointList.h" />
     <ClInclude Include="YmTngn\YmTngnDmLengthDimension.h" />
     <ClInclude Include="YmTngn\YmTngnDmMemoryPointList.h" />
+    <ClInclude Include="YmTngn\YmTngnDmObjFiles.h" />
     <ClInclude Include="YmTngn\YmTngnDmPointBlockList.h" />
     <ClInclude Include="YmTngn\YmTngnDmPointBlockListFile.h" />
     <ClInclude Include="YmTngn\YmTngnDmPtxFiles.h" />
@@ -175,6 +176,7 @@
     <ClCompile Include="YmTngn\YmTngnDmExclusiveLodPointList.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmLengthDimension.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmMemoryPointList.cpp" />
+    <ClCompile Include="YmTngn\YmTngnDmObjFiles.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmPointBlockList.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmPointBlockListFile.cpp" />
     <ClCompile Include="YmTngn\YmTngnDmPtxFiles.cpp" />

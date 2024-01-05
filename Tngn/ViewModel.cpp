@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ViewModel.h"
 #include "YmTngn/YmViewOp.h"
+#include "YmTngn/YmTngnDmObjFiles.h"
 #include "YmTngn/YmTngnDmPtxFiles.h"
 #include "YmTngn/YmTngnDmMemoryPointList.h"
 #include "YmTngn/YmTngnDmTriangleMesh.h"
@@ -75,6 +76,16 @@ bool ViewModel::OpenPtxFile(System::String^ ptxFilePath)
 {
 	YM_NOEXCEPT_BEGIN("ViewModel::OpenPtxFile");
 	m_pImpl->PreparePtxFileContent()->ReadPtxFile(marshal_as<YmTString>(ptxFilePath));
+	m_pImpl->SetSelectedContent(nullptr);
+	return true;
+	YM_NOEXCEPT_END;
+	return false;
+}
+
+bool ViewModel::OpenObjFile(System::String^ objFilePath)
+{
+	YM_NOEXCEPT_BEGIN("ViewModel::OpenObjFile");
+	m_pImpl->PrepareObjFileContent()->ReadObjFile(marshal_as<YmTString>(objFilePath));
 	m_pImpl->SetSelectedContent(nullptr);
 	return true;
 	YM_NOEXCEPT_END;

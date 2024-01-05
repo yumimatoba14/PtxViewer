@@ -120,6 +120,9 @@
     <ClInclude Include="Vector3d.h">
       <Filter>Cli</Filter>
     </ClInclude>
+    <ClInclude Include="YmTngn\YmTngnDmObjFiles.h">
+      <Filter>Ymcpp\YmTngn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tngn.cpp">
@@ -202,6 +205,9 @@
     </ClCompile>
     <ClCompile Include="Vector3d.cpp">
       <Filter>Cli</Filter>
+    </ClCompile>
+    <ClCompile Include="YmTngn\YmTngnDmObjFiles.cpp">
+      <Filter>Ymcpp\YmTngn</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

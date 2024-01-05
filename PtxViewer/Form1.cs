@@ -73,7 +73,7 @@ namespace PtxViewer
 
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Filter = "PTX File(*.ptx)|*.ptx|All file(*.*)|*.*";
+                openFileDialog.Filter = "PTX File(*.ptx)|*.ptx|OBJ File(*.obj)|*.obj|All file(*.*)|*.*";
                 openFileDialog.Multiselect = true;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -83,7 +83,7 @@ namespace PtxViewer
                         {
                             foreach (var filePath in openFileDialog.FileNames)
                             {
-                                bool isOk = viewModel.OpenPtxFile(filePath);
+                                bool isOk = OpenFileImpl(filePath);
                                 if (!isOk)
                                 {
                                     MessageBox.Show("Failed to open file:" + filePath, "File open", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -93,7 +93,7 @@ namespace PtxViewer
                         }
                         else
                         {
-                            bool isOk = viewModel.OpenPtxFile(openFileDialog.FileName);
+                            bool isOk = OpenFileImpl(openFileDialog.FileName);
                             if (!isOk)
                             {
                                 MessageBox.Show("Failed to open file:" + openFileDialog.FileName, "File open", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -104,6 +104,19 @@ namespace PtxViewer
                     mainView.Invalidate();
                 }
             }
+        }
+
+        private bool OpenFileImpl(String filePath)
+        {
+            if (filePath.EndsWith(".ptx", StringComparison.OrdinalIgnoreCase))
+            {
+                return viewModel.OpenPtxFile(filePath);
+            }
+            else if (filePath.EndsWith(".obj", StringComparison.OrdinalIgnoreCase))
+            {
+                return viewModel.OpenObjFile(filePath);
+            }
+            return false;
         }
 
         private bool isProgressiveViewMode = true;

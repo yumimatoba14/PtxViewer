@@ -7,6 +7,7 @@
 namespace Ymcpp {
 
 class YmTngnShaderImpl;
+class YmTngnDmObjFiles;
 class YmTngnDmPtxFiles;
 class YmTngnDmMemoryPointList;
 class YmTextDrawerImpl;
@@ -52,6 +53,7 @@ public:
 
 public:
 	std::shared_ptr<YmTngnDmPtxFiles> PreparePtxFileContent();
+	std::shared_ptr<YmTngnDmObjFiles> PrepareObjFileContent();
 	std::shared_ptr<YmTngnDmMemoryPointList> PrepareSelectedPointList();
 
 	void AddLengthDimension(const YmVector3d& point0, const YmVector3d& point1);
@@ -98,6 +100,7 @@ private:
 	YmTngnDrawingModelPtr m_pContent;
 	YmTngnDrawingModelPtr m_pSelectedContent;
 	std::shared_ptr<YmTngnDmPtxFiles> m_pDmPtxFiles;
+	std::shared_ptr<YmTngnDmObjFiles> m_pDmObjFiles;
 	std::shared_ptr<YmTngnDmMemoryPointList> m_pSelectedPoints;
 	std::vector<YmTngnDmLengthDimensionPtr> m_lengthDimensions;
 };

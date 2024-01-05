@@ -85,6 +85,7 @@ namespace {
 	static const ValueSchema<YmRgba4b> aRgba4bValueSchema[YmTngnViewConfig::RGBA4B_KEY_COUNT] = {
 		{"DefaultTextFgColor", YmRgba4b(255, 255, 255), sectionTngnView},
 		{"DefaultTextBgColor", YmRgba4b(64, 64, 64, 192), sectionTngnView},
+		{"DefaultPolygonColor", YmRgba4b(192, 192, 192), sectionTngnView},
 		{"LightDiffuseColor", YmRgba4b(255, 255, 255), sectionTngnView},
 		{"LightSpecularColor", YmRgba4b(255, 255, 255), sectionTngnView},
 	};

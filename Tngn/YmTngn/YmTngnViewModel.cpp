@@ -3,6 +3,7 @@
 #include "YmTngnDraw.h"
 #include "YmTngnDrawingModel.h"
 #include "YmTngnDmMemoryPointList.h"
+#include "YmTngnDmObjFiles.h"
 #include "YmTngnDmPtxFiles.h"
 #include "YmTngnDmDrawableObjectList.h"
 #include "YmTngnDmLengthDimension.h"
@@ -427,6 +428,15 @@ std::shared_ptr<YmTngnDmPtxFiles> YmTngnViewModel::PreparePtxFileContent()
 	}
 	SetContent(m_pDmPtxFiles);
 	return m_pDmPtxFiles;
+}
+
+std::shared_ptr<YmTngnDmObjFiles> YmTngnViewModel::PrepareObjFileContent()
+{
+	if (!m_pDmObjFiles) {
+		m_pDmObjFiles = make_shared<YmTngnDmObjFiles>(*m_pConfig);
+	}
+	SetContent(m_pDmObjFiles);
+	return m_pDmObjFiles;
 }
 
 shared_ptr<YmTngnDmMemoryPointList> YmTngnViewModel::PrepareSelectedPointList()

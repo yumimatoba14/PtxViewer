@@ -25,6 +25,7 @@ public:
 	void SetViewEventListener(ViewEventListener^ listener);
 
 	bool OpenPtxFile(System::String^ ptxFilePath);
+	bool OpenObjFile(System::String^ objFilePath);
 	bool IsProgressiveViewMode();
 	void SetProgressiveViewMode(bool enableProgressiveView, bool isFollowingFrame);
 	bool IsViewContentUpdated() { return m_pImpl->IsViewContentUpdated(); }
