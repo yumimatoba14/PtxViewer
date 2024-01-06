@@ -725,8 +725,7 @@ void YmTngnViewModel::BeginDraw(bool isEraseBackground, bool isUseLastRenderingR
 		m_pDc->ClearRenderTargetView(m_pRenderTargetViewForPick.Get(), aClearColor);
 		m_pDc->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-		m_pShaderImpl->ClearTransparentObject();
-		m_pShaderImpl->Clear2DText();
+		m_pShaderImpl->InitializeForFrame();
 	}
 	else if (isUseLastRenderingResources) {
 		CopyResourceToView(m_pDc, m_apLastRenderingTextureForProgressiveView[0], m_pRenderTargetViewForNormalRendering);

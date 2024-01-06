@@ -95,6 +95,8 @@ public:
 		m_isUseScannerPosition = false;
 	}
 
+	YmTngnPickTargetId MakePickTargetId(int64_t numId);
+
 	YmDx11MappedSubResource MapDynamicBuffer(const D3DBufferPtr& pDynamicBuffer);
 	YmDx11MappedSubResource MapResource(const D3DResourcePtr& pResource, D3D11_MAP mapType);
 
@@ -110,6 +112,8 @@ public:
 		}
 		m_tempVertexBufferList[i] = buffer;
 	}
+	
+	void InitializeForFrame();
 
 	YmTngnDmDrawableObjectListPtr GetTransparentObjectList() const { return m_pTransparentObjectList; }
 	void ClearTransparentObject();
@@ -213,6 +217,7 @@ private:
 	double m_lightSpecularShininess = 100;
 
 private:
+	uint32_t m_nextPickTargetIdUpperPart = 1;
 	std::vector<YmDx11BufferWithSize> m_tempVertexBufferList;
 	YmTngnDmDrawableObjectListPtr m_pTransparentObjectList;
 	std::vector<YmTngn2DText> m_2dTextList;

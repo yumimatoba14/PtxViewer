@@ -73,6 +73,14 @@ XMMATRIX YmTngnShaderImpl::GetModelToProjectionMatrix() const
 	return XMMatrixMultiply(GetModelToViewMatrix(), this->GetProjectionMatrix(GetAspectRatio()));
 }
 
+YmTngnPickTargetId YmTngnShaderImpl::MakePickTargetId(int64_t numId)
+{
+	YM_IS_TRUE(0 < numId);
+	YmTngnPickTargetId nextId = (YmTngnPickTargetId(m_nextPickTargetIdUpperPart) << 32);
+	m_nextPickTargetIdUpperPart += (uint32_t(numId >> 32) + 1);
+	return nextId;
+}
+
 YmDx11MappedSubResource YmTngnShaderImpl::MapDynamicBuffer(const D3DBufferPtr& pDynamicBuffer)
 {
 	return MapResource(pDynamicBuffer, D3D11_MAP_WRITE_DISCARD);
@@ -93,6 +101,14 @@ YmDx11MappedSubResource YmTngnShaderImpl::MapResource(const D3DResourcePtr& pRes
 
 	return YmDx11MappedSubResource(m_pDc, pResource, move(mappedData));
 }
+
+void YmTngnShaderImpl::InitializeForFrame()
+{
+	m_nextPickTargetIdUpperPart = 1;
+	ClearTransparentObject();
+	Clear2DText();
+}
+
 
 void YmTngnShaderImpl::ClearTransparentObject()
 {

@@ -65,9 +65,6 @@ std::vector<YmTngnPickedPoint> YmTngnDmMemoryPointList::FindPickedPoints(YmTngnP
 
 bool YmTngnDmMemoryPointList::OnSetPickEnabled(bool bEnable)
 {
-	if (bEnable && GetPointPickTargetIdFirst() == YM_TNGN_PICK_TARGET_NULL) {
-		SetPointPickTargetIdFirst(1);
-	}
 	return bEnable;
 }
 
@@ -88,7 +85,8 @@ void YmTngnDmMemoryPointList::OnDraw(YmTngnDraw* pDraw)
 
 	YmTngnPickTargetId firstId = YM_TNGN_PICK_TARGET_NULL;
 	if (IsPickEnabled()) {
-		firstId = GetPointPickTargetIdFirst();
+		firstId = pDraw->MakePickTargetId();
+		SetPointPickTargetIdFirst(firstId);
 	}
 
 	if (m_isUseScannerPoint) {

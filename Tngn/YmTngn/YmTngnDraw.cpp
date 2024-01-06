@@ -82,7 +82,7 @@ D3DBufferPtr YmTngnDraw::CreateVertexBufferWithSize(UINT bufferByte, const void*
 	return pBuffer;
 }
 
-D3DBufferPtr YmTngnDraw::CreateInexBuffer(const UINT aIndex[], UINT nIndex)
+D3DBufferPtr YmTngnDraw::CreateIndexBuffer(const UINT aIndex[], UINT nIndex)
 {
 	D3D11_BUFFER_DESC hBufferDesc;
 	ZeroMemory(&hBufferDesc, sizeof(hBufferDesc));
@@ -107,6 +107,11 @@ D3DBufferPtr YmTngnDraw::CreateInexBuffer(const UINT aIndex[], UINT nIndex)
 		YM_THROW_ERROR("CreateBuffer");
 	}
 	return pBuffer;
+}
+
+YmTngnPickTargetId YmTngnDraw::MakePickTargetId(int64_t numId)
+{
+	return m_pShaderImpl->MakePickTargetId(numId);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -319,7 +319,7 @@ void YmTngnDmTriangleMesh::IndexedTriangleList::PrepareData(YmTngnDraw* pDraw)
 	}
 
 	m_pVertexBuffer = pDraw->CreateVertexBuffer(vertices.data(), (UINT)vertices.size(), false);
-	m_pIndexBuffer = pDraw->CreateInexBuffer(indices.data(), (UINT)indices.size());
+	m_pIndexBuffer = pDraw->CreateIndexBuffer(indices.data(), (UINT)indices.size());
 	m_nIndex = indices.size();
 }
 

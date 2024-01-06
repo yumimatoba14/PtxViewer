@@ -144,7 +144,6 @@ void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 			maxPointPerInst = maxDrawnPointCountPerFrame / numInstMax;
 		}
 
-		uint64_t nextPickId = uint64_t(1) << 32;
 		double persNearZ = pDraw->GetPerspectiveViewNearZ();
 		for (auto iBlock : m_drawnInstanceIndices) {
 			const InstanceData& instance = m_instanceList[iBlock];
@@ -155,9 +154,8 @@ void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 			instance.pPointBlock->SetDrawingPrecision(precision);
 			instance.pPointBlock->SetMaxPointCountDrawnPerFrame(maxPointPerInst);
 			if (IsPickEnabled()) {
+				YmTngnPickTargetId nextPickId = pDraw->MakePickTargetId(instance.pPointBlock->GetPointCount());
 				instance.pPointBlock->SetPointPickTargetIdFirst(nextPickId);
-				uint64_t pickIdEnd = nextPickId + instance.pPointBlock->GetPointCount();
-				nextPickId = ((pickIdEnd >> 32) + 1 ) << 32;
 				instance.pPointBlock->SetPickEnabled(true);
 			}
 			else {

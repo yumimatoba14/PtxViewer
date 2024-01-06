@@ -51,8 +51,9 @@ public:
 
 	D3DBufferPtr CreateVertexBufferWithSize(UINT bufferByte, const void* aVertex, bool writeByCpu);
 
-	D3DBufferPtr CreateInexBuffer(const UINT aIndex[], UINT nIndex);
+	D3DBufferPtr CreateIndexBuffer(const UINT aIndex[], UINT nIndex);
 
+	YmTngnPickTargetId MakePickTargetId(int64_t numId = 1);
 public:
 	void RegisterTransparentObject(const YmTngnModelMatrixPtr& pMatrix, const YmTngnDrawableObjectPtr& pObject);
 
