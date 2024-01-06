@@ -49,6 +49,18 @@ void YmTngnDmMemoryPointList::SetupXZRectanglePoints(const YmVector3d& basePos, 
 	m_pVertexBuffer = nullptr;
 }
 
+std::vector<YmTngnPickedPoint> YmTngnDmMemoryPointList::FindPickedPoints(YmTngnPickTargetId id) const
+{
+	vector<YmTngnPickedPoint> points;
+	if (GetPointPickTargetIdFirst() != YM_TNGN_PICK_TARGET_NULL) {
+		if (GetPointPickTargetIdFirst() <= id && id < GetPointPickTargetIdFirst() + m_dataSource.size()) {
+			const auto vtx = m_dataSource[size_t(id - GetPointPickTargetIdFirst())];
+			points.push_back(YmTngnPickedPoint{ id, vtx.position, vtx.rgba });
+		}
+	}
+	return points;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 bool YmTngnDmMemoryPointList::OnSetPickEnabled(bool bEnable)
@@ -87,17 +99,6 @@ void YmTngnDmMemoryPointList::OnDraw(YmTngnDraw* pDraw)
 	else {
 		pDraw->DrawPointList(m_pVertexBuffer, sizeof(YmTngnPointListVertex), m_nVertex, firstId);
 	}
-}
-
-std::vector<YmTngnPointListVertex> YmTngnDmMemoryPointList::OnFindPickedPoints(YmTngnPickTargetId id)
-{
-	vector<YmTngnPointListVertex> points;
-	if (GetPointPickTargetIdFirst() != YM_TNGN_PICK_TARGET_NULL) {
-		if (GetPointPickTargetIdFirst() <= id && id < GetPointPickTargetIdFirst() + m_dataSource.size()) {
-			points.push_back(m_dataSource[size_t(id - GetPointPickTargetIdFirst())]);
-		}
-	}
-	return points;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

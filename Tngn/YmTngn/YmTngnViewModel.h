@@ -47,7 +47,7 @@ public:
 	bool IsPickEnabled() const { return m_isPickEnabled; }
 	void SetPickEnabled(bool isEnabled);
 
-	std::vector<YmTngnPointListVertex> TryToPickPoint(const YmVector2i& mousePos);
+	std::vector<YmTngnPickedPoint> TryToPickPoint(const YmVector2i& mousePos);
 
 	bool SaveViewToFile(REFGUID targetFormat, LPCTSTR targetFilePath);
 

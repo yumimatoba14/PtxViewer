@@ -378,7 +378,7 @@ static YmTngnPickTargetId GetTexture2DInt64Pixel(YmTngnShaderImpl* pShaderImpl, 
 	return YmTngnPickTargetId(value);
 }
 
-std::vector<YmTngnPointListVertex> YmTngnViewModel::TryToPickPoint(const YmVector2i& mousePos)
+std::vector<YmTngnPickedPoint> YmTngnViewModel::TryToPickPoint(const YmVector2i& mousePos)
 {
 	D3DTexture2DPtr pStaging = CaptureRenderTargetStagingTexture(m_pDevice, m_pDc, m_pRenderTargetViewForPick);
 	if (false) {
@@ -387,9 +387,12 @@ std::vector<YmTngnPointListVertex> YmTngnViewModel::TryToPickPoint(const YmVecto
 
 	YmTngnPickTargetId pickedId = GetTexture2DInt64Pixel(m_pShaderImpl.get(), pStaging, mousePos);
 	if (pickedId == YM_TNGN_PICK_TARGET_NULL) {
-		return vector<YmTngnPointListVertex>();
+		return vector<YmTngnPickedPoint>();
 	}
-	return m_pContent->FindPickedPoints(pickedId);
+	if (m_pDmPtxFiles == m_pContent) {
+		return m_pDmPtxFiles->FindPickedPoints(pickedId);
+	}
+	return vector<YmTngnPickedPoint>();
 }
 
 /// <summary>

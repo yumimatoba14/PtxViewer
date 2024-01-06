@@ -50,7 +50,6 @@ public:
 protected:
 	//virtual bool OnSetPickEnabled(bool bEnable);
 	virtual void OnDraw(YmTngnDraw* pDraw);
-	//virtual std::vector<YmTngnPointListVertex> OnFindPickedPoints(YmTngnPickTargetId id);
 
 private:
 	YmTngnModelMatrixPtr m_pLocalToGlobalMatrix;

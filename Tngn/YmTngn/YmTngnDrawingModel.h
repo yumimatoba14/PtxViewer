@@ -27,12 +27,10 @@ public:
 	/// <returns>Whether pick is enabled.</returns>
 	bool SetPickEnabled(bool isEnable);
 	void Draw(YmTngnDraw* pDraw);
-	std::vector<YmTngnPointListVertex> FindPickedPoints(YmTngnPickTargetId id);
 
 protected:
 	virtual bool OnSetPickEnabled(bool bEnable);
 	virtual void OnDraw(YmTngnDraw* pDraw) = 0;
-	virtual std::vector<YmTngnPointListVertex> OnFindPickedPoints(YmTngnPickTargetId id);
 
 private:
 	bool m_isPickEnabled = false;

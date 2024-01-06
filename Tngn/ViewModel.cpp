@@ -235,10 +235,10 @@ void ViewModel::OnMouseButtonUp(System::Windows::Forms::MouseEventArgs^ e)
 			}
 		}
 		else {
-			for (YmTngnPointListVertex& point : points) {
-				bool isAdd = eventListener->PickingPoint(MakeVector(point.position));
+			for (YmTngnPickedPoint& point : points) {
+				bool isAdd = eventListener->PickingPoint(MakeVector(point.positionInModel));
 				if (isAdd) {
-					m_pImpl->PrepareSelectedPointList()->AddPoint(point.position, YmRgba4b(255, 0, 0));
+					m_pImpl->PrepareSelectedPointList()->AddPoint(point.positionInModel, YmRgba4b(255, 0, 0));
 				}
 			}
 		}

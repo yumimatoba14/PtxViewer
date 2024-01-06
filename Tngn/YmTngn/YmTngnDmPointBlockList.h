@@ -41,10 +41,11 @@ public:
 	void AddInstances(const YmTngnDmPointBlockList& sourceInstances);
 	void ReserveInstanceList(size_t capacity) { m_instanceList.reserve(capacity); }
 
+	std::vector<YmTngnPickedPoint> FindPickedPoints(YmTngnPickTargetId id) const;
+
 protected:
 	virtual bool OnSetPickEnabled(bool bEnable);
 	virtual void OnDraw(YmTngnDraw* pDraw);
-	virtual std::vector<YmTngnPointListVertex> OnFindPickedPoints(YmTngnPickTargetId id);
 
 private:
 	void UpdateDrawnInstances(YmTngnDraw* pDraw);

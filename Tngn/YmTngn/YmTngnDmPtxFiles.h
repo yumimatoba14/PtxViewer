@@ -24,10 +24,11 @@ public:
 	void SetDrawWithScannerPosition(bool isUse);
 
 	YmTString ReadPtxFile(const YmTString& filePath);
+
+	std::vector<YmTngnPickedPoint> FindPickedPoints(YmTngnPickTargetId id) const;
 protected:
 	virtual bool OnSetPickEnabled(bool bEnable);
 	virtual void OnDraw(YmTngnDraw* pDraw);
-	virtual std::vector<YmTngnPointListVertex> OnFindPickedPoints(YmTngnPickTargetId id);
 
 private:
 	YmTngnViewConfig m_config;

@@ -56,6 +56,31 @@ void YmTngnDmPointBlockList::AddInstances(const YmTngnDmPointBlockList& sourceIn
 	}
 }
 
+static YmVector3d TransformCoord(const YmVector3d& localCoord, const float localToGlobalMatrix[4][4])
+{
+	YmVector3d globalCoord = YmVectorUtil::Make<double>(localToGlobalMatrix[3][0], localToGlobalMatrix[3][1], localToGlobalMatrix[3][2]);
+	for (int i = 0; i < 3; ++i) {
+		globalCoord += localCoord[i] * YmVectorUtil::Make<double>(localToGlobalMatrix[i][0], localToGlobalMatrix[i][1], localToGlobalMatrix[i][2]);
+	}
+	return globalCoord;
+}
+
+std::vector<YmTngnPickedPoint> YmTngnDmPointBlockList::FindPickedPoints(YmTngnPickTargetId id) const
+{
+	std::vector<YmTngnPickedPoint> points;
+	for (auto iInstance : m_drawnInstanceIndices) {
+		const InstanceData& instance = m_instanceList[iInstance];
+		YmTngnPointListVertex pointData;
+		if (instance.pPointBlock->FindPointByPickTargetId(id, &pointData)) {
+			YmTngnPickedPoint point = {
+				id, TransformCoord(pointData.position, instance.localToGlobalMatrix.m), pointData.rgba
+			};
+			points.push_back(point);
+		}
+	}
+	return points;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 bool YmTngnDmPointBlockList::OnSetPickEnabled(bool bEnable)
@@ -155,19 +180,6 @@ void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 	}
 
 	pDraw->ClearModelMatrix();
-}
-
-std::vector<YmTngnPointListVertex> YmTngnDmPointBlockList::OnFindPickedPoints(YmTngnPickTargetId id)
-{
-	std::vector<YmTngnPointListVertex> points;
-	for (auto iInstance : m_drawnInstanceIndices) {
-		const InstanceData& instance = m_instanceList[iInstance];
-		YmTngnPointListVertex pointData;
-		if (instance.pPointBlock->FindPointByPickTargetId(id, &pointData)) {
-			points.push_back(pointData);
-		}
-	}
-	return points;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

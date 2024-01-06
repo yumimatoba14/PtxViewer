@@ -11,6 +11,12 @@ struct YmTngnPointListVertex
 	UINT rgba;
 };
 
+struct YmTngnPickedPoint {
+	YmTngnPickTargetId id;
+	YmVector3d positionInModel;
+	UINT rgba;
+};
+
 struct YmTngnTriangleVertex
 {
 	DirectX::XMFLOAT3 position;

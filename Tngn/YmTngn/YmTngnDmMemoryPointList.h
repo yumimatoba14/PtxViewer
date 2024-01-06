@@ -40,10 +40,10 @@ public:
 	YmTngnPickTargetId GetPointPickTargetIdFirst() const { return m_pointPickTargetIdFirst; }
 	void SetPointPickTargetIdFirst(YmTngnPickTargetId id) { m_pointPickTargetIdFirst = id; }
 
+	std::vector<YmTngnPickedPoint> FindPickedPoints(YmTngnPickTargetId id) const;
 protected:
 	virtual bool OnSetPickEnabled(bool bEnable);
 	virtual void OnDraw(YmTngnDraw* pDraw);
-	virtual std::vector<YmTngnPointListVertex> OnFindPickedPoints(YmTngnPickTargetId id);
 
 private:
 	std::vector<YmTngnPointListVertex> CreateXZRectanglePoints(const YmVector3d& basePos, const YmRgba4b& color);
