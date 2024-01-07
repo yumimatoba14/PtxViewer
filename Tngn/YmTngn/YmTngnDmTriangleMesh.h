@@ -46,8 +46,11 @@ public:
 	DirectX::XMFLOAT4X4 GetLocalToGlobalMatrix() const { return *m_pLocalToGlobalMatrix; }
 	void SetLocalToGlobalMatrix(const DirectX::XMFLOAT4X4& matrix) { *m_pLocalToGlobalMatrix = matrix; }
 
-	static std::shared_ptr<YmTngnDmTriangleMesh> MakeSampleData(YmVector3d origin);
-	static std::shared_ptr<YmTngnDmTriangleMesh> MakeSampleCylinderData(
+	std::vector<IndexedTriangleListPtr> FindPickedTriangles(YmTngnPickTargetId id) const;
+
+public:
+	static YmTngnDmTriangleMeshPtr MakeSampleData(YmVector3d origin);
+	static YmTngnDmTriangleMeshPtr MakeSampleCylinderData(
 		double approxTol, YmVector3d origin, YmVector3d axisDir, double radius, double height, YmRgba4b color, bool smooth);
 
 protected:

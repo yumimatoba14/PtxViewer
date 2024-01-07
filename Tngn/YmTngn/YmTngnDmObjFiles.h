@@ -10,16 +10,16 @@ namespace Ymcpp {
 class YmTngnDmObjFiles : public YmTngnDrawingModel
 {
 public:
-	using MeshPtr = std::shared_ptr<YmTngnDmTriangleMesh>;
+	using MeshPtr = YmTngnDmTriangleMeshPtr;
 public:
 	YmTngnDmObjFiles(const YmTngnViewConfig& config);
 	virtual ~YmTngnDmObjFiles();
 
 public:
 	void ReadObjFile(const YmTString& filePath);
-
+	std::vector<YmTngnDmTriangleMeshPtr> FindPickedMesh(YmTngnPickTargetId id) const;
 protected:
-	//virtual bool OnSetPickEnabled(bool bEnable);
+	virtual bool OnSetPickEnabled(bool isEnable);
 	virtual void OnDraw(YmTngnDraw* pDraw);
 
 private:

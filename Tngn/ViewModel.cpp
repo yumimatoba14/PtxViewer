@@ -228,18 +228,23 @@ void ViewModel::OnMouseButtonUp(System::Windows::Forms::MouseEventArgs^ e)
 		m_pImpl->GetViewOp().OnMouseButtonUp(GetLocation(e), button);
 	}
 	if (button == YmViewOp::MouseStartOption::L_BUTTON && isPicking) {
-		auto points = m_pImpl->TryToPickPoint(GetLocation(e));
-		if (points.empty()) {
+		YmTngnPickTargetId pickedId = m_pImpl->TryToPickAsId(GetLocation(e));
+		if (pickedId == YM_TNGN_PICK_TARGET_NULL) {
 			if (eventListener->PickingNone()) {
 				m_pImpl->PrepareSelectedPointList()->ClearPoint();
 			}
 		}
 		else {
+			auto points = m_pImpl->GetPickedPoint(pickedId);
 			for (YmTngnPickedPoint& point : points) {
 				bool isAdd = eventListener->PickingPoint(MakeVector(point.positionInModel));
 				if (isAdd) {
 					m_pImpl->PrepareSelectedPointList()->AddPoint(point.positionInModel, YmRgba4b(255, 0, 0));
 				}
+			}
+			auto meshes = m_pImpl->GetPickedTriangleMesh(pickedId);
+			for (auto& pMesh : meshes) {
+				// TODO:
 			}
 		}
 	}

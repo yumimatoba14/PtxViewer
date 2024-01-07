@@ -27,9 +27,24 @@ void YmTngnDmTriangleMesh::AddIndexedTriangleList(const YmTngnIndexedTriangleLis
 	m_indexedTriangleLists.push_back(make_shared<IndexedTriangleList>(pTriList));
 }
 
+std::vector<YmTngnDmTriangleMesh::IndexedTriangleListPtr>
+YmTngnDmTriangleMesh::FindPickedTriangles(YmTngnPickTargetId id) const
+{
+	if (IsPickEnabled() && id != YM_TNGN_PICK_TARGET_NULL) {
+		vector<IndexedTriangleListPtr> results;
+		for (auto& pList : m_indexedTriangleLists) {
+			if (pList->GetPickTargetId() == id) {
+				results.push_back(pList);
+			}
+		}
+		return results;
+	}
+	return vector<IndexedTriangleListPtr>();
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
-std::shared_ptr<YmTngnDmTriangleMesh> YmTngnDmTriangleMesh::MakeSampleData(YmVector3d origin)
+YmTngnDmTriangleMeshPtr YmTngnDmTriangleMesh::MakeSampleData(YmVector3d origin)
 {
 	auto pMesh = make_shared<YmTngnDmTriangleMesh>();
 	pMesh->m_pLocalToGlobalMatrix->m[3][0] = static_cast<float>(origin[0]);
@@ -115,7 +130,7 @@ static YmVector3d MakeSeedDir(const YmVector3d& vecN)
 	return seed;
 }
 
-static std::shared_ptr<YmTngnDmTriangleMesh> MakeExtrudedSideFaceMesh(
+static YmTngnDmTriangleMeshPtr MakeExtrudedSideFaceMesh(
 	double zeroTol, const vector<YmVector3d>& profilePoints, const YmVector3d& vecN, double height, YmRgba4b color
 )
 {

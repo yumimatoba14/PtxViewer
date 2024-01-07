@@ -47,7 +47,9 @@ public:
 	bool IsPickEnabled() const { return m_isPickEnabled; }
 	void SetPickEnabled(bool isEnabled);
 
-	std::vector<YmTngnPickedPoint> TryToPickPoint(const YmVector2i& mousePos);
+	YmTngnPickTargetId TryToPickAsId(const YmVector2i& mousePos);
+	std::vector<YmTngnPickedPoint> GetPickedPoint(YmTngnPickTargetId pickedId);
+	std::vector<YmTngnDmTriangleMeshPtr> GetPickedTriangleMesh(YmTngnPickTargetId pickedId);
 
 	bool SaveViewToFile(REFGUID targetFormat, LPCTSTR targetFilePath);
 

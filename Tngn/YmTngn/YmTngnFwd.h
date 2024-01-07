@@ -17,6 +17,7 @@ namespace Ymcpp {
 
 class YmTngnDmDrawableObjectList;
 class YmTngnDmLengthDimension;
+class YmTngnDmTriangleMesh;
 class YmTngnDraw;
 class YmTngnDrawableObject;
 class YmTngnDrawingModel;
@@ -27,6 +28,7 @@ class YmViewOp;
 
 using YmTngnDmDrawableObjectListPtr = std::shared_ptr<YmTngnDmDrawableObjectList>;
 using YmTngnDmLengthDimensionPtr = std::shared_ptr<YmTngnDmLengthDimension>;
+using YmTngnDmTriangleMeshPtr = std::shared_ptr<YmTngnDmTriangleMesh>;
 using YmTngnDrawableObjectPtr = std::shared_ptr<YmTngnDrawableObject>;
 using YmTngnDrawingModelPtr = std::shared_ptr<YmTngnDrawingModel>;
 

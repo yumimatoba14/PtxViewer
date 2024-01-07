@@ -30,11 +30,33 @@ void YmTngnDmObjFiles::ReadObjFile(const YmTString& filePath)
 	m_meshes.push_back(pMeshModel);
 }
 
+std::vector<YmTngnDmTriangleMeshPtr> YmTngnDmObjFiles::FindPickedMesh(YmTngnPickTargetId id) const
+{
+	if (IsPickEnabled() && id != YM_TNGN_PICK_TARGET_NULL) {
+		vector<YmTngnDmTriangleMeshPtr> resultMeshes;
+		for (auto pMesh : m_meshes) {
+			auto triangles = pMesh->FindPickedTriangles(id);
+			if (!triangles.empty()) {
+				resultMeshes.push_back(pMesh);
+			}
+		}
+		return resultMeshes;
+	}
+	return vector<YmTngnDmTriangleMeshPtr>();
+}
+
 ////////////////////////////////////////////////////////////////////////////////
+
+bool YmTngnDmObjFiles::OnSetPickEnabled(bool isEnable)
+{
+	return isEnable;
+}
 
 void YmTngnDmObjFiles::OnDraw(YmTngnDraw* pDraw)
 {
+	bool isPicking = IsPickEnabled();
 	for (auto pMesh : m_meshes) {
+		pMesh->SetPickEnabled(isPicking);
 		pMesh->Draw(pDraw);
 	}
 }

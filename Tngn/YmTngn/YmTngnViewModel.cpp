@@ -378,21 +378,37 @@ static YmTngnPickTargetId GetTexture2DInt64Pixel(YmTngnShaderImpl* pShaderImpl, 
 	return YmTngnPickTargetId(value);
 }
 
-std::vector<YmTngnPickedPoint> YmTngnViewModel::TryToPickPoint(const YmVector2i& mousePos)
+YmTngnPickTargetId YmTngnViewModel::TryToPickAsId(const YmVector2i& mousePos)
 {
+	if (!IsPickEnabled()) {
+		return YM_TNGN_PICK_TARGET_NULL;
+	}
 	D3DTexture2DPtr pStaging = CaptureRenderTargetStagingTexture(m_pDevice, m_pDc, m_pRenderTargetViewForPick);
 	if (false) {
 		CountTexture2DColor(m_pShaderImpl.get(), pStaging);
 	}
 
-	YmTngnPickTargetId pickedId = GetTexture2DInt64Pixel(m_pShaderImpl.get(), pStaging, mousePos);
-	if (pickedId == YM_TNGN_PICK_TARGET_NULL) {
-		return vector<YmTngnPickedPoint>();
-	}
-	if (m_pDmPtxFiles == m_pContent) {
-		return m_pDmPtxFiles->FindPickedPoints(pickedId);
+	return GetTexture2DInt64Pixel(m_pShaderImpl.get(), pStaging, mousePos);
+}
+
+std::vector<YmTngnPickedPoint> YmTngnViewModel::GetPickedPoint(YmTngnPickTargetId pickedId)
+{
+	if (IsPickEnabled() && pickedId != YM_TNGN_PICK_TARGET_NULL) {
+		if (m_pDmPtxFiles == m_pContent) {
+			return m_pDmPtxFiles->FindPickedPoints(pickedId);
+		}
 	}
 	return vector<YmTngnPickedPoint>();
+}
+
+std::vector<YmTngnDmTriangleMeshPtr> YmTngnViewModel::GetPickedTriangleMesh(YmTngnPickTargetId pickedId)
+{
+	if (IsPickEnabled() && pickedId != YM_TNGN_PICK_TARGET_NULL) {
+		if (m_pDmObjFiles == m_pContent) {
+			return m_pDmObjFiles->FindPickedMesh(pickedId);
+		}
+	}
+	return vector<YmTngnDmTriangleMeshPtr>();
 }
 
 /// <summary>
