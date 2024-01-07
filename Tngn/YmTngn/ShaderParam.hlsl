@@ -17,4 +17,5 @@ cbuffer ShaderParam : register(b0)
 	float3 lightDiffuseRgb;
 	float3 lightSpecularRgb;
 	float lightSpecularShininess;
+	uint4 pickTargetId;	// For Triangle list.
 };

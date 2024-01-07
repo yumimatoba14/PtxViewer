@@ -20,6 +20,8 @@ public:
 		bool IsTransparent() const;
 		void Draw(YmTngnDraw* pDraw);
 		void PrepareAabb();
+		YmTngnPickTargetId GetPickTargetId() const { return m_pickTargetId; }
+		void SetPickTargetId(YmTngnPickTargetId id) { m_pickTargetId = id; }
 	protected:
 		void virtual OnDraw(YmTngnDraw* pDraw) { Draw(pDraw); }
 	private:
@@ -29,6 +31,7 @@ public:
 		D3DBufferPtr m_pVertexBuffer;
 		D3DBufferPtr m_pIndexBuffer;
 		size_t m_nIndex = 0;
+		YmTngnPickTargetId m_pickTargetId = YM_TNGN_PICK_TARGET_NULL;
 	};
 	using IndexedTriangleListPtr = std::shared_ptr<IndexedTriangleList>;
 public:
@@ -48,7 +51,7 @@ public:
 		double approxTol, YmVector3d origin, YmVector3d axisDir, double radius, double height, YmRgba4b color, bool smooth);
 
 protected:
-	//virtual bool OnSetPickEnabled(bool bEnable);
+	virtual bool OnSetPickEnabled(bool isEnable);
 	virtual void OnDraw(YmTngnDraw* pDraw);
 
 private:

@@ -78,7 +78,8 @@ public:
 	);
 
 	void DrawTriangleList(
-		const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pIndexBuf, size_t nIndex
+		const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pIndexBuf, size_t nIndex,
+		YmTngnPickTargetId pickId = YM_TNGN_PICK_TARGET_NULL
 	);
 
 	void DrawLineList(
@@ -90,6 +91,7 @@ private:
 		const D3DBufferPtr& pVertexBuf, size_t nVertex, YmTngnPickTargetId firstId
 	);
 	YmDx11BufferWithSize PrepareTempVertexBuffer();
+	YmDx11BufferWithSize PrepareTempVertexBuffer(int bufferId, size_t nNecessaryBufByte);
 	void DrawPointListWithTempBuffer(const YmTngnPointListVertex aVertex[], size_t nVertex, YmTngnPickTargetId firstId);
 
 private:

@@ -43,6 +43,7 @@ public:
 		XMFLOAT3A lightDiffuseRgb;
 		XMFLOAT3 lightSpecularRgb;	// To allocate shininess just after this, avoided XMFLOAT3A.
 		float lightSpecularShininess;
+		DirectX::XMUINT4 pickTargetId;
 	};
 public:
 	explicit YmTngnShaderImpl(const YmTngnViewConfig& config, const D3DDevicePtr& pDevice, const D3DDeviceContextPtr& pDc);
@@ -75,6 +76,8 @@ public:
 
 	double GetPerspectiveViewFarZ() { return m_viewFarZ; }
 	void SetPerspectiveViewFarZ(double z) { m_viewFarZ = z; m_isNeedUpdateShaderParam = true; }
+
+	void SetShaderParamPickTargetId(YmTngnPickTargetId id) { m_shaderParamPickTargetId = id; m_isNeedUpdateShaderParam = true; }
 
 	XMMATRIX GetModelToViewMatrix() const;
 
@@ -136,8 +139,17 @@ public:
 		const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pIndexBuf, size_t nIndex
 	);
 
+	void DrawPickableTriangleList(
+		const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pIndexBuf, size_t nIndex
+	);
+
 	void DrawLineList(
 		const D3DBufferPtr& pVertexBuf, size_t nVertex
+	);
+
+private:
+	void DrawTriangleListImpl(
+		const YmTngnShaderContext& sc, const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pIndexBuf, size_t nIndex
 	);
 
 private:
@@ -153,6 +165,7 @@ private:
 	void InitializeShaderContextsForNormalRendering();
 	void InitializeShaderContextsForPickableRendering();
 	void InitializeShaderContextsForTriangleListNormalRendering();
+	void InitializeShaderContextsForTriangleListPickableRendering();
 	void InitializeShaderContextsForLineListNormalRendering();
 
 	static YmTString GetHslsFilePath(const YmTString& fileName);
@@ -189,6 +202,7 @@ private:
 	YmTngnShaderContext m_pointListSc;
 	YmTngnShaderContext m_pickablePointListSc;
 	YmTngnShaderContext m_triangleListSc;
+	YmTngnShaderContext m_pickableTriangleListSc;
 	YmTngnShaderContext m_lineListSc;
 	YmVector2i m_viewSize;
 	double m_pointSize;
@@ -215,6 +229,7 @@ private:
 	YmVector3d m_lightDiffuseRgb = YmVectorUtil::Make(1.0, 1.0, 1.0);
 	YmVector3d m_lightSpecularRgb = YmVectorUtil::Make(1.0, 1.0, 1.0);
 	double m_lightSpecularShininess = 100;
+	YmTngnPickTargetId m_shaderParamPickTargetId;
 
 private:
 	uint32_t m_nextPickTargetIdUpperPart = 1;

@@ -161,11 +161,19 @@ void YmTngnDraw::DrawPointListWithSingleScannerPosition(
 }
 
 void YmTngnDraw::DrawTriangleList(
-	const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pIndexBuf, size_t nIndex
+	const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pIndexBuf, size_t nIndex,
+	YmTngnPickTargetId pickId
 )
 {
-	m_pShaderImpl->PrepareShaderParam();
-	m_pShaderImpl->DrawTriangleList(pVertexBuf, pIndexBuf, nIndex);
+	if (pickId == YM_TNGN_PICK_TARGET_NULL) {
+		m_pShaderImpl->PrepareShaderParam();
+		m_pShaderImpl->DrawTriangleList(pVertexBuf, pIndexBuf, nIndex);
+	}
+	else {
+		m_pShaderImpl->SetShaderParamPickTargetId(pickId);
+		m_pShaderImpl->PrepareShaderParam();
+		m_pShaderImpl->DrawPickableTriangleList(pVertexBuf, pIndexBuf, nIndex);
+	}
 }
 
 void YmTngnDraw::DrawLineList(
@@ -206,17 +214,11 @@ void YmTngnDraw::DrawPointListImpl(
 	const bool isPickMode = (firstId != YM_TNGN_PICK_TARGET_NULL);
 
 	if (isPickMode) {
-		YmDx11BufferWithSize pickIdBuffer = m_pShaderImpl->GetTempVertexBuffer(TEMP_VERTEX_BUF_PICK_ID);
-
 		const size_t nNecessaryBufByte = nVertex * sizeof(YmTngnPickTargetId);
 		if (UINT_MAX < nNecessaryBufByte) {
 			YM_THROW_ERROR("nVertex is too large. (Not supported case.)");
 		}
-		if (!pickIdBuffer.pBuffer || pickIdBuffer.nBufferByte < nNecessaryBufByte) {
-			pickIdBuffer.nBufferByte = static_cast<UINT>(nNecessaryBufByte);
-			pickIdBuffer.pBuffer = CreateVertexBufferWithSize(pickIdBuffer.nBufferByte, nullptr, true);
-			m_pShaderImpl->SetTempVertexBuffer(TEMP_VERTEX_BUF_PICK_ID, pickIdBuffer);
-		}
+		YmDx11BufferWithSize pickIdBuffer = PrepareTempVertexBuffer(TEMP_VERTEX_BUF_PICK_ID, nNecessaryBufByte);
 
 		{
 			YmDx11MappedSubResource mappedMemory = m_pShaderImpl->MapDynamicBuffer(pickIdBuffer.pBuffer);
@@ -248,6 +250,18 @@ YmDx11BufferWithSize YmTngnDraw::PrepareTempVertexBuffer()
 	return buffer;
 }
 
+YmDx11BufferWithSize YmTngnDraw::PrepareTempVertexBuffer(int bufferId, size_t nNecessaryBufByte)
+{
+	YmDx11BufferWithSize buffer = m_pShaderImpl->GetTempVertexBuffer(bufferId);
+	YM_ASSERT(nNecessaryBufByte <= UINT_MAX);
+	if (!buffer.pBuffer || buffer.nBufferByte < nNecessaryBufByte) {
+		buffer.nBufferByte = static_cast<UINT>(nNecessaryBufByte);
+		buffer.pBuffer = CreateVertexBufferWithSize(buffer.nBufferByte, nullptr, true);
+		m_pShaderImpl->SetTempVertexBuffer(bufferId, buffer);
+	}
+	return buffer;
+}
+
 void YmTngnDraw::DrawPointListWithTempBuffer(const YmTngnPointListVertex aVertex[], size_t nVertex, YmTngnPickTargetId firstId)
 {
 	const bool isPickMode = (firstId != YM_TNGN_PICK_TARGET_NULL);
@@ -256,15 +270,9 @@ void YmTngnDraw::DrawPointListWithTempBuffer(const YmTngnPointListVertex aVertex
 	const size_t nVertexInBufUpperBound = vertexBuffer.nBufferByte / vertexSize;
 	YM_IS_TRUE(0 < nVertexInBufUpperBound);
 
-	YmDx11BufferWithSize pickIdBuffer = m_pShaderImpl->GetTempVertexBuffer(TEMP_VERTEX_BUF_PICK_ID);
+	YmDx11BufferWithSize pickIdBuffer = { nullptr, 0 };
 	if (isPickMode) {
-		const size_t nNecessaryBufByte = nVertexInBufUpperBound * sizeof(YmTngnPickTargetId);
-		YM_ASSERT(nNecessaryBufByte <= UINT_MAX);
-		if (!pickIdBuffer.pBuffer || pickIdBuffer.nBufferByte < nNecessaryBufByte) {
-			pickIdBuffer.nBufferByte = static_cast<UINT>(nNecessaryBufByte);
-			pickIdBuffer.pBuffer = CreateVertexBufferWithSize(pickIdBuffer.nBufferByte, nullptr, true);
-			m_pShaderImpl->SetTempVertexBuffer(TEMP_VERTEX_BUF_PICK_ID, pickIdBuffer);
-		}
+		pickIdBuffer = PrepareTempVertexBuffer(TEMP_VERTEX_BUF_PICK_ID, nVertexInBufUpperBound * sizeof(YmTngnPickTargetId));
 	}
 
 	size_t nRemainingVertex = nVertex;

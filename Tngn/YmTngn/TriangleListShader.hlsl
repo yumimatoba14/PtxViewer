@@ -5,9 +5,6 @@ struct VS_INPUT
 	float3 Pos : POSITION;
 	float3 Normal: NORMAL;
 	float4 Col : COLOR;
-#if PICKABLE_MODE
-	uint4 PickTargetId : PICK_ID;
-#endif
 };
 
 struct PS_INPUT
@@ -15,9 +12,6 @@ struct PS_INPUT
 	float4 Pos : SV_POSITION;
 	float4 Col : COLOR;
 	float3 Normal : TEXCOORD;
-#if PICKABLE_MODE
-	uint4 PickTargetId : PICK_ID;
-#endif
 };
 
 struct PS_OUTPUT
@@ -29,7 +23,7 @@ struct PS_OUTPUT
 };
 
 #if PICKABLE_MODE
-#define COPY_PICK_TARGET_ID(o, i) (o).PickTargetId = (i).PickTargetId
+#define COPY_PICK_TARGET_ID(o, i) (o).PickTargetId = pickTargetId
 #else
 #define COPY_PICK_TARGET_ID(o, i) (0)
 #endif
@@ -44,7 +38,6 @@ PS_INPUT vsMain(VS_INPUT pos)
 	float4 normDir = float4(pos.Normal, 0);
 	normDir = mul(normDir, viewMatrix);
 	o.Normal = float3(normDir[0], normDir[1], normDir[2]);
-	COPY_PICK_TARGET_ID(o, pos);
 	return o;
 }
 

@@ -188,6 +188,20 @@ void YmTngnShaderImpl::DrawTriangleList(
 	const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pIndexBuf, size_t nIndex
 )
 {
+	DrawTriangleListImpl(m_triangleListSc, pVertexBuf, pIndexBuf, nIndex);
+}
+
+void YmTngnShaderImpl::DrawPickableTriangleList(
+	const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pIndexBuf, size_t nIndex
+)
+{
+	DrawTriangleListImpl(m_pickableTriangleListSc, pVertexBuf, pIndexBuf, nIndex);
+}
+
+void YmTngnShaderImpl::DrawTriangleListImpl(
+	const YmTngnShaderContext& sc, const D3DBufferPtr& pVertexBuf, const D3DBufferPtr& pIndexBuf, size_t nIndex
+)
+{
 	YM_ASSERT(nIndex <= UINT_MAX);
 	m_pDc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	ID3D11Buffer* apVB[1] = { pVertexBuf.Get() };
@@ -196,7 +210,7 @@ void YmTngnShaderImpl::DrawTriangleList(
 	m_pDc->IASetVertexBuffers(0, 1, apVB, aVertexSize, aOffset);
 	m_pDc->IASetIndexBuffer(pIndexBuf.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-	SetShaderContext(m_triangleListSc);
+	SetShaderContext(sc);
 	m_pDc->DrawIndexed((UINT)nIndex, 0, 0);
 }
 
@@ -229,7 +243,20 @@ void YmTngnShaderImpl::Initialize()
 	InitializeShaderContextsForNormalRendering();
 	InitializeShaderContextsForPickableRendering();
 	InitializeShaderContextsForTriangleListNormalRendering();
+	InitializeShaderContextsForTriangleListPickableRendering();
 	InitializeShaderContextsForLineListNormalRendering();
+}
+
+static XMUINT4 ConvertPickTargetIdToUint4(YmTngnPickTargetId id)
+{
+	YM_ASSERT(sizeof(id) == 8);
+	const uint16_t* aInt2 = reinterpret_cast<uint16_t*>(&id);
+	XMUINT4 result;
+	result.x = aInt2[0];
+	result.y = aInt2[1];
+	result.z = aInt2[2];
+	result.w = aInt2[3];
+	return result;
 }
 
 void YmTngnShaderImpl::UpdateShaderParam()
@@ -280,6 +307,8 @@ void YmTngnShaderImpl::UpdateShaderParam()
 	else {
 		shaderParam.isUseLight = false;
 	}
+
+	shaderParam.pickTargetId = ConvertPickTargetIdToUint4(m_shaderParamPickTargetId);
 
 	SetConstantBufferData(m_pShaderParamConstBuf, shaderParam);
 	m_isNeedUpdateShaderParam = false;
@@ -389,6 +418,28 @@ void YmTngnShaderImpl::InitializeShaderContextsForTriangleListNormalRendering()
 		{ "COLOR"	,	0,	DXGI_FORMAT_R8G8B8A8_UNORM,	    0,	24,	D3D11_INPUT_PER_VERTEX_DATA,	0},
 	};
 	m_triangleListSc.Init(
+		CreateInputLayout(aPointListElem, sizeof(aPointListElem) / sizeof(aPointListElem[0]), hlslFilePath, "vsMain", aMacro),
+		CreateVertexShader(hlslFilePath, "vsMain", aMacro),
+		m_pShaderParamConstBuf,
+		nullptr, nullptr,
+		CreatePixelShader(hlslFilePath, "psMain", aMacro), m_pShaderParamConstBuf
+	);
+}
+
+void YmTngnShaderImpl::InitializeShaderContextsForTriangleListPickableRendering()
+{
+	const YmTString hlslFilePath = GetHslsFilePath(_T("TriangleListShader.hlsl"));
+	const D3D_SHADER_MACRO aMacro[] = {
+		{ "PICKABLE_MODE", "1" },
+		{ nullptr, nullptr }
+	};
+
+	D3D11_INPUT_ELEMENT_DESC aPointListElem[] = {
+		{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0,	0,	D3D11_INPUT_PER_VERTEX_DATA,	0},
+		{ "NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,	0,	12,	D3D11_INPUT_PER_VERTEX_DATA,	0},
+		{ "COLOR"	,	0,	DXGI_FORMAT_R8G8B8A8_UNORM,	    0,	24,	D3D11_INPUT_PER_VERTEX_DATA,	0},
+	};
+	m_pickableTriangleListSc.Init(
 		CreateInputLayout(aPointListElem, sizeof(aPointListElem) / sizeof(aPointListElem[0]), hlslFilePath, "vsMain", aMacro),
 		CreateVertexShader(hlslFilePath, "vsMain", aMacro),
 		m_pShaderParamConstBuf,

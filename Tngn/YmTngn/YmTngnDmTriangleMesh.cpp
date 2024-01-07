@@ -233,13 +233,30 @@ YmTngnDmTriangleMesh::MakeSampleCylinderData(
 
 ////////////////////////////////////////////////////////////////////////////////
 
+bool YmTngnDmTriangleMesh::OnSetPickEnabled(bool isEnable)
+{
+	return isEnable;
+}
+
 void YmTngnDmTriangleMesh::OnDraw(YmTngnDraw* pDraw)
 {
 	if (pDraw->IsProgressiveViewFollowingFrame()) {
 		return;
 	}
+	bool isPickMode = IsPickEnabled();
+	YmTngnPickTargetId nextPickId = YM_TNGN_PICK_TARGET_NULL;
+	if (isPickMode) {
+		nextPickId = pDraw->MakePickTargetId(m_indexedTriangleLists.size());
+	}
+
 	pDraw->SetModelMatrix(GetLocalToGlobalMatrix());
 	for (auto pObj : m_indexedTriangleLists) {
+		if (isPickMode) {
+			pObj->SetPickTargetId(nextPickId++);
+		}
+		else {
+			pObj->SetPickTargetId(YM_TNGN_PICK_TARGET_NULL);
+		}
 		if (pObj->IsTransparent()) {
 			pObj->PrepareAabb();
 			pDraw->RegisterTransparentObject(m_pLocalToGlobalMatrix, pObj);
@@ -268,7 +285,7 @@ void YmTngnDmTriangleMesh::IndexedTriangleList::Draw(YmTngnDraw* pDraw)
 		PrepareData(pDraw);
 	}
 	if (m_pVertexBuffer && m_pIndexBuffer) {
-		pDraw->DrawTriangleList(m_pVertexBuffer, m_pIndexBuffer, m_nIndex);
+		pDraw->DrawTriangleList(m_pVertexBuffer, m_pIndexBuffer, m_nIndex, m_pickTargetId);
 	}
 }
 
