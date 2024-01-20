@@ -4,12 +4,17 @@
 #include "YmBase/YmVector.h"
 #include <vector>
 
+// 0 : disabled depth buffer.
+// 1 : just clear depth stencil buffer.
+#define YM_TNGN_VIEW_MODEL_FOREGROUND_MODE (1)
+
 namespace Ymcpp {
 
 class YmTngnShaderImpl;
 class YmTngnDmObjFiles;
 class YmTngnDmPtxFiles;
 class YmTngnDmMemoryPointList;
+class YmTngnMeshSelectionManager;
 class YmTextDrawerImpl;
 
 class YmTngnViewModel
@@ -57,6 +62,7 @@ public:
 	std::shared_ptr<YmTngnDmPtxFiles> PreparePtxFileContent();
 	std::shared_ptr<YmTngnDmObjFiles> PrepareObjFileContent();
 	std::shared_ptr<YmTngnDmMemoryPointList> PrepareSelectedPointList();
+	std::shared_ptr<YmTngnMeshSelectionManager> PrepareMeshSelectionManager();
 
 	void AddLengthDimension(const YmVector3d& point0, const YmVector3d& point1);
 	void ClearLengthDimension();
@@ -79,7 +85,9 @@ private:
 	D3DDeviceContextPtr m_pDc;
 	DXGISwapChainPtr m_pSwapChain;
 	D3DDepthStencilStatePtr m_pDepthStencilState;
+#if YM_TNGN_VIEW_MODEL_FOREGROUND_MODE == 0
 	D3DDepthStencilStatePtr m_pDepthStencilStateForForegroundDraw;
+#endif
 	D3DBlendStatePtr m_pBlendStateForTransparency;
 	D3DRasterizerStatePtr m_pRasterizerState;
 
@@ -101,6 +109,7 @@ private:
 private:
 	YmTngnDrawingModelPtr m_pContent;
 	YmTngnDrawingModelPtr m_pSelectedContent;
+	std::shared_ptr<YmTngnMeshSelectionManager> m_pMeshSelectionManager;
 	std::shared_ptr<YmTngnDmPtxFiles> m_pDmPtxFiles;
 	std::shared_ptr<YmTngnDmObjFiles> m_pDmObjFiles;
 	std::shared_ptr<YmTngnDmMemoryPointList> m_pSelectedPoints;

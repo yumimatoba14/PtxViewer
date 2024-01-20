@@ -149,6 +149,7 @@
     <ClInclude Include="YmTngn\YmTngnDrawingModel.h" />
     <ClInclude Include="YmTngn\YmTngnDrawUtil.h" />
     <ClInclude Include="YmTngn\YmTngnFwd.h" />
+    <ClInclude Include="YmTngn\YmTngnMeshSelectionManager.h" />
     <ClInclude Include="YmTngn\YmTngnShaderContext.h" />
     <ClInclude Include="YmTngn\YmTngnShaderImpl.h" />
     <ClInclude Include="YmTngn\YmTngnVectorUtil.h" />
@@ -185,6 +186,7 @@
     <ClCompile Include="YmTngn\YmTngnDrawableObject.cpp" />
     <ClCompile Include="YmTngn\YmTngnDrawingModel.cpp" />
     <ClCompile Include="YmTngn\YmTngnDrawUtil.cpp" />
+    <ClCompile Include="YmTngn\YmTngnMeshSelectionManager.cpp" />
     <ClCompile Include="YmTngn\YmTngnShaderContext.cpp" />
     <ClCompile Include="YmTngn\YmTngnShaderImpl.cpp" />
     <ClCompile Include="YmTngn\YmTngnViewConfig.cpp" />

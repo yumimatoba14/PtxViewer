@@ -27,6 +27,13 @@ void YmTngnDmTriangleMesh::AddIndexedTriangleList(const YmTngnIndexedTriangleLis
 	m_indexedTriangleLists.push_back(make_shared<IndexedTriangleList>(pTriList));
 }
 
+void YmTngnDmTriangleMesh::SetColor(YmRgba4b color)
+{
+	for (auto& pList : m_indexedTriangleLists) {
+		pList->SetColor(color);
+	}
+}
+
 std::vector<YmTngnDmTriangleMesh::IndexedTriangleListPtr>
 YmTngnDmTriangleMesh::FindPickedTriangles(YmTngnPickTargetId id) const
 {
@@ -40,6 +47,16 @@ YmTngnDmTriangleMesh::FindPickedTriangles(YmTngnPickTargetId id) const
 		return results;
 	}
 	return vector<IndexedTriangleListPtr>();
+}
+
+YmTngnDmTriangleMeshPtr YmTngnDmTriangleMesh::CreateClone() const
+{
+	YmTngnDmTriangleMeshPtr pResult = make_shared< YmTngnDmTriangleMesh>();
+	pResult->SetLocalToGlobalMatrix(GetLocalToGlobalMatrix());
+	for (auto pTri : m_indexedTriangleLists) {
+		pResult->m_indexedTriangleLists.push_back(pTri->CreateClone());
+	}
+	return pResult;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -285,12 +302,12 @@ void YmTngnDmTriangleMesh::OnDraw(YmTngnDraw* pDraw)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool YmTngnDmTriangleMesh::IndexedTriangleList::IsTransparent() const
+YmTngnDmTriangleMesh::IndexedTriangleList::IndexedTriangleList(YmTngnIndexedTriangleListPtr pModel)
+	: m_pModel(std::move(pModel))
 {
 	if (m_pModel) {
-		return m_pModel->IsTransparent();
+		m_color = m_pModel->GetColor();
 	}
-	return false;
 }
 
 void YmTngnDmTriangleMesh::IndexedTriangleList::Draw(YmTngnDraw* pDraw)
@@ -319,11 +336,16 @@ void YmTngnDmTriangleMesh::IndexedTriangleList::PrepareAabb()
 	SetAabBox(aabb);
 }
 
+YmTngnDmTriangleMesh::IndexedTriangleListPtr YmTngnDmTriangleMesh::IndexedTriangleList::CreateClone() const
+{
+	auto pTri = make_shared<IndexedTriangleList>(m_pModel);
+	pTri->SetColor(GetColor());
+	return pTri;
+}
+
 void YmTngnDmTriangleMesh::IndexedTriangleList::PrepareData(YmTngnDraw* pDraw)
 {
-	m_pVertexBuffer = nullptr;
-	m_pIndexBuffer = nullptr;
-	m_nIndex = 0;
+	ClearData();
 	if (!m_pModel) {
 		return;
 	}
@@ -337,7 +359,7 @@ void YmTngnDmTriangleMesh::IndexedTriangleList::PrepareData(YmTngnDraw* pDraw)
 		VertexType vtx;
 		vtx.position = YmVectorUtil::StaticCast<XMFLOAT3>(inVtx.position);
 		vtx.normalDir = YmVectorUtil::StaticCast<XMFLOAT3>(inVtx.normalDir);
-		vtx.rgba = m_pModel->GetColor().ToUint32();
+		vtx.rgba = m_color.ToUint32();
 		vertices.push_back(vtx);
 	}
 	

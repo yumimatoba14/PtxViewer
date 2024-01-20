@@ -15,19 +15,26 @@ public:
 	class IndexedTriangleList : public YmTngnDrawableObject
 	{
 	public:
-		IndexedTriangleList(YmTngnIndexedTriangleListPtr pModel) : m_pModel(std::move(pModel)) {}
+		IndexedTriangleList(YmTngnIndexedTriangleListPtr pModel);
 
-		bool IsTransparent() const;
+		YmTngnIndexedTriangleListPtr GetModel() const { return m_pModel; }
+		YmRgba4b GetColor() const { return m_color; }
+		void SetColor(YmRgba4b color) { m_color = color; ClearData(); }
+		bool IsTransparent() const { return m_color.GetA() != 255; }
 		void Draw(YmTngnDraw* pDraw);
 		void PrepareAabb();
 		YmTngnPickTargetId GetPickTargetId() const { return m_pickTargetId; }
 		void SetPickTargetId(YmTngnPickTargetId id) { m_pickTargetId = id; }
+
+		void ClearData() { m_pVertexBuffer = nullptr; m_pIndexBuffer = nullptr; m_nIndex = 0; }
+		std::shared_ptr<IndexedTriangleList> CreateClone() const;
 	protected:
 		void virtual OnDraw(YmTngnDraw* pDraw) { Draw(pDraw); }
 	private:
 		void PrepareData(YmTngnDraw* pDraw);
 	private:
 		YmTngnIndexedTriangleListPtr m_pModel;
+		YmRgba4b m_color;
 		D3DBufferPtr m_pVertexBuffer;
 		D3DBufferPtr m_pIndexBuffer;
 		size_t m_nIndex = 0;
@@ -46,8 +53,11 @@ public:
 	DirectX::XMFLOAT4X4 GetLocalToGlobalMatrix() const { return *m_pLocalToGlobalMatrix; }
 	void SetLocalToGlobalMatrix(const DirectX::XMFLOAT4X4& matrix) { *m_pLocalToGlobalMatrix = matrix; }
 
+	void SetColor(YmRgba4b color);
+
 	std::vector<IndexedTriangleListPtr> FindPickedTriangles(YmTngnPickTargetId id) const;
 
+	YmTngnDmTriangleMeshPtr CreateClone() const;
 public:
 	static YmTngnDmTriangleMeshPtr MakeSampleData(YmVector3d origin);
 	static YmTngnDmTriangleMeshPtr MakeSampleCylinderData(

@@ -123,6 +123,9 @@
     <ClInclude Include="YmTngn\YmTngnDmObjFiles.h">
       <Filter>Ymcpp\YmTngn</Filter>
     </ClInclude>
+    <ClInclude Include="YmTngn\YmTngnMeshSelectionManager.h">
+      <Filter>Ymcpp\YmTngn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tngn.cpp">
@@ -207,6 +210,9 @@
       <Filter>Cli</Filter>
     </ClCompile>
     <ClCompile Include="YmTngn\YmTngnDmObjFiles.cpp">
+      <Filter>Ymcpp\YmTngn</Filter>
+    </ClCompile>
+    <ClCompile Include="YmTngn\YmTngnMeshSelectionManager.cpp">
       <Filter>Ymcpp\YmTngn</Filter>
     </ClCompile>
   </ItemGroup>

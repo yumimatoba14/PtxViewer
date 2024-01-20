@@ -5,6 +5,7 @@
 #include "YmTngn/YmTngnDmPtxFiles.h"
 #include "YmTngn/YmTngnDmMemoryPointList.h"
 #include "YmTngn/YmTngnDmTriangleMesh.h"
+#include "YmTngn/YmTngnMeshSelectionManager.h"
 #include "YmTngn/YmTngnViewConfig.h"
 #include "YmBase/YmFilePath.h"
 #include <msclr/marshal_cppstd.h>
@@ -233,6 +234,7 @@ void ViewModel::OnMouseButtonUp(System::Windows::Forms::MouseEventArgs^ e)
 			if (eventListener->PickingNone()) {
 				m_pImpl->PrepareSelectedPointList()->ClearPoint();
 			}
+			m_pImpl->PrepareMeshSelectionManager()->ClearSelection();
 		}
 		else {
 			auto points = m_pImpl->GetPickedPoint(pickedId);
@@ -244,7 +246,7 @@ void ViewModel::OnMouseButtonUp(System::Windows::Forms::MouseEventArgs^ e)
 			}
 			auto meshes = m_pImpl->GetPickedTriangleMesh(pickedId);
 			for (auto& pMesh : meshes) {
-				// TODO:
+				m_pImpl->PrepareMeshSelectionManager()->SelectMesh(pMesh);
 			}
 		}
 	}

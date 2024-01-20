@@ -7,6 +7,7 @@
 #include "YmTngnDmPtxFiles.h"
 #include "YmTngnDmDrawableObjectList.h"
 #include "YmTngnDmLengthDimension.h"
+#include "YmTngnMeshSelectionManager.h"
 #include "YmTngnShaderImpl.h"
 #include "YmTngnViewConfig.h"
 #include "YmTextDrawerImpl.h"
@@ -190,13 +191,20 @@ void YmTngnViewModel::Draw()
 	}
 
 	if (isDrawForegroundPhase) {
+#if YM_TNGN_VIEW_MODEL_FOREGROUND_MODE == 0
 		m_pDc->OMSetDepthStencilState(m_pDepthStencilStateForForegroundDraw.Get(), 1);
+#else
+		m_pDc->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+#endif
 		YmTngnDraw draw(m_pShaderImpl.get(), m_pDevice);
 		for (auto& pDim : m_lengthDimensions) {
 			pDim->Draw(&draw);
 		}
 		if (m_pSelectedContent) {
 			m_pSelectedContent->Draw(&draw);
+		}
+		if (m_pMeshSelectionManager && !m_pMeshSelectionManager->IsEmpty()) {
+			m_pMeshSelectionManager->Draw(&draw);
 		}
 		// Selected content should not be considered where view is updated or not.
 	}
@@ -267,9 +275,13 @@ void YmTngnViewModel::SetPickEnabled(bool isEnabled)
 		m_isNeedDraw = true;
 	}
 	m_isPickEnabled = isEnabled;
-	if (!m_isPickEnabled && m_pSelectedPoints) {
-		if (0 < m_pSelectedPoints->GetPointCount()) {
+	if (!m_isPickEnabled) {
+		if (m_pSelectedPoints && 0 < m_pSelectedPoints->GetPointCount()) {
 			m_pSelectedPoints->ClearPoint();
+			m_isNeedDraw = true;
+		}
+		if (m_pMeshSelectionManager && !m_pMeshSelectionManager->IsEmpty()) {
+			m_pMeshSelectionManager->ClearSelection();
 			m_isNeedDraw = true;
 		}
 	}
@@ -468,6 +480,15 @@ shared_ptr<YmTngnDmMemoryPointList> YmTngnViewModel::PrepareSelectedPointList()
 	return m_pSelectedPoints;
 }
 
+std::shared_ptr<YmTngnMeshSelectionManager> YmTngnViewModel::PrepareMeshSelectionManager()
+{
+	if (!m_pMeshSelectionManager) {
+		m_pMeshSelectionManager = make_shared<YmTngnMeshSelectionManager>();
+	}
+	m_isNeedDraw = true;
+	return m_pMeshSelectionManager;
+}
+
 void YmTngnViewModel::AddLengthDimension(const YmVector3d& point0, const YmVector3d& point1)
 {
 	auto pDim = make_shared<YmTngnDmLengthDimension>(point0, point1);
@@ -544,12 +565,14 @@ void YmTngnViewModel::SetupDevice(HWND hWnd, const YmVector2i& viewSize)
 		YM_THROW_ERROR("CreateDepthStencilState");
 	}
 
+#if YM_TNGN_VIEW_MODEL_FOREGROUND_MODE == 0
 	D3D11_DEPTH_STENCIL_DESC depthStencilForFgDrawDesc = depthStencilDesc;
 	depthStencilForFgDrawDesc.DepthEnable = FALSE;
 	hr = m_pDevice->CreateDepthStencilState(&depthStencilForFgDrawDesc, &m_pDepthStencilStateForForegroundDraw);
 	if (FAILED(hr)) {
 		YM_THROW_ERROR("CreateDepthStencilState");
 	}
+#endif
 
 	D3D11_BLEND_DESC blendDesc;
 	ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
