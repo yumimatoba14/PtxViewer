@@ -160,7 +160,8 @@ static void ConvertMesh(LoaderContext* pLoader, const tinyobj::mesh_t& mesh, vec
 			vertexIndexMap.clear();
 		}
 
-		auto itIndexBegin = AdvanceIterator(mesh.indices.begin(), 3 * iTri);
+		size_t iMeshFace = get<1>(triangles[iTri]);
+		auto itIndexBegin = AdvanceIterator(mesh.indices.begin(), 3 * iMeshFace);
 		YmVector3f defaultNormalDir = CalcTriangleNormal(pLoader, itIndexBegin);
 		auto itIndexEnd = AdvanceIterator(itIndexBegin, 3);
 		auto resultTriangle = YmTngnIndexedTriangleList::TriangleType::MakeZero();
