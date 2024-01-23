@@ -64,7 +64,7 @@ namespace {
 
 		YmRgba4b GetMatrialColor(int materialId) const
 		{
-			if (materialId < 0 || materials.size() <= materialId) {
+			if (materialId < 0 || materials.size() <= static_cast<size_t>(materialId)) {
 				return pConverter->GetDefaultMaterialColor();
 			}
 			return ConvertMaterialToRgba(materials[materialId]);
