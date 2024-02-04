@@ -13,6 +13,8 @@ YmViewOp::YmViewOp()
 	m_eyeDirection = YmVectorUtil::Make(0, 1, 0);
 	m_upDirection = YmVectorUtil::Make(0, 0, 1);
 	m_verticalDirection = YmVector3d::MakeZero();
+	m_orthographicLengthPerDot = 0.01;
+	m_isPerspectiveView = true;
 }
 
 YmViewOp::~YmViewOp()
@@ -41,8 +43,23 @@ void YmViewOp::SetVerticalDirection(double zeroTol, const YmVector3d& vertDir)
 
 void YmViewOp::OnMouseWheel(int delta)
 {
-	double stepLength = 1;
-	GoForward((delta < 0 ? -1 : 1) * stepLength);
+	if (IsPerspectiveViewMode()) {
+		double stepLength = 1;
+		GoForward((delta < 0 ? -1 : 1) * stepLength);
+	}
+	else {
+		const double lengthPerDotMin = 1e-12;
+		const double coef = 2;
+		if (delta < 0) {
+			m_orthographicLengthPerDot *= coef;
+		}
+		else {
+			m_orthographicLengthPerDot /= coef;
+		}
+		if (m_orthographicLengthPerDot < lengthPerDotMin) {
+			m_orthographicLengthPerDot = lengthPerDotMin;
+		}
+	}
 	OnChanged();
 }
 

@@ -4,6 +4,7 @@
 #include "YmTngnShaderContext.h"
 #include "YmDx11MappedSubResource.h"
 #include "YmTngn2DText.h"
+#include "YmViewOp.h"
 #include <vector>
 
 namespace Ymcpp {
@@ -63,6 +64,9 @@ public:
 	bool IsProgressiveViewFollowingFrame() const { return m_isProgressiveViewFollowingFrame; }
 	void SetProgressiveViewMode(bool enableProgressiveView, bool isFollowingFrame);
 
+	bool IsViewPerspective() const { return m_pViewOp->IsPerspectiveViewMode(); }
+	void SetViewPerspective(bool isPerspective) { m_pViewOp->SetPerspectiveViewMode(isPerspective); }
+
 	YmVector2i GetViewSize() const { return m_viewSize; }
 	void SetViewSize(const YmVector2i& viewSize) { m_viewSize = viewSize; NeedUpdateShaderParam(); }
 
@@ -76,6 +80,9 @@ public:
 
 	double GetPerspectiveViewFarZ() { return m_viewFarZ; }
 	void SetPerspectiveViewFarZ(double z) { m_viewFarZ = z; NeedUpdateShaderParam(); }
+
+	double GetOrthographicLengthPerDot() const { return m_pViewOp->GetOrthographicLengthPerDot(); }
+	void SetOrthographicLengthPerDot(double length) { m_pViewOp->SetOrthographicLengthPerDot(length); }
 
 	void SetShaderParamPickTargetId(YmTngnPickTargetId id) { m_shaderParamPickTargetId = id; NeedUpdateShaderParam(); }
 

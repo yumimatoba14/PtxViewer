@@ -35,6 +35,12 @@ public:
 	void SetVerticalDirection(double zeroTol, const YmVector3d& vertDir);
 	bool IsMoving() const { return m_mode != Mode::NONE; }
 
+	double GetOrthographicLengthPerDot() const { return m_orthographicLengthPerDot; }
+	void SetOrthographicLengthPerDot(double length) { m_orthographicLengthPerDot = length; OnChanged(); }
+
+	bool IsPerspectiveViewMode() const { return m_isPerspectiveView; }
+	void SetPerspectiveViewMode(bool isPerspective) { m_isPerspectiveView = isPerspective; OnChanged(); }
+
 	template<class CB>
 	void AddOnChangedCallback(CB&& cb) { m_onChangedCallbacks.push_back(std::forward<CB>(cb)); }
 public:
@@ -59,6 +65,8 @@ private:
 	YmVector3d m_upDirection;
 	YmVector3d m_verticalDirection;
 	YmVector2i m_lastMousePoint;
+	double m_orthographicLengthPerDot;
+	bool m_isPerspectiveView;
 	std::vector<std::function<void()>> m_onChangedCallbacks;
 };
 
