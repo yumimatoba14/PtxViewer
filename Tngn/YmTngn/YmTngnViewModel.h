@@ -40,6 +40,9 @@ public:
 	bool IsProgressiveViewFollowingFrame() const;
 	void SetProgressiveViewMode(bool enableProgressiveView, bool isFollowingFrame = false);
 
+	bool IsViewPerspective() const;
+	void SetViewPerspective(bool isPerspective);
+
 	bool IsViewContentUpdated() const { return m_isViewUpdated; }
 
 	void SetContent(const YmTngnDrawingModelPtr& pContent) { m_pContent = pContent; m_isNeedDraw = true; }

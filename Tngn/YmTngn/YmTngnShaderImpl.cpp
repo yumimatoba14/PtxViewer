@@ -28,8 +28,10 @@ YmTngnShaderImpl::YmTngnShaderImpl(const YmTngnViewConfig& config, const D3DDevi
 {
 	m_pointSize = config.GetDoubleValue(YmTngnViewConfig::POINT_SIZE);
 	m_fovAngleYDeg = config.GetDoubleValue(YmTngnViewConfig::FOV_ANGLE_Y_DEG);
-	m_viewNearZ = config.GetDoubleValue(YmTngnViewConfig::PERSPECTIVE_VIEW_NEAR_Z);
-	m_viewFarZ = config.GetDoubleValue(YmTngnViewConfig::PERSPECTIVE_VIEW_FAR_Z);
+	m_perspectiveViewNearZ = config.GetDoubleValue(YmTngnViewConfig::PERSPECTIVE_VIEW_NEAR_Z);
+	m_perspectiveViewFarZ = config.GetDoubleValue(YmTngnViewConfig::PERSPECTIVE_VIEW_FAR_Z);
+	m_orthographicViewNearZ = config.GetDoubleValue(YmTngnViewConfig::ORTHOGRAPHIC_VIEW_NEAR_Z);
+	m_orthographicViewFarZ = config.GetDoubleValue(YmTngnViewConfig::ORTHOGRAPHIC_VIEW_FAR_Z);
 	m_scannerDistanceUpperBound = config.GetDoubleValue(YmTngnViewConfig::SCANNER_DISTANCE_UB);
 	m_scannerDistanceDepthOffset = config.GetDoubleValue(YmTngnViewConfig::SCANNER_DISTANCE_DEPTH_OFFSET);
 
@@ -280,13 +282,25 @@ void YmTngnShaderImpl::UpdateShaderParam()
 		shaderParam.pointSizeY = float(m_pointSize * shaderParam.pixelSizeY);
 	}
 	else {
-		// Set length in model space. (m_pointSize is size in model space.)
-		// Drawn range in Y direction is defined by FovAngleY.
-		// Drawn range in X directino is defined by FovAgnleY and aspectRatio.
-		// So size in X direction should be adjusted with aspectRatio.
-		const double tanY = tan(m_fovAngleYDeg * 0.5 * M_PI / 180);
-		shaderParam.pointSizeX = float(m_pointSize / (tanY * aspectRatio));
-		shaderParam.pointSizeY = float(m_pointSize / tanY);
+		if (IsViewPerspective()) {
+			// Set length in model space. (m_pointSize is size in model space.)
+			// Drawn range in Y direction is defined by FovAngleY.
+			// Drawn range in X directino is defined by FovAgnleY and aspectRatio.
+			// So size in X direction should be adjusted with aspectRatio.
+			const double tanY = tan(m_fovAngleYDeg * 0.5 * M_PI / 180);
+			shaderParam.pointSizeX = float(m_pointSize / (tanY * aspectRatio));
+			shaderParam.pointSizeY = float(m_pointSize / tanY);
+		}
+		else {
+			// pointSizeX and pointSizeY are point sizes in [-1, 1] coordinate system after projection.
+			const double lengthPerDotMin = 1e-12;
+			double lengthPerDot = m_pViewOp->GetOrthographicLengthPerDot();
+			if (lengthPerDot <= lengthPerDotMin) {
+				lengthPerDot = lengthPerDotMin;
+			}
+			shaderParam.pointSizeX = float(m_pointSize / lengthPerDot * shaderParam.pixelSizeX);
+			shaderParam.pointSizeY = float(m_pointSize / lengthPerDot * shaderParam.pixelSizeY);
+		}
 	}
 
 	shaderParam.scannerPosition = YmVectorUtil::StaticCast<XMFLOAT3>(m_scannerPosition);
@@ -326,7 +340,17 @@ double YmTngnShaderImpl::GetAspectRatio() const
 
 XMMATRIX YmTngnShaderImpl::GetProjectionMatrix(double aspectRatio) const
 {
-	return XMMatrixPerspectiveFovRH(XMConvertToRadians((float)m_fovAngleYDeg), (float)aspectRatio, (float)m_viewNearZ, (float)m_viewFarZ);
+	if (IsViewPerspective()) {
+		return XMMatrixPerspectiveFovRH(XMConvertToRadians((float)m_fovAngleYDeg), (float)aspectRatio, (float)m_perspectiveViewNearZ, (float)m_perspectiveViewFarZ);
+	}
+	else {
+		// XMMatrixOrthographicRH() causes an error when widh or height because smaller than 1e-5.
+		double lengthPerDot = GetOrthographicLengthPerDot();
+		const float valueLowerBound = 1.001e-5f;
+		float width = max(static_cast<float>(m_viewSize[0] * lengthPerDot), valueLowerBound);
+		float height = max(static_cast<float>(m_viewSize[1] * lengthPerDot), valueLowerBound);
+		return XMMatrixOrthographicRH(width, height, (float)m_orthographicViewNearZ, (float)m_orthographicViewFarZ);
+	}
 }
 
 static int CastFloatToInt(float f)

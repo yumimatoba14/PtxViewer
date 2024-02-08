@@ -28,6 +28,11 @@ bool YmTngnDraw::IsProgressiveViewFollowingFrame() const
 	return m_pShaderImpl->IsProgressiveViewFollowingFrame();
 }
 
+bool YmTngnDraw::IsViewPerspective() const
+{
+	return m_pShaderImpl->IsViewPerspective();
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void YmTngnDraw::SetModelMatrix(const DirectX::XMFLOAT4X4& matrix)
@@ -270,8 +275,13 @@ static double CalcPointListEnumerationPrecision(
 
 double YmTngnDraw::EstimateLengthPerDotForLocalBox(const YmAabBox3d& localAabb)
 {
-	double persNearZ = GetPerspectiveViewNearZ();
-	return CalcPointListEnumerationPrecision(localAabb, GetModelToViewMatrix(), persNearZ);
+	if (IsViewPerspective()) {
+		double persNearZ = GetPerspectiveViewNearZ();
+		return CalcPointListEnumerationPrecision(localAabb, GetModelToViewMatrix(), persNearZ);
+	}
+	else {
+		return m_pShaderImpl->GetOrthographicLengthPerDot();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

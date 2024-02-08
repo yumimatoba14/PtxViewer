@@ -251,6 +251,16 @@ void YmTngnViewModel::SetProgressiveViewMode(bool enableProgressiveView, bool is
 	m_pShaderImpl->SetProgressiveViewMode(enableProgressiveView, isFollowingFrame);
 }
 
+bool YmTngnViewModel::IsViewPerspective() const
+{
+	return m_pShaderImpl->IsViewPerspective();
+}
+
+void YmTngnViewModel::SetViewPerspective(bool isPerspective)
+{
+	m_pShaderImpl->SetViewPerspective(isPerspective);
+}
+
 bool YmTngnViewModel::IsDrawWithScannerPosition() const
 {
 	if (m_pContent != m_pDmPtxFiles) {
@@ -611,8 +621,8 @@ void YmTngnViewModel::SetupDevice(HWND hWnd, const YmVector2i& viewSize)
 		TRUE,
 		0,
 		0.0f,
-		FALSE,
-		FALSE,
+		0.0f,
+		TRUE,
 		FALSE,
 		FALSE,
 		FALSE

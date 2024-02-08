@@ -75,11 +75,17 @@ public:
 
 	void SetModelMatrix(const XMFLOAT4X4& matrix) { m_modelMatrix = matrix; NeedUpdateShaderParam(); }
 
-	double GetPerspectiveViewNearZ() { return m_viewNearZ; }
-	void SetPerspectiveViewNearZ(double z) { m_viewNearZ = z; NeedUpdateShaderParam(); }
+	double GetPerspectiveViewNearZ() const { return m_perspectiveViewNearZ; }
+	void SetPerspectiveViewNearZ(double z) { m_perspectiveViewNearZ = z; NeedUpdateShaderParam(); }
 
-	double GetPerspectiveViewFarZ() { return m_viewFarZ; }
-	void SetPerspectiveViewFarZ(double z) { m_viewFarZ = z; NeedUpdateShaderParam(); }
+	double GetPerspectiveViewFarZ() const { return m_perspectiveViewFarZ; }
+	void SetPerspectiveViewFarZ(double z) { m_perspectiveViewFarZ = z; NeedUpdateShaderParam(); }
+
+	double GetOrthographicViewNearZ() const { return m_orthographicViewNearZ; }
+	void SetOrthographicViewNearZ(double z) { m_orthographicViewNearZ = z; }
+
+	double GetOrthographicViewFarZ() const { return m_orthographicViewFarZ; }
+	void SetOrthographicViewFarZ(double z) { m_orthographicViewFarZ = z; }
 
 	double GetOrthographicLengthPerDot() const { return m_pViewOp->GetOrthographicLengthPerDot(); }
 	void SetOrthographicLengthPerDot(double length) { m_pViewOp->SetOrthographicLengthPerDot(length); }
@@ -215,8 +221,10 @@ private:
 	YmVector2i m_viewSize;
 	double m_pointSize;
 	double m_fovAngleYDeg;
-	double m_viewNearZ;
-	double m_viewFarZ;
+	double m_perspectiveViewNearZ;
+	double m_perspectiveViewFarZ;
+	double m_orthographicViewNearZ;
+	double m_orthographicViewFarZ;
 	YmVector3d m_scannerPosition;
 	double m_scannerDistanceUpperBound;
 	double m_scannerDistanceDepthOffset;

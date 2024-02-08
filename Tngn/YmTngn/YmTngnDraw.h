@@ -30,6 +30,8 @@ public:
 	bool IsProgressiveViewFollowingFrame() const;
 	int64_t GetDrawnPointCount() const { return m_nDrawnPoint; }
 
+	bool IsViewPerspective() const;
+
 public:
 	/// <summary>
 	/// Set a transformation matrix which converts vertex coordintes to model coordinate system.

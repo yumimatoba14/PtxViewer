@@ -80,6 +80,12 @@ namespace {
 		{
 			"LightSpecularShininess", 100, sectionTngnView
 		},
+		{
+			"OrthographicViewNearZ", -50, sectionTngnView
+		},
+		{
+			"OrthographicViewFarZ", 50, sectionTngnView
+		},
 	};
 
 	static const ValueSchema<YmRgba4b> aRgba4bValueSchema[YmTngnViewConfig::RGBA4B_KEY_COUNT] = {
