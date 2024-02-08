@@ -2,6 +2,7 @@
 
 #include "YmTngn.h"
 #include "YmTngnDrawUtil.h"
+#include "YmBase/YmAabBox.h"
 
 namespace Ymcpp {
 
@@ -85,6 +86,10 @@ public:
 	void DrawLineList(
 		const YmTngnPointListVertex aVertex[], size_t nVertex
 	);
+
+public:
+	static double CalculateViewMinDepthForLocalBox(const YmAabBox3d& localAabb, const DirectX::XMMATRIX& localToViewMatrix);
+	double EstimateLengthPerDotForLocalBox(const YmAabBox3d& localAabb);
 
 private:
 	void DrawPointListImpl(

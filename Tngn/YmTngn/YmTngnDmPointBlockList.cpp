@@ -88,40 +88,6 @@ bool YmTngnDmPointBlockList::OnSetPickEnabled(bool bEnable)
 	return bEnable;
 }
 
-/// <summary>
-/// 
-/// </summary>
-/// <param name="modelToViewMatrix">modelToViewMatrix is pre-multiplied matrix by model coordinates.</param>
-/// <param name="aabb"></param>
-/// <param name="distanceLBIn"></param>
-/// <returns></returns>
-static double CalcPointListEnumerationPrecision(
-	const XMFLOAT4X4& modelToViewMatrix, const YmAabBox3d& aabb, double distanceLBIn
-)
-{
-	const double distanceLB = max(0, distanceLBIn);
-	double minDistance = DBL_MAX;
-	for (int i = 0; i < 8; ++i) {
-		YmVector3d pnt;
-		pnt[0] = ((i & 0x01) == 0 ? aabb.GetMinPoint()[0] : aabb.GetMaxPoint()[0]);
-		pnt[1] = ((i & 0x02) == 0 ? aabb.GetMinPoint()[1] : aabb.GetMaxPoint()[1]);
-		pnt[2] = ((i & 0x04) == 0 ? aabb.GetMinPoint()[2] : aabb.GetMaxPoint()[2]);
-		double value = modelToViewMatrix.m[3][2];
-		for (int j = 0; j < 3; ++j) {
-			value += modelToViewMatrix.m[j][2] * pnt[j];
-		}
-		value *= -1;
-		if (value < minDistance) {
-			minDistance = value;
-			if (minDistance < distanceLB) {
-				minDistance = distanceLB;
-				break;
-			}
-		}
-	}
-	return  0.001 * minDistance;  // TODO: fix me
-}
-
 void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 {
 	const int64_t maxDrawnPointCountPerFrame = m_maxDrawnPointCountPerFrame;
@@ -144,13 +110,10 @@ void YmTngnDmPointBlockList::OnDraw(YmTngnDraw* pDraw)
 			maxPointPerInst = maxDrawnPointCountPerFrame / numInstMax;
 		}
 
-		double persNearZ = pDraw->GetPerspectiveViewNearZ();
 		for (auto iBlock : m_drawnInstanceIndices) {
 			const InstanceData& instance = m_instanceList[iBlock];
 			pDraw->SetModelMatrix(instance.localToGlobalMatrix);
-			XMFLOAT4X4 modelToViewMatrix;
-			XMStoreFloat4x4(&modelToViewMatrix, pDraw->GetModelToViewMatrix());
-			double precision = CalcPointListEnumerationPrecision(modelToViewMatrix, instance.localAabb, persNearZ);
+			double precision = pDraw->EstimateLengthPerDotForLocalBox(instance.localAabb);
 			instance.pPointBlock->SetDrawingPrecision(precision);
 			instance.pPointBlock->SetMaxPointCountDrawnPerFrame(maxPointPerInst);
 			if (IsPickEnabled()) {

@@ -64,23 +64,11 @@ void YmTngnDmDrawableObjectList::DrawSorted(YmTngnDraw* pDraw)
 	}
 }
 
-static double CalcAabBoxDepth(const XMMATRIX& localToViewMatrix, const YmAabBox3d& aabb)
-{
-	YM_IS_TRUE(aabb.IsInitialized());
-	double depth = DBL_MAX;
-	for (int i = 0; i < 8; ++i) {
-		float coord[3];
-		coord[0] = static_cast<float>((i & 0x01) ? aabb.GetMaxPoint()[0] : aabb.GetMinPoint()[0]);
-		coord[1] = static_cast<float>((i & 0x02) ? aabb.GetMaxPoint()[1] : aabb.GetMinPoint()[1]);
-		coord[2] = static_cast<float>((i & 0x04) ? aabb.GetMaxPoint()[2] : aabb.GetMinPoint()[2]);
-
-		XMVECTOR localVec = XMVectorSet(coord[0], coord[1], coord[2], 1);
-		XMVECTOR viewVec = XMVector4Transform(localVec, localToViewMatrix);
-		depth = min(depth, (double)XMVectorGetZ(viewVec));
-	}
-	return depth;
-}
-
+/// <summary>
+/// Sort object from deep side to shallow side. (Its direction is +Z direction in case of right-hand view coordinate system.)
+/// This sorted result is used to draw transparent objects.
+/// </summary>
+/// <param name="pDraw"></param>
 void YmTngnDmDrawableObjectList::SortObjectsByDepth(YmTngnDraw* pDraw)
 {
 	auto modelMatrix = pDraw->MakeModelMatrixSetter();
@@ -93,7 +81,7 @@ void YmTngnDmDrawableObjectList::SortObjectsByDepth(YmTngnDraw* pDraw)
 			localToViewMatrix = pDraw->GetModelToViewMatrix();
 		}
 
-		double depth = CalcAabBoxDepth(localToViewMatrix, data.m_pObject->GetAabBox());
+		double depth = pDraw->CalculateViewMinDepthForLocalBox(data.m_pObject->GetAabBox(), localToViewMatrix);
 		if (0 < depth) {
 			continue;
 		}

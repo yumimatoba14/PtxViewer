@@ -64,20 +64,20 @@ public:
 	void SetProgressiveViewMode(bool enableProgressiveView, bool isFollowingFrame);
 
 	YmVector2i GetViewSize() const { return m_viewSize; }
-	void SetViewSize(const YmVector2i& viewSize) { m_viewSize = viewSize; m_isNeedUpdateShaderParam = true; }
+	void SetViewSize(const YmVector2i& viewSize) { m_viewSize = viewSize; NeedUpdateShaderParam(); }
 
 	double GetPointSize() const { return m_pointSize; }
-	void SetPointSize(double pointSize) { m_pointSize = pointSize; m_isNeedUpdateShaderParam = true; }
+	void SetPointSize(double pointSize) { m_pointSize = pointSize; NeedUpdateShaderParam(); }
 
-	void SetModelMatrix(const XMFLOAT4X4& matrix) { m_modelMatrix = matrix; m_isNeedUpdateShaderParam = true; }
+	void SetModelMatrix(const XMFLOAT4X4& matrix) { m_modelMatrix = matrix; NeedUpdateShaderParam(); }
 
 	double GetPerspectiveViewNearZ() { return m_viewNearZ; }
-	void SetPerspectiveViewNearZ(double z) { m_viewNearZ = z; m_isNeedUpdateShaderParam = true; }
+	void SetPerspectiveViewNearZ(double z) { m_viewNearZ = z; NeedUpdateShaderParam(); }
 
 	double GetPerspectiveViewFarZ() { return m_viewFarZ; }
-	void SetPerspectiveViewFarZ(double z) { m_viewFarZ = z; m_isNeedUpdateShaderParam = true; }
+	void SetPerspectiveViewFarZ(double z) { m_viewFarZ = z; NeedUpdateShaderParam(); }
 
-	void SetShaderParamPickTargetId(YmTngnPickTargetId id) { m_shaderParamPickTargetId = id; m_isNeedUpdateShaderParam = true; }
+	void SetShaderParamPickTargetId(YmTngnPickTargetId id) { m_shaderParamPickTargetId = id; NeedUpdateShaderParam(); }
 
 	XMMATRIX GetModelToViewMatrix() const;
 
@@ -155,6 +155,7 @@ private:
 private:
 	void Initialize();
 	void UpdateShaderParam();
+	void NeedUpdateShaderParam() { m_isNeedUpdateShaderParam = true; }
 
 	double GetAspectRatio() const;
 

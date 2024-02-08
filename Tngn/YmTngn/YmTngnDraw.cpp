@@ -5,6 +5,7 @@
 
 using namespace std;
 using namespace Ymcpp;
+using namespace DirectX;
 
 static constexpr int TEMP_VERTEX_BUF_VERTEX = 0;
 static constexpr int TEMP_VERTEX_BUF_PICK_ID = 1;
@@ -203,6 +204,74 @@ void YmTngnDraw::DrawLineList(
 
 		nRemainingVertex -= nVertexInBuf;
 	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// <summary>
+/// Calculate min value of view depth for local AABB.
+/// It is assumed that view coordiante system is right hand system and view depth direction is +Z.
+/// </summary>
+/// <param name="localAabb"></param>
+/// <param name="localToViewMatrix"></param>
+/// <returns></returns>
+double YmTngnDraw::CalculateViewMinDepthForLocalBox(const YmAabBox3d& localAabb, const DirectX::XMMATRIX& localToViewMatrix)
+{
+	YM_IS_TRUE(localAabb.IsInitialized());
+	double depth = DBL_MAX;
+	for (int i = 0; i < 8; ++i) {
+		float coord[3];
+		coord[0] = static_cast<float>((i & 0x01) ? localAabb.GetMaxPoint()[0] : localAabb.GetMinPoint()[0]);
+		coord[1] = static_cast<float>((i & 0x02) ? localAabb.GetMaxPoint()[1] : localAabb.GetMinPoint()[1]);
+		coord[2] = static_cast<float>((i & 0x04) ? localAabb.GetMaxPoint()[2] : localAabb.GetMinPoint()[2]);
+
+		XMVECTOR localVec = XMVectorSet(coord[0], coord[1], coord[2], 1);
+		XMVECTOR viewVec = XMVector4Transform(localVec, localToViewMatrix);
+		depth = min(depth, (double)XMVectorGetZ(viewVec));
+	}
+	return depth;
+}
+
+/// <summary>
+/// 
+/// </summary>
+/// <param name="modelToViewMatrix">modelToViewMatrix is pre-multiplied matrix by model coordinates.</param>
+/// <param name="aabb"></param>
+/// <param name="distanceLBIn"></param>
+/// <returns></returns>
+static double CalcPointListEnumerationPrecision(
+	const YmAabBox3d& localAabb, const XMMATRIX& localToViewMatrix, double distanceLBIn
+)
+{
+	YM_IS_TRUE(localAabb.IsInitialized());
+	const double distanceLB = max(0, distanceLBIn);
+	double minDistance = DBL_MAX;
+	for (int i = 0; i < 8; ++i) {
+		float coord[3];
+		coord[0] = static_cast<float>((i & 0x01) ? localAabb.GetMaxPoint()[0] : localAabb.GetMinPoint()[0]);
+		coord[1] = static_cast<float>((i & 0x02) ? localAabb.GetMaxPoint()[1] : localAabb.GetMinPoint()[1]);
+		coord[2] = static_cast<float>((i & 0x04) ? localAabb.GetMaxPoint()[2] : localAabb.GetMinPoint()[2]);
+
+		XMVECTOR localVec = XMVectorSet(coord[0], coord[1], coord[2], 1);
+		XMVECTOR viewVec = XMVector4Transform(localVec, localToViewMatrix);
+		double value = XMVectorGetZ(viewVec);
+
+		value *= -1;
+		if (value < minDistance) {
+			minDistance = value;
+			if (minDistance < distanceLB) {
+				minDistance = distanceLB;
+				break;
+			}
+		}
+	}
+	return  0.001 * minDistance;  // TODO: fix me
+}
+
+double YmTngnDraw::EstimateLengthPerDotForLocalBox(const YmAabBox3d& localAabb)
+{
+	double persNearZ = GetPerspectiveViewNearZ();
+	return CalcPointListEnumerationPrecision(localAabb, GetModelToViewMatrix(), persNearZ);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
