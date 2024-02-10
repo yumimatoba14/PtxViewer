@@ -23,6 +23,8 @@ public:
 	virtual event System::EventHandler^ Disposed;
 
 	void SetViewEventListener(ViewEventListener^ listener);
+	bool IsViewOrthographic();
+	void SetViewOrthographic(bool isOrtho);
 
 	bool OpenPtxFile(System::String^ ptxFilePath);
 	bool OpenObjFile(System::String^ objFilePath);

@@ -41,6 +41,8 @@ namespace PtxViewer
             this.viewTimer = new System.Windows.Forms.Timer(this.components);
             this.saveViewImageMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.lengthDimensionMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewMenu = new System.Windows.Forms.ToolStripMenuItem();
+            this.orthographicViewMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,6 +50,7 @@ namespace PtxViewer
             // 
             this.mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileMenu,
+            this.viewMenu,
             this.testMenu});
             this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.mainMenuStrip.Name = "mainMenuStrip";
@@ -142,6 +145,24 @@ namespace PtxViewer
             this.lengthDimensionMenu.Size = new System.Drawing.Size(196, 22);
             this.lengthDimensionMenu.Text = "&Measure distance";
             this.lengthDimensionMenu.Click += new System.EventHandler(this.lengthDimensionMenu_Click);
+            // 
+            // viewMenu
+            // 
+            this.viewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.orthographicViewMenu});
+            this.viewMenu.Name = "viewMenu";
+            this.viewMenu.Size = new System.Drawing.Size(44, 20);
+            this.viewMenu.Text = "&View";
+            // 
+            // orthographicViewMenu
+            // 
+            this.orthographicViewMenu.CheckOnClick = true;
+            this.orthographicViewMenu.Name = "orthographicViewMenu";
+            this.orthographicViewMenu.Size = new System.Drawing.Size(180, 22);
+            this.orthographicViewMenu.Text = "&Orthographic view";
+            this.orthographicViewMenu.ToolTipText = "Switch perspective view and orthographic view.";
+            this.orthographicViewMenu.Click += new System.EventHandler(this.orthographicViewMenu_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -172,6 +193,8 @@ namespace PtxViewer
         private System.Windows.Forms.ToolStripMenuItem drawWithScannerPosMenu;
         private System.Windows.Forms.ToolStripMenuItem saveViewImageMenu;
         private System.Windows.Forms.ToolStripMenuItem lengthDimensionMenu;
+        private System.Windows.Forms.ToolStripMenuItem viewMenu;
+        private System.Windows.Forms.ToolStripMenuItem orthographicViewMenu;
     }
 }
 

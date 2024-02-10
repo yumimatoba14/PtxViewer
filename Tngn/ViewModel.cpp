@@ -73,6 +73,16 @@ void ViewModel::SetViewEventListener(ViewEventListener^ listener)
 	eventListener->Attach(this);
 }
 
+bool ViewModel::IsViewOrthographic()
+{
+	return !m_pImpl->IsViewPerspective();
+}
+
+void ViewModel::SetViewOrthographic(bool isOrtho)
+{
+	m_pImpl->SetViewPerspective(!isOrtho);
+}
+
 bool ViewModel::OpenPtxFile(System::String^ ptxFilePath)
 {
 	YM_NOEXCEPT_BEGIN("ViewModel::OpenPtxFile");

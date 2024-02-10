@@ -271,5 +271,13 @@ namespace PtxViewer
                 viewModel.SetViewEventListener(null);
             }
         }
+
+        private void orthographicViewMenu_Click(object sender, EventArgs e)
+        {
+            if(viewModel != null)
+            {
+                viewModel.SetViewOrthographic(orthographicViewMenu.Checked);
+            }
+        }
     }
 }
