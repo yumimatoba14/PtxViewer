@@ -170,6 +170,7 @@
     <ClInclude Include="..\src\YmBase\YmOrtho3dXform.h" />
     <ClInclude Include="..\src\YmBase\YmStreamBuf.h" />
     <ClInclude Include="..\src\YmBase\YmVector.h" />
+    <ClInclude Include="..\src\YmBase\YmVectorFwd.h" />
     <ClInclude Include="..\src\YmBase\YmVectorN.h" />
     <ClInclude Include="..\src\YmBase\YmWin32.h" />
     <ClInclude Include="..\src\YmBase\YmWin32FileBuf.h" />

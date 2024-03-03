@@ -1,13 +1,11 @@
 #pragma once
 
-#include "YmBaseFwd.h"
+#include "YmVectorFwd.h"
+#include <array>
 
 namespace Ymcpp {
 
-template<class V>
-struct YmVectorTraits;
-
-template<int N, typename COORD = double>
+template<int N, typename COORD>
 class YmVectorN
 {
 public:
@@ -19,6 +17,11 @@ public:
 	YmVectorN() {}
 
 	YmVectorN(const YmVectorN&) = default;
+
+	YmVectorN(const std::array<CoordType, DIM>& aCoord)
+	{
+		std::copy(aCoord.begin(), aCoord.end(), m_aCoord);
+	}
 
 	explicit YmVectorN(const CoordType aCoord[DIM])
 	{
@@ -35,7 +38,7 @@ public:
 		}
 	}
 
-	template<typename V, typename TRAITS = YmVectorTraits<V>>
+	template<typename V, typename TRAITS = YmVectorTraits<V>, typename C = typename YmVectorTraits<V>::CoordType>
 	YmVectorN(const V& v)
 	{
 		using DimensionValueType = typename YmVectorTraits<YmVectorN>::DimensionValueType;
@@ -135,6 +138,11 @@ YmVectorN<N, COORD> operator - (const YmVectorN<N, COORD>& lhs, const YmVectorN<
 	return YmVectorN<N, COORD>(lhs) -= rhs;
 }
 
+// A template parameter, SCALAR, and implicit cast are used for convenience
+// in order to allow the following expressions sucn as;
+// 2*vec, 0.5*vec.
+// 2.0f, 0.5f are incovenient in the context of template.
+// float(2), static_cast<float>(0.5) are too long.
 template<int N, typename COORD, typename SCALAR>
 YmVectorN<N, COORD> operator * (SCALAR s, const YmVectorN<N, COORD>& v)
 {
@@ -170,6 +178,20 @@ bool operator != (const YmVectorN<N, COORD>& lhs, const YmVectorN<N, COORD>& rhs
 {
 	return lhs.Compare(rhs) != 0;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+template<int N, typename C>
+struct YmVectorTraits<YmVectorN<N,C>>
+{
+	using VectorType = YmVectorN<N, C>;
+	using CoordType = C;
+	static constexpr int DIM = N;
+	using DimensionValueType = std::integral_constant<int, DIM>;
+
+	static CoordType GetAt(const VectorType& v, int i) { return v[i]; }
+	static void SetAt(VectorType& v, int i, CoordType coord) { v[i] = coord; }
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 

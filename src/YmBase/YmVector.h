@@ -1,38 +1,10 @@
 #pragma once
 
-#include "YmBaseFwd.h"
 #include "YmVectorN.h"
 #include <type_traits>
 //#include <cmath>
 
 namespace Ymcpp {
-
-////////////////////////////////////////////////////////////////////////////////
-
-typedef YmVectorN<2, double> YmVector2d;
-typedef YmVectorN<3, double> YmVector3d;
-typedef YmVectorN<2, float> YmVector2f;
-typedef YmVectorN<3, float> YmVector3f;
-typedef YmVectorN<2, int> YmVector2i;
-typedef YmVectorN<3, int> YmVector3i;
-
-////////////////////////////////////////////////////////////////////////////////
-
-/// <summary>
-/// This class implicitly implements traits for YmVectorN.
-/// </summary>
-/// <typeparam name="V"></typeparam>
-template<typename V>
-struct YmVectorTraits
-{
-	using VectorType = V;
-	using CoordType = typename V::CoordType;
-	static constexpr int DIM = V::DIM;
-	using DimensionValueType = std::integral_constant<int, DIM>;
-
-	static CoordType GetAt(const VectorType& v, int i) { return v[i]; }
-	static void SetAt(VectorType& v, int i, CoordType coord) { v[i] = coord; }
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -52,6 +24,18 @@ namespace YmVectorUtil
 		const COORD aCoord[3] = { x, y, z };
 		return YmVectorN<3, COORD>(aCoord);
 	}
+
+#if 0
+	// error C2397 was caused in VS2019.
+	template<class COORD, class... ARGS>
+	static YmVectorN<1 + sizeof...(ARGS), COORD> Make(COORD x, ARGS... args)
+	{
+		//return std::array<COORD, 1 + sizeof...(ARGS)>{ x, args... };
+		return { { x, args... } };
+		//const COORD aCoord[1 + sizeof...(ARGS)] = { x, args... };
+		//return YmVectorN<1 + sizeof...(ARGS), COORD>(aCoord);
+	}
+#endif
 
 	template<class V>
 	static void CopyToArray(const V& vec, int nCoord, typename YmVectorTraits<V>::CoordType aCoord[])

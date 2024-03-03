@@ -84,6 +84,9 @@
     <ClInclude Include="..\src\YmBase\YmDebugOutputStream.h">
       <Filter>public\IO</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\YmBase\YmVectorFwd.h">
+      <Filter>public\Geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="YmBase.cpp">
