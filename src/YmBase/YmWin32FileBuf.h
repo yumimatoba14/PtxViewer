@@ -21,7 +21,7 @@ public:
 	void OpenTempFile(DWORD dwCreationDisposition = CREATE_ALWAYS);
 	void OpenToRead(LPCTSTR pFilePath);
 
-	bool IsOpend() const { return m_hFile.get() != nullptr && m_hFile.get() != INVALID_HANDLE_VALUE; }
+	bool IsOpened() const { return m_hFile.get() != nullptr && m_hFile.get() != INVALID_HANDLE_VALUE; }
 
 	void Close();
 	HANDLE GetHandle() const { return m_hFile.get(); }

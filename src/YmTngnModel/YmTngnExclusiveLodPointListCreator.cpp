@@ -152,7 +152,7 @@ int64_t YmTngnExclusiveLodPointListCreator::CreateImage(
 )
 {
 	YM_IS_TRUE(MIN_BASE_LENGTH < m_latticeLength);
-	YM_IS_TRUE(pResultFileBuf != nullptr && pResultFileBuf->IsOpend());
+	YM_IS_TRUE(pResultFileBuf != nullptr && pResultFileBuf->IsOpened());
 
 	using HeaderType = YmTngnModel::ExclusiveLodPointList::Header;
 	HeaderType header = { YmTngnModel::CURRENT_FILE_VERSION, 0 };
