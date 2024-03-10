@@ -61,6 +61,20 @@ std::vector<YmTngnPickedPoint> YmTngnDmMemoryPointList::FindPickedPoints(YmTngnP
 	return points;
 }
 
+bool YmTngnDmMemoryPointList::RemovePoint(const YmTngnPickedPoint& point)
+{
+	if (point.id == YM_TNGN_PICK_TARGET_NULL) {
+		return false;
+	}
+	if (GetPointPickTargetIdFirst() <= point.id && point.id < GetPointPickTargetIdFirst() + m_dataSource.size()) {
+		size_t index = point.id - GetPointPickTargetIdFirst();
+		m_dataSource.erase(m_dataSource.begin() + index);
+		m_pVertexBuffer = nullptr;
+		return true;
+	}
+	return false;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 bool YmTngnDmMemoryPointList::OnSetPickEnabled(bool bEnable)

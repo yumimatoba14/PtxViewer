@@ -61,4 +61,12 @@ bool ViewEventListener::PickingNone()
 	return true;
 }
 
+bool ViewEventListener::IsUnpickEnabled()
+{
+	FUNC_BEGIN();
+	return OnIsUnpickEnabled();
+	FUNC_END();
+	return true;
+}
+
 ////////////////////////////////////////////////////////////////////////////////

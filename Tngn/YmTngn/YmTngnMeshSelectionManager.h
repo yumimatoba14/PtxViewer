@@ -19,6 +19,7 @@ public:
 	bool IsEmpty() const { return m_selectedMeshMap.empty(); }
 
 	void SelectMesh(const YmTngnDmTriangleMeshPtr& pMesh);
+	void DeselectMesh(const YmTngnDmTriangleMeshPtr& pMesh);
 	bool IsSelected(const YmTngnDmTriangleMeshPtr& pMesh) const {
 		return m_selectedMeshMap.find(pMesh) != m_selectedMeshMap.end();
 	}

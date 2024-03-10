@@ -41,6 +41,8 @@ public:
 	void SetPointPickTargetIdFirst(YmTngnPickTargetId id) { m_pointPickTargetIdFirst = id; }
 
 	std::vector<YmTngnPickedPoint> FindPickedPoints(YmTngnPickTargetId id) const;
+	bool RemovePoint(const YmTngnPickedPoint& point);
+
 protected:
 	virtual bool OnSetPickEnabled(bool bEnable);
 	virtual void OnDraw(YmTngnDraw* pDraw);

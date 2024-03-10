@@ -23,6 +23,12 @@ void YmTngnMeshSelectionManager::SelectMesh(const YmTngnDmTriangleMeshPtr& pMesh
 	m_selectedMeshMap.emplace(pMesh, nullptr);
 }
 
+void YmTngnMeshSelectionManager::DeselectMesh(const YmTngnDmTriangleMeshPtr& pMesh)
+{
+	YM_IS_TRUE(pMesh);
+	m_selectedMeshMap.erase(pMesh);
+}
+
 void YmTngnMeshSelectionManager::ClearSelection()
 {
 	m_selectedMeshMap.clear();

@@ -20,12 +20,14 @@ public:
 	void Attach(ViewModel^ viewModel);
 	bool PickingPoint(const Vector3d coord);
 	bool PickingNone();
+	bool IsUnpickEnabled();
 
 protected:
 	virtual void OnDetach(ViewModel^ viewModel) {}
 	virtual void OnAttach(ViewModel^ viewModel) {}
 	virtual bool OnPickingPoint(const Vector3d coord) { return true; }
 	virtual bool OnPickingNone() { return true; }
+	virtual bool OnIsUnpickEnabled() { return true; }
 
 private:
 	static ViewEventListener^ pDefaultInstance = gcnew ViewEventListener();

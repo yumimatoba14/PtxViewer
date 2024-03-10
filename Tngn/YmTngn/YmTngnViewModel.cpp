@@ -201,6 +201,7 @@ void YmTngnViewModel::Draw()
 			pDim->Draw(&draw);
 		}
 		if (m_pSelectedContent) {
+			m_pSelectedContent->SetPickEnabled(IsPickEnabled());
 			m_pSelectedContent->Draw(&draw);
 		}
 		if (m_pMeshSelectionManager && !m_pMeshSelectionManager->IsEmpty()) {
@@ -418,6 +419,16 @@ std::vector<YmTngnPickedPoint> YmTngnViewModel::GetPickedPoint(YmTngnPickTargetI
 	if (IsPickEnabled() && pickedId != YM_TNGN_PICK_TARGET_NULL) {
 		if (m_pDmPtxFiles == m_pContent) {
 			return m_pDmPtxFiles->FindPickedPoints(pickedId);
+		}
+	}
+	return vector<YmTngnPickedPoint>();
+}
+
+std::vector<YmTngnPickedPoint> YmTngnViewModel::GetPickedSelectedPoint(YmTngnPickTargetId pickedId)
+{
+	if (IsPickEnabled() && pickedId != YM_TNGN_PICK_TARGET_NULL) {
+		if (m_pSelectedPoints && m_pSelectedPoints == m_pSelectedContent) {
+			return m_pSelectedPoints->FindPickedPoints(pickedId);
 		}
 	}
 	return vector<YmTngnPickedPoint>();

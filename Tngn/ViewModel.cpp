@@ -243,8 +243,8 @@ void ViewModel::OnMouseButtonUp(System::Windows::Forms::MouseEventArgs^ e)
 		if (pickedId == YM_TNGN_PICK_TARGET_NULL) {
 			if (eventListener->PickingNone()) {
 				m_pImpl->PrepareSelectedPointList()->ClearPoint();
+				m_pImpl->PrepareMeshSelectionManager()->ClearSelection();
 			}
-			m_pImpl->PrepareMeshSelectionManager()->ClearSelection();
 		}
 		else {
 			auto points = m_pImpl->GetPickedPoint(pickedId);
@@ -255,8 +255,23 @@ void ViewModel::OnMouseButtonUp(System::Windows::Forms::MouseEventArgs^ e)
 				}
 			}
 			auto meshes = m_pImpl->GetPickedTriangleMesh(pickedId);
+			std::vector<YmTngnDmTriangleMeshPtr> selectedMeshes;
+			auto pMeshSelManager = m_pImpl->PrepareMeshSelectionManager();
 			for (auto& pMesh : meshes) {
-				m_pImpl->PrepareMeshSelectionManager()->SelectMesh(pMesh);
+				if (pMeshSelManager->IsSelected(pMesh)) {
+					selectedMeshes.push_back(pMesh);
+				} else {
+					pMeshSelManager->SelectMesh(pMesh);
+				}
+			}
+			if (eventListener->IsUnpickEnabled()) {
+				auto selectedPoints = m_pImpl->GetPickedSelectedPoint(pickedId);
+				for (YmTngnPickedPoint& point : selectedPoints) {
+					m_pImpl->PrepareSelectedPointList()->RemovePoint(point);
+				}
+				for (auto& pMesh : selectedMeshes) {
+					pMeshSelManager->DeselectMesh(pMesh);
+				}
 			}
 		}
 	}

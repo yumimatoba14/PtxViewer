@@ -57,6 +57,7 @@ public:
 
 	YmTngnPickTargetId TryToPickAsId(const YmVector2i& mousePos);
 	std::vector<YmTngnPickedPoint> GetPickedPoint(YmTngnPickTargetId pickedId);
+	std::vector<YmTngnPickedPoint> GetPickedSelectedPoint(YmTngnPickTargetId pickedId);
 	std::vector<YmTngnDmTriangleMeshPtr> GetPickedTriangleMesh(YmTngnPickTargetId pickedId);
 
 	bool SaveViewToFile(REFGUID targetFormat, LPCTSTR targetFilePath);
